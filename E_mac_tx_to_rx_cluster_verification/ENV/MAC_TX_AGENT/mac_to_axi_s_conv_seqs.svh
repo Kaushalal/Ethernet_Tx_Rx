@@ -47,8 +47,9 @@ class mac_to_axi_s_conv_seqs extends axi_str_mas_base_seqs #(.DATA_SIZE(`AXI_STR
    data_q = {>>{req_mac_item.da, req_mac_item.sa, req_mac_item.tci, req_mac_item.Etype, req_mac_item.payload_q, req_mac_item.fcs } };
    
    foreach( data_q[i] ) begin
+   `uvm_info( "PKT_TO_TDATA",$sformatf(" BEFORE inversion data_q[%0d] = %b | %h ",i,data_q[i],data_q[i]),UVM_FULL)
    data_q[i] = {<<8{data_q[i]}};
-   `uvm_info( "DATA_Q",$sformatf(" data_q[%0d] = %b | %h ",i,data_q[i],data_q[i]),UVM_FULL)
+   `uvm_info( "PKT_TO_TDATA",$sformatf(" AFTER inversion data_q[%0d] = %b | %h ",i,data_q[i],data_q[i]),UVM_FULL)
    end 
    
    this.total_no_of_bytes = $size(req_mac_item.da) + $size(req_mac_item.sa) + $size(req_mac_item.tci) + $size(req_mac_item.Etype) + $size(req_mac_item.payload_q) + $size(req_mac_item.fcs);
