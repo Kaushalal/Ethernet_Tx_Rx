@@ -13,6 +13,9 @@ comp:
 		../ENV/REG/emac_tx2rx_reg_pkg.sv \
   		../ENV/emac_tx2rx_env_pkg.sv \
   		../TEST/emac_tx2rx_test_pkg.sv \
+		../../e_mac_tx2_rx_rtl/Interface/axi_lite_inf.sv \
+		../../e_mac_tx2_rx_rtl/Interface/axi_str_inf.sv \
+		../../e_mac_tx2_rx_rtl/e_mac_tx2_rx_top.sv \
   		../TOP/emac_tx2rx_top.sv \
   		+incdir+../../AXI_Stream_VIP_f/AXI_Stream_VIP/ENV/MASTER_AGENT \
   		+incdir+../../AXI_Stream_VIP_f/AXI_Stream_VIP/ENV/SLAVE_AGENT \
@@ -27,6 +30,8 @@ comp:
 		+incdir+../ENV/REG \
   		+incdir+../ENV \
   		+incdir+../TEST \
+		+incdir+../../e_mac_tx2_rx_rtl/Interface \
+		+incdir+../../e_mac_tx2_rx_rtl \
   		+incdir+../TOP
 	
 sim:

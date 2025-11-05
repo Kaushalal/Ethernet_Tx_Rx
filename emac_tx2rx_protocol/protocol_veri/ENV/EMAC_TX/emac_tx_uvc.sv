@@ -33,7 +33,7 @@ class emac_tx_uvc#(
       foreach(tx_agent[i]) begin
 			tx_agent[i] = emac_tx_agent#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)::type_id::create($sformatf("tx_agent[%0d]",i),this);
 			tx_config[i] = emac_tx_config::type_id::create($sformatf("tx_config[%0d]",i),this);
-			tx_config[i].id = i;
+			tx_config[i].id = i+3;
 			tx_config[i].is_active = tx_cfg.is_active;   
    	   tx_config[i].no_of_ports = tx_cfg.no_of_ports;
 			uvm_config_db#(emac_tx_config)::set(uvm_root::get(),$sformatf("*tx_agent[%0d]*",i),"tx_cfg",tx_config[i]);

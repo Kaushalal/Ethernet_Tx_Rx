@@ -18,6 +18,7 @@ package emac_tx2rx_env_pkg;
 	
 	`include "emac_tx2rx_vseqr.sv"
 	`include "emac_tx2rx_base_vseqs.sv"
+	`include "emac_tx2rx_ref_model.sv"
 
 	`include "emac_tx2rx_env.sv"
 

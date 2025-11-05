@@ -24,6 +24,8 @@ class emac_tx_seqs_item#(
 	rand bit [31:0]                   fcs;	          //CRC
 	int unsigned 			  				 total_bytes;   //total bytes in a transfer
 	int unsigned 			  				 pkt_len;   	 //packet length in a transfer
+	
+	bit [2:0]	port_id;
 
 	rand bit[31:0] min,max;
 
@@ -41,6 +43,7 @@ class emac_tx_seqs_item#(
 		`uvm_field_int(e_type,          UVM_ALL_ON | UVM_DEC)
 		`uvm_field_queue_int(payload,   UVM_ALL_ON | UVM_HEX)
 		`uvm_field_int(fcs,             UVM_ALL_ON | UVM_HEX)
+		`uvm_field_int(port_id,     	  UVM_ALL_ON | UVM_DEC)
 		`uvm_field_int(total_bytes,     UVM_ALL_ON | UVM_DEC)
 		`uvm_field_int(pkt_len,     	  UVM_ALL_ON | UVM_DEC)
 		`uvm_field_queue_int(frame,     UVM_ALL_ON)
@@ -55,8 +58,7 @@ class emac_tx_seqs_item#(
 	endfunction : post_randomization	
   
   	function string convert2string;
-   	return $sformatf("\nDEST_MAC_ADDR = %h | SOURCE_MAC_ADDR=%h | TCI=%h | e_type=%0d | fcs=%h | min=%0d | max = %0d",
-                     		dest_mac_addr,source_mac_addr,{vlan_id,prior,dei},e_type,fcs,min,max);
+   	return $sformatf("\nDEST_MAC_ADDR = %h | SOURCE_MAC_ADDR=%h | TCI=%h | e_type=%0d | fcs=%h | min=%0d | max = %0d", dest_mac_addr,source_mac_addr,{vlan_id,prior,dei},e_type,fcs,min,max);
   	endfunction : convert2string 
 
 endclass : emac_tx_seqs_item

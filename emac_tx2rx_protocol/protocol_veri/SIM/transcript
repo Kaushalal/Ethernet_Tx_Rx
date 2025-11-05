@@ -1,8 +1,85 @@
 # vsim -voptargs="+acc" emac_tx2rx_top -c -do "run -all;exit" -sv_seed 123 
-# Start time: 13:03:58 on Oct 31,2025
-# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Start time: 15:28:54 on Nov 05,2025
+# ** Note: (vsim-3812) Design is being optimized...
 # ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
-# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=1.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(46): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(47): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(48): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(49): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(50): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(51): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(52): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(53): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(54): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(55): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(56): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(57): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(58): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(59): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(60): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(61): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(62): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(80): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(81): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(82): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(83): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(84): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(85): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(86): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(80): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(81): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(82): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(83): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(84): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(85): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(86): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(80): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(81): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(82): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(83): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(84): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(85): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(86): (vopt-8637) A modport ('master') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(67): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(68): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(69): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(70): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(71): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(72): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(73): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(67): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(68): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(69): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(70): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(71): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(72): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(73): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(67): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(68): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(69): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(70): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(71): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(72): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../TOP/emac_tx2rx_top.sv(73): (vopt-8637) A modport ('slave') should not be used in a hierarchical path.
+# ** Warning: ../../AXI_Stream_VIP_f/AXI_Stream_VIP/TEST/axi_str_mas_user_callback.sv(23): (vopt-2973) Type definition for 'axi_str_mas_driver' forward declared in ../../AXI_Stream_VIP_f/AXI_Stream_VIP/TEST/axi_str_mas_user_callback.sv(18) found via package import at ../../AXI_Stream_VIP_f/AXI_Stream_VIP/ENV/MASTER_AGENT/axi_str_mas_driver.sv(21).
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2240) Treating stand-alone use of function '<protected>' as an implicit VOID cast.
+# ** Warning: ../../e_mac_tx2_rx_rtl/arbiter.svp(26): (vopt-2240) Treating stand-alone use of function '<protected>' as an implicit VOID cast.
+# ** Warning: ../../e_mac_tx2_rx_rtl/header_parser.svp(34): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../../e_mac_tx2_rx_rtl/header_parser.svp(34): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=78.
 # //  Questa Sim-64
 # //  Version 2023.4 linux_x86_64 Oct  9 2023
 # //
@@ -35,24 +112,118 @@
 # Loading work.emac_tx2rx_top_sv_unit(fast)
 # Loading mtiUvm.questa_uvm_pkg(fast)
 # Loading work.emac_tx2rx_top(fast)
+# Loading work.axi_str_inf(fast__2)
+# Loading work.axi_lite_inf(fast__1)
 # Loading work.axi_lite_mas_inf(fast__2)
+# Loading work.e_mac_tx2_rx_top_sv_unit(fast)
+# Loading work.top(fast)
+# Loading work.axi_str_inf(fast__3)
+# Loading work.arbiter(fast)
+# Loading work.header_parser(fast)
+# Loading work.axi_str_inf(fast__1)
 # Loading work.axi_str_env_pkg_sv_unit(fast)
 # Loading work.axi_str_mas_inf(fast__2)
 # Loading work.axi_str_slv_inf(fast__2)
 # Loading work.axi_str_slv_inf(fast__3)
 # ** Warning: (vsim-3764) Stand-alone call to function 'get' treated as implicit void cast.
-#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_env_pkg File: ../ENV/emac_tx2rx_env.sv Line: 41
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_env_pkg File: ../ENV/emac_tx2rx_env.sv Line: 44
 # ** Warning: (vsim-3764) Stand-alone call to function 'get' treated as implicit void cast.
-#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_env_pkg File: ../ENV/emac_tx2rx_env.sv Line: 40
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_env_pkg File: ../ENV/emac_tx2rx_env.sv Line: 43
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Instance: /emac_tx2rx_top File: ../TOP/emac_tx2rx_top.sv Line: 58
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 72
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 71
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 70
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 69
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 68
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 67
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 72
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 71
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 70
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 69
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 68
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 67
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 72
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 71
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 70
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 69
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 68
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 67
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 86
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 86
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 86
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 73
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 73
+# ** Warning: (vsim-8637) A modport ('slave') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_MAS_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 73
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 85
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 84
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 83
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 82
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 81
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[0] File: ../TOP/emac_tx2rx_top.sv Line: 80
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 85
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 84
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 83
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 82
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 81
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[1] File: ../TOP/emac_tx2rx_top.sv Line: 80
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 85
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 84
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 83
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 82
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 81
+# ** Warning: (vsim-8637) A modport ('master') should not be used in a hierarchical path.
+#    Time: 0 ps  Iteration: 0  Region: /emac_tx2rx_top/AXI_STREAM_SLV_CONNECT[2] File: ../TOP/emac_tx2rx_top.sv Line: 80
 # ** Warning: (vsim-8441) Clocking block output vif.drv_cb.ARVALID is not legal in this
 # or another expression.
-#    Time: 0 ps  Iteration: 0  Region: /axi_lite_pkg::axi_lite_mas_drv #(32, 32) File: ../../AXI_4_Lite_VIP_f/AXI_4_Lite_VIP/ENV/MASTER/axi_lite_mas_drv.sv Line: 84
+#    Time: 0 ps  Iteration: 0  Region: /axi_lite_pkg::axi_lite_mas_drv #(32, 32) File: ../../AXI_4_Lite_VIP_f/AXI_4_Lite_VIP/ENV/MASTER/axi_lite_mas_drv.sv Line: 143
 # ** Warning: (vsim-8441) Clocking block output vif.drv_cb.WVALID is not legal in this
 # or another expression.
-#    Time: 0 ps  Iteration: 0  Region: /axi_lite_pkg::axi_lite_mas_drv #(32, 32) File: ../../AXI_4_Lite_VIP_f/AXI_4_Lite_VIP/ENV/MASTER/axi_lite_mas_drv.sv Line: 67
+#    Time: 0 ps  Iteration: 0  Region: /axi_lite_pkg::axi_lite_mas_drv #(32, 32) File: ../../AXI_4_Lite_VIP_f/AXI_4_Lite_VIP/ENV/MASTER/axi_lite_mas_drv.sv Line: 115
 # ** Warning: (vsim-8441) Clocking block output vif.drv_cb.AWVALID is not legal in this
 # or another expression.
-#    Time: 0 ps  Iteration: 0  Region: /axi_lite_pkg::axi_lite_mas_drv #(32, 32) File: ../../AXI_4_Lite_VIP_f/AXI_4_Lite_VIP/ENV/MASTER/axi_lite_mas_drv.sv Line: 56
+#    Time: 0 ps  Iteration: 0  Region: /axi_lite_pkg::axi_lite_mas_drv #(32, 32) File: ../../AXI_4_Lite_VIP_f/AXI_4_Lite_VIP/ENV/MASTER/axi_lite_mas_drv.sv Line: 99
 # Loading /tools/mentor/questa/2023.4/questasim/uvm-1.1d/linux_x86_64/uvm_dpi.so
 # run -all
 # ----------------------------------------------------------------
@@ -88,127 +259,135 @@
 # uvm_test_top                       emac_tx2rx_sanity_test  -     @532   
 #   env                              emac_tx2rx_env          -     @539   
 #     lite_mas_uvc                   axi_lite_mas_uvc        -     @711   
-#       axi_lite_m_agent[0]          axi_lite_mas_agent      -     @197597
-#         m_seqr                     uvm_sequencer           -     @197608
-#           rsp_export               uvm_analysis_export     -     @197615
-#           seq_item_export          uvm_seq_item_pull_imp   -     @197709
+#       axi_lite_m_agent[0]          axi_lite_mas_agent      -     @197612
+#         m_seqr                     uvm_sequencer           -     @197623
+#           rsp_export               uvm_analysis_export     -     @197630
+#           seq_item_export          uvm_seq_item_pull_imp   -     @197724
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
 #           num_last_rsps            integral                32    'd1    
-#         s_drv                      uvm_driver #(REQ,RSP)   -     @197717
-#           rsp_port                 uvm_analysis_port       -     @197732
-#           seq_item_port            uvm_seq_item_pull_port  -     @197724
-#         s_mon                      uvm_monitor             -     @197740
-#           mon_put_port             uvm_analysis_port       -     @197747
+#         s_drv                      uvm_driver #(REQ,RSP)   -     @197732
+#           rsp_port                 uvm_analysis_port       -     @197747
+#           seq_item_port            uvm_seq_item_pull_port  -     @197739
+#         s_mon                      uvm_monitor             -     @197755
+#           mon_put_port             uvm_analysis_port       -     @197762
+#     ref_model                      emac_tx2rx_ref_model    -     @721   
+#       txmon_analysis_imp           uvm_analysis_imp        -     @728   
 #     rx_uvc                         uvm_agent               -     @690   
-#       rx_agent[0]                  uvm_agent               -     @197763
-#         rx_mon                     uvm_monitor             -     @197794
-#           item_collected_imp       uvm_analysis_imp        -     @197801
-#       rx_agent[1]                  uvm_agent               -     @197774
-#         rx_mon                     uvm_monitor             -     @197811
-#           item_collected_imp       uvm_analysis_imp        -     @197818
-#       rx_agent[2]                  uvm_agent               -     @197783
-#         rx_mon                     uvm_monitor             -     @197828
-#           item_collected_imp       uvm_analysis_imp        -     @197835
+#       rx_agent[0]                  uvm_agent               -     @197778
+#         rx_mon                     uvm_monitor             -     @197809
+#           item_collected_imp       uvm_analysis_imp        -     @197816
+#           rxmon_analysis_port      uvm_analysis_port       -     @197824
+#       rx_agent[1]                  uvm_agent               -     @197789
+#         rx_mon                     uvm_monitor             -     @197834
+#           item_collected_imp       uvm_analysis_imp        -     @197841
+#           rxmon_analysis_port      uvm_analysis_port       -     @197849
+#       rx_agent[2]                  uvm_agent               -     @197798
+#         rx_mon                     uvm_monitor             -     @197859
+#           item_collected_imp       uvm_analysis_imp        -     @197866
+#           rxmon_analysis_port      uvm_analysis_port       -     @197874
 #     str_mas_uvc                    uvm_agent               -     @697   
-#       master_agent[0]              uvm_agent               -     @197845
-#         master_drv                 uvm_driver #(REQ,RSP)   -     @197873
-#           rsp_port                 uvm_analysis_port       -     @197888
-#           seq_item_port            uvm_seq_item_pull_port  -     @197880
+#       master_agent[0]              uvm_agent               -     @197884
+#         master_drv                 uvm_driver #(REQ,RSP)   -     @197912
+#           rsp_port                 uvm_analysis_port       -     @197927
+#           seq_item_port            uvm_seq_item_pull_port  -     @197919
 #           packet_count             integral                8     'd1    
-#         master_mon                 uvm_monitor             -     @198005
-#           continuous_data_port     uvm_analysis_port       -     @198020
-#           item_collected_port      uvm_analysis_port       -     @198012
-#         master_seqr                uvm_sequencer           -     @197896
-#           rsp_export               uvm_analysis_export     -     @197903
-#           seq_item_export          uvm_seq_item_pull_imp   -     @197997
+#         master_mon                 uvm_monitor             -     @198044
+#           continuous_data_port     uvm_analysis_port       -     @198059
+#           item_collected_port      uvm_analysis_port       -     @198051
+#         master_seqr                uvm_sequencer           -     @197935
+#           rsp_export               uvm_analysis_export     -     @197942
+#           seq_item_export          uvm_seq_item_pull_imp   -     @198036
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
 #           num_last_rsps            integral                32    'd1    
-#       master_agent[1]              uvm_agent               -     @197855
-#         master_drv                 uvm_driver #(REQ,RSP)   -     @198039
-#           rsp_port                 uvm_analysis_port       -     @198054
-#           seq_item_port            uvm_seq_item_pull_port  -     @198046
+#       master_agent[1]              uvm_agent               -     @197894
+#         master_drv                 uvm_driver #(REQ,RSP)   -     @198078
+#           rsp_port                 uvm_analysis_port       -     @198093
+#           seq_item_port            uvm_seq_item_pull_port  -     @198085
 #           packet_count             integral                8     'd1    
-#         master_mon                 uvm_monitor             -     @198171
-#           continuous_data_port     uvm_analysis_port       -     @198186
-#           item_collected_port      uvm_analysis_port       -     @198178
-#         master_seqr                uvm_sequencer           -     @198062
-#           rsp_export               uvm_analysis_export     -     @198069
-#           seq_item_export          uvm_seq_item_pull_imp   -     @198163
+#         master_mon                 uvm_monitor             -     @198210
+#           continuous_data_port     uvm_analysis_port       -     @198225
+#           item_collected_port      uvm_analysis_port       -     @198217
+#         master_seqr                uvm_sequencer           -     @198101
+#           rsp_export               uvm_analysis_export     -     @198108
+#           seq_item_export          uvm_seq_item_pull_imp   -     @198202
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
 #           num_last_rsps            integral                32    'd1    
-#       master_agent[2]              uvm_agent               -     @197864
-#         master_drv                 uvm_driver #(REQ,RSP)   -     @198205
-#           rsp_port                 uvm_analysis_port       -     @198220
-#           seq_item_port            uvm_seq_item_pull_port  -     @198212
+#       master_agent[2]              uvm_agent               -     @197903
+#         master_drv                 uvm_driver #(REQ,RSP)   -     @198244
+#           rsp_port                 uvm_analysis_port       -     @198259
+#           seq_item_port            uvm_seq_item_pull_port  -     @198251
 #           packet_count             integral                8     'd1    
-#         master_mon                 uvm_monitor             -     @198337
-#           continuous_data_port     uvm_analysis_port       -     @198352
-#           item_collected_port      uvm_analysis_port       -     @198344
-#         master_seqr                uvm_sequencer           -     @198228
-#           rsp_export               uvm_analysis_export     -     @198235
-#           seq_item_export          uvm_seq_item_pull_imp   -     @198329
+#         master_mon                 uvm_monitor             -     @198376
+#           continuous_data_port     uvm_analysis_port       -     @198391
+#           item_collected_port      uvm_analysis_port       -     @198383
+#         master_seqr                uvm_sequencer           -     @198267
+#           rsp_export               uvm_analysis_export     -     @198274
+#           seq_item_export          uvm_seq_item_pull_imp   -     @198368
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
 #           num_last_rsps            integral                32    'd1    
 #     str_slv_uvc                    axi_str_slv_uvc         -     @704   
-#       slave_agent[0]               uvm_agent               -     @198372
-#         slave_drv                  uvm_driver #(REQ,RSP)   -     @198401
-#           rsp_port                 uvm_analysis_port       -     @198416
-#           seq_item_port            uvm_seq_item_pull_port  -     @198408
+#       slave_agent[0]               uvm_agent               -     @198411
+#         slave_drv                  uvm_driver #(REQ,RSP)   -     @198440
+#           rsp_port                 uvm_analysis_port       -     @198455
+#           seq_item_port            uvm_seq_item_pull_port  -     @198447
 #           packet_count             integral                8     'd1    
-#         slave_mon                  uvm_monitor             -     @198424
-#           item_collected_port      uvm_analysis_port       -     @198431
-#           item_sample_1_data_port  uvm_analysis_port       -     @198439
-#       slave_agent[1]               uvm_agent               -     @198382
-#         slave_drv                  uvm_driver #(REQ,RSP)   -     @198453
-#           rsp_port                 uvm_analysis_port       -     @198468
-#           seq_item_port            uvm_seq_item_pull_port  -     @198460
+#         slave_mon                  uvm_monitor             -     @198463
+#           item_collected_port      uvm_analysis_port       -     @198470
+#           item_sample_1_data_port  uvm_analysis_port       -     @198478
+#       slave_agent[1]               uvm_agent               -     @198421
+#         slave_drv                  uvm_driver #(REQ,RSP)   -     @198492
+#           rsp_port                 uvm_analysis_port       -     @198507
+#           seq_item_port            uvm_seq_item_pull_port  -     @198499
 #           packet_count             integral                8     'd1    
-#         slave_mon                  uvm_monitor             -     @198476
-#           item_collected_port      uvm_analysis_port       -     @198483
-#           item_sample_1_data_port  uvm_analysis_port       -     @198491
-#       slave_agent[2]               uvm_agent               -     @198391
-#         slave_drv                  uvm_driver #(REQ,RSP)   -     @198505
-#           rsp_port                 uvm_analysis_port       -     @198520
-#           seq_item_port            uvm_seq_item_pull_port  -     @198512
+#         slave_mon                  uvm_monitor             -     @198515
+#           item_collected_port      uvm_analysis_port       -     @198522
+#           item_sample_1_data_port  uvm_analysis_port       -     @198530
+#       slave_agent[2]               uvm_agent               -     @198430
+#         slave_drv                  uvm_driver #(REQ,RSP)   -     @198544
+#           rsp_port                 uvm_analysis_port       -     @198559
+#           seq_item_port            uvm_seq_item_pull_port  -     @198551
 #           packet_count             integral                8     'd1    
-#         slave_mon                  uvm_monitor             -     @198528
-#           item_collected_port      uvm_analysis_port       -     @198535
-#           item_sample_1_data_port  uvm_analysis_port       -     @198543
+#         slave_mon                  uvm_monitor             -     @198567
+#           item_collected_port      uvm_analysis_port       -     @198574
+#           item_sample_1_data_port  uvm_analysis_port       -     @198582
 #     tx_uvc                         uvm_agent               -     @683   
-#       tx_agent[0]                  uvm_agent               -     @198556
-#         tx_mon                     uvm_monitor             -     @198700
-#           item_collected_imp       uvm_analysis_imp        -     @198707
-#         tx_seqr                    uvm_sequencer           -     @198591
-#           rsp_export               uvm_analysis_export     -     @198598
-#           seq_item_export          uvm_seq_item_pull_imp   -     @198692
+#       tx_agent[0]                  uvm_agent               -     @198595
+#         tx_mon                     uvm_monitor             -     @198739
+#           item_collected_imp       uvm_analysis_imp        -     @198746
+#           txmon_analysis_port      uvm_analysis_port       -     @198754
+#         tx_seqr                    uvm_sequencer           -     @198630
+#           rsp_export               uvm_analysis_export     -     @198637
+#           seq_item_export          uvm_seq_item_pull_imp   -     @198731
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
 #           num_last_rsps            integral                32    'd1    
-#       tx_agent[1]                  uvm_agent               -     @198567
-#         tx_mon                     uvm_monitor             -     @198835
-#           item_collected_imp       uvm_analysis_imp        -     @198842
-#         tx_seqr                    uvm_sequencer           -     @198726
-#           rsp_export               uvm_analysis_export     -     @198733
-#           seq_item_export          uvm_seq_item_pull_imp   -     @198827
+#       tx_agent[1]                  uvm_agent               -     @198606
+#         tx_mon                     uvm_monitor             -     @198883
+#           item_collected_imp       uvm_analysis_imp        -     @198890
+#           txmon_analysis_port      uvm_analysis_port       -     @198898
+#         tx_seqr                    uvm_sequencer           -     @198774
+#           rsp_export               uvm_analysis_export     -     @198781
+#           seq_item_export          uvm_seq_item_pull_imp   -     @198875
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
 #           num_last_rsps            integral                32    'd1    
-#       tx_agent[2]                  uvm_agent               -     @198576
-#         tx_mon                     uvm_monitor             -     @198970
-#           item_collected_imp       uvm_analysis_imp        -     @198977
-#         tx_seqr                    uvm_sequencer           -     @198861
-#           rsp_export               uvm_analysis_export     -     @198868
-#           seq_item_export          uvm_seq_item_pull_imp   -     @198962
+#       tx_agent[2]                  uvm_agent               -     @198615
+#         tx_mon                     uvm_monitor             -     @199027
+#           item_collected_imp       uvm_analysis_imp        -     @199034
+#           txmon_analysis_port      uvm_analysis_port       -     @199042
+#         tx_seqr                    uvm_sequencer           -     @198918
+#           rsp_export               uvm_analysis_export     -     @198925
+#           seq_item_export          uvm_seq_item_pull_imp   -     @199019
 #           arbitration_queue        array                   0     -      
 #           lock_queue               array                   0     -      
 #           num_last_reqs            integral                32    'd1    
@@ -223,14 +402,14 @@
 # ------------------------------------------------------------------------
 # 
 # UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 0: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.conn_config_reg_h[17603].conn_val' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
-# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 5000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.conn_config_reg_h[17603].conn_id' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
-# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 15000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.outport_sel_reg_h[2].outport_sel' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
-# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 25000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.crc_reg_h.crc' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
-# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 35000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.vcid_config_reg_h[2].vcid' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
-# UVM_INFO ../ENV/REG/reg_cfg_seqs.sv(57) @ 45000: uvm_test_top.env.vseqr@@sanity_vseqs.cfg_seqs [uvm_test_top.env.vseqr.sanity_vseqs.cfg_seqs] --------------------------------------------------------------------------------------
+# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 15000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.conn_config_reg_h[17603].conn_id' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
+# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 25000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.outport_sel_reg_h[2].outport_sel' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
+# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 35000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.crc_reg_h.crc' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
+# UVM_WARNING verilog_src/uvm-1.1d/src/reg/uvm_reg_field.svh(1800) @ 45000: reporter [RegModel] Target bus does not support byte enabling, and the field 'reg_blk.vcid_config_reg_h[2].vcid' is not the only field within the entire bus width. Individual field access will not be available. Accessing complete register instead.
+# UVM_INFO ../ENV/REG/reg_cfg_seqs.sv(57) @ 55000: uvm_test_top.env.vseqr@@sanity_vseqs.cfg_seqs [uvm_test_top.env.vseqr.sanity_vseqs.cfg_seqs] --------------------------------------------------------------------------------------
 # Name                           Type          Size  Value                              
 # --------------------------------------------------------------------------------------
-# cfg_seqs                       reg_cfg_seqs  -     @199050                            
+# cfg_seqs                       reg_cfg_seqs  -     @199116                            
 #   vlan_id                      integral      12    'h4c3                              
 #   port_id                      integral      3     'h4                                
 #   conn_val                     integral      1     'h1                                
@@ -247,16 +426,16 @@
 #   rsp                          object        -     <null>                             
 # --------------------------------------------------------------------------------------
 # 
-# UVM_INFO ../ENV/EMAC_TX/emac_tx_seqs.sv(46) @ 45000: uvm_test_top.env.tx_uvc.tx_agent[2].tx_seqr@@sanity_vseqs.tx_seqs[2] [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[2]] 
+# UVM_INFO ../ENV/EMAC_TX/emac_tx_seqs.sv(46) @ 55000: uvm_test_top.env.tx_uvc.tx_agent[2].tx_seqr@@sanity_vseqs.tx_seqs[2] [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[2]] 
 # DEST_MAC_ADDR = 4a6612b17718 | SOURCE_MAC_ADDR=146f6a61cb1a | TCI=7899 | e_type=800 | fcs=8495c0a3 | min=104 | max = 105
-# UVM_INFO ../ENV/EMAC_TX/emac_tx_seqs.sv(46) @ 45000: uvm_test_top.env.tx_uvc.tx_agent[1].tx_seqr@@sanity_vseqs.tx_seqs[1] [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[1]] 
+# UVM_INFO ../ENV/EMAC_TX/emac_tx_seqs.sv(46) @ 55000: uvm_test_top.env.tx_uvc.tx_agent[1].tx_seqr@@sanity_vseqs.tx_seqs[1] [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[1]] 
 # DEST_MAC_ADDR = 91b4fb8deae2 | SOURCE_MAC_ADDR=aad43411d654 | TCI=4566 | e_type=8100 | fcs=074daa40 | min=104 | max = 105
-# UVM_INFO ../ENV/EMAC_TX/emac_tx_seqs.sv(46) @ 45000: uvm_test_top.env.tx_uvc.tx_agent[0].tx_seqr@@sanity_vseqs.tx_seqs[0] [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[0]] 
+# UVM_INFO ../ENV/EMAC_TX/emac_tx_seqs.sv(46) @ 55000: uvm_test_top.env.tx_uvc.tx_agent[0].tx_seqr@@sanity_vseqs.tx_seqs[0] [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[0]] 
 # DEST_MAC_ADDR = 01fb2fe8d8b8 | SOURCE_MAC_ADDR=b39b1f4c36db | TCI=1237 | e_type=800 | fcs=18cf3e7a | min=104 | max = 105
-# UVM_INFO ../ENV/EMAC_TX/emac_2_axistr_seqs.sv(24) @ 45000: uvm_test_top.env.str_mas_uvc.master_agent[2].master_seqr@@conv_seqs [uvm_test_top.env.str_mas_uvc.master_agent[2].master_seqr.conv_seqs] ------------------------------------------------------------------------------------------------------
+# UVM_INFO ../ENV/EMAC_TX/emac_2_axistr_seqs.sv(24) @ 55000: uvm_test_top.env.str_mas_uvc.master_agent[2].master_seqr@@conv_seqs [uvm_test_top.env.str_mas_uvc.master_agent[2].master_seqr.conv_seqs] ------------------------------------------------------------------------------------------------------
 # Name                           Type               Size  Value                                         
 # ------------------------------------------------------------------------------------------------------
-# req                            uvm_sequence_item  -     @199345                                       
+# req                            uvm_sequence_item  -     @199411                                       
 #   dest_mac_addr                integral           48    'h4a6612b17718                                
 #   source_mac_addr              integral           48    'h146f6a61cb1a                                
 #   vlan_id                      integral           12    'h789                                         
@@ -277,13 +456,14 @@
 #     [102]                      integral           8     'h88                                          
 #     [103]                      integral           8     'h41                                          
 #   fcs                          integral           32    'h8495c0a3                                    
+#   port_id                      integral           3     'd0                                           
 #   total_bytes                  integral           32    'd124                                         
 #   pkt_len                      integral           32    'd31                                          
 #   frame                        da(integral)       31    -                                             
 #     [0]                        integral           32    'h4a6612b1                                    
 #     [1]                        integral           32    'h7718146f                                    
 #     [2]                        integral           32    'h6a61cb1a                                    
-#     [3]                        integral           32    'h320                                         
+#     [3]                        integral           32    'h78990320                                    
 #     [4]                        integral           32    'h8063aa07                                    
 #     ...                        ...                ...   ...                                           
 #     [26]                       integral           32    'h8f52bf8c                                    
@@ -291,17 +471,17 @@
 #     [28]                       integral           32    'h691c87d8                                    
 #     [29]                       integral           32    'hb3fe8841                                    
 #     [30]                       integral           32    'h8495c0a3                                    
-#   begin_time                   time               64    45000                                         
+#   begin_time                   time               64    55000                                         
 #   depth                        int                32    'd3                                           
 #   parent sequence (name)       string             10    tx_seqs[2]                                    
 #   parent sequence (full name)  string             46    uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[2]
 #   sequencer                    string             43    uvm_test_top.env.tx_uvc.tx_agent[2].tx_seqr   
 # ------------------------------------------------------------------------------------------------------
 # 
-# UVM_INFO ../ENV/EMAC_TX/emac_2_axistr_seqs.sv(24) @ 45000: uvm_test_top.env.str_mas_uvc.master_agent[1].master_seqr@@conv_seqs [uvm_test_top.env.str_mas_uvc.master_agent[1].master_seqr.conv_seqs] ------------------------------------------------------------------------------------------------------
+# UVM_INFO ../ENV/EMAC_TX/emac_2_axistr_seqs.sv(24) @ 55000: uvm_test_top.env.str_mas_uvc.master_agent[1].master_seqr@@conv_seqs [uvm_test_top.env.str_mas_uvc.master_agent[1].master_seqr.conv_seqs] ------------------------------------------------------------------------------------------------------
 # Name                           Type               Size  Value                                         
 # ------------------------------------------------------------------------------------------------------
-# req                            uvm_sequence_item  -     @199341                                       
+# req                            uvm_sequence_item  -     @199407                                       
 #   dest_mac_addr                integral           48    'h91b4fb8deae2                                
 #   source_mac_addr              integral           48    'haad43411d654                                
 #   vlan_id                      integral           12    'h456                                         
@@ -322,13 +502,14 @@
 #     [102]                      integral           8     'h27                                          
 #     [103]                      integral           8     'h48                                          
 #   fcs                          integral           32    'h74daa40                                     
+#   port_id                      integral           3     'd0                                           
 #   total_bytes                  integral           32    'd124                                         
 #   pkt_len                      integral           32    'd31                                          
 #   frame                        da(integral)       31    -                                             
 #     [0]                        integral           32    'h91b4fb8d                                    
 #     [1]                        integral           32    'heae2aad4                                    
 #     [2]                        integral           32    'h3411d654                                    
-#     [3]                        integral           32    'h1fa4                                        
+#     [3]                        integral           32    'h45661fa4                                    
 #     [4]                        integral           32    'h6bd66e9d                                    
 #     ...                        ...                ...   ...                                           
 #     [26]                       integral           32    'ha2a7e36a                                    
@@ -336,17 +517,17 @@
 #     [28]                       integral           32    'hffb7484a                                    
 #     [29]                       integral           32    'h4f642748                                    
 #     [30]                       integral           32    'h74daa40                                     
-#   begin_time                   time               64    45000                                         
+#   begin_time                   time               64    55000                                         
 #   depth                        int                32    'd3                                           
 #   parent sequence (name)       string             10    tx_seqs[1]                                    
 #   parent sequence (full name)  string             46    uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[1]
 #   sequencer                    string             43    uvm_test_top.env.tx_uvc.tx_agent[1].tx_seqr   
 # ------------------------------------------------------------------------------------------------------
 # 
-# UVM_INFO ../ENV/EMAC_TX/emac_2_axistr_seqs.sv(24) @ 45000: uvm_test_top.env.str_mas_uvc.master_agent[0].master_seqr@@conv_seqs [uvm_test_top.env.str_mas_uvc.master_agent[0].master_seqr.conv_seqs] ------------------------------------------------------------------------------------------------------
+# UVM_INFO ../ENV/EMAC_TX/emac_2_axistr_seqs.sv(24) @ 55000: uvm_test_top.env.str_mas_uvc.master_agent[0].master_seqr@@conv_seqs [uvm_test_top.env.str_mas_uvc.master_agent[0].master_seqr.conv_seqs] ------------------------------------------------------------------------------------------------------
 # Name                           Type               Size  Value                                         
 # ------------------------------------------------------------------------------------------------------
-# req                            uvm_sequence_item  -     @199337                                       
+# req                            uvm_sequence_item  -     @199403                                       
 #   dest_mac_addr                integral           48    'h1fb2fe8d8b8                                 
 #   source_mac_addr              integral           48    'hb39b1f4c36db                                
 #   vlan_id                      integral           12    'h123                                         
@@ -367,13 +548,14 @@
 #     [103]                      integral           8     'h68                                          
 #     [104]                      integral           8     'he1                                          
 #   fcs                          integral           32    'h18cf3e7a                                    
+#   port_id                      integral           3     'd0                                           
 #   total_bytes                  integral           32    'd125                                         
 #   pkt_len                      integral           32    'd32                                          
 #   frame                        da(integral)       32    -                                             
 #     [0]                        integral           32    'h1fb2fe8                                     
 #     [1]                        integral           32    'hd8b8b39b                                    
 #     [2]                        integral           32    'h1f4c36db                                    
-#     [3]                        integral           32    'h320                                         
+#     [3]                        integral           32    'h12370320                                    
 #     [4]                        integral           32    'h9b27c729                                    
 #     ...                        ...                ...   ...                                           
 #     [27]                       integral           32    'h5096ee8c                                    
@@ -381,25 +563,250 @@
 #     [29]                       integral           32    'h39cde568                                    
 #     [30]                       integral           32    'he118cf3e                                    
 #     [31]                       integral           32    'h7a000000                                    
-#   begin_time                   time               64    45000                                         
+#   begin_time                   time               64    55000                                         
 #   depth                        int                32    'd3                                           
 #   parent sequence (name)       string             10    tx_seqs[0]                                    
 #   parent sequence (full name)  string             46    uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[0]
 #   sequencer                    string             43    uvm_test_top.env.tx_uvc.tx_agent[0].tx_seqr   
 # ------------------------------------------------------------------------------------------------------
 # 
-# UVM_INFO ../ENV/EMAC_RX/emac_rx_mon.sv(43) @ 385000: uvm_test_top.env.rx_uvc.rx_agent[1].rx_mon [uvm_test_top.env.rx_uvc.rx_agent[1].rx_mon] 
-# DEST_MAC_ADDR = 91b4fb8deae2 | SOURCE_MAC_ADDR=aad43411d654 | VCID = 00 | e_type=8100
-# UVM_INFO ../ENV/EMAC_RX/emac_rx_mon.sv(43) @ 385000: uvm_test_top.env.rx_uvc.rx_agent[2].rx_mon [uvm_test_top.env.rx_uvc.rx_agent[2].rx_mon] 
-# DEST_MAC_ADDR = 4a6612b17718 | SOURCE_MAC_ADDR=146f6a61cb1a | VCID = 00 | e_type=800
-# UVM_INFO ../ENV/EMAC_RX/emac_rx_mon.sv(43) @ 395000: uvm_test_top.env.rx_uvc.rx_agent[0].rx_mon [uvm_test_top.env.rx_uvc.rx_agent[0].rx_mon] 
-# DEST_MAC_ADDR = 01fb2fe8d8b8 | SOURCE_MAC_ADDR=b39b1f4c36db | VCID = 00 | e_type=800
-# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 395000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# UVM_INFO ../ENV/EMAC_RX/emac_rx_mon.sv(28) @ 395000: uvm_test_top.env.rx_uvc.rx_agent[1].rx_mon [uvm_test_top.env.rx_uvc.rx_agent[1].rx_mon] ----------------------------------------------------------
+# Name               Type               Size  Value         
+# ----------------------------------------------------------
+# rx_seqs_item       uvm_sequence_item  -     @199427       
+#   dest_mac_addr    integral           48    'h91b4fb8deae2
+#   source_mac_addr  integral           48    'haad43411d654
+#   vcid             integral           8     'h0           
+#   e_type           integral           16    'd8100        
+#   payload          da(integral)       104   -             
+#     [0]            integral           8     'h6b          
+#     [1]            integral           8     'hd6          
+#     [2]            integral           8     'h6e          
+#     [3]            integral           8     'h9d          
+#     [4]            integral           8     'hee          
+#     ...            ...                ...   ...           
+#     [99]           integral           8     'h4a          
+#     [100]          integral           8     'h4f          
+#     [101]          integral           8     'h64          
+#     [102]          integral           8     'h27          
+#     [103]          integral           8     'h48          
+#   total_bytes      integral           32    'd20          
+#   pkt_len          integral           32    'd5           
+#   frame            da(integral)       30    -             
+#     [0]            integral           32    'h91b4fb8d    
+#     [1]            integral           32    'heae2aad4    
+#     [2]            integral           32    'h3411d654    
+#     [3]            integral           32    'h45661fa4    
+#     [4]            integral           32    'h6bd66e9d    
+#     ...            ...                ...   ...           
+#     [25]           integral           32    'haee941dd    
+#     [26]           integral           32    'ha2a7e36a    
+#     [27]           integral           32    'hc3ccc2c3    
+#     [28]           integral           32    'hffb7484a    
+#     [29]           integral           32    'h4f642748    
+# ----------------------------------------------------------
+# 
+# UVM_INFO ../ENV/EMAC_RX/emac_rx_mon.sv(28) @ 395000: uvm_test_top.env.rx_uvc.rx_agent[2].rx_mon [uvm_test_top.env.rx_uvc.rx_agent[2].rx_mon] ----------------------------------------------------------
+# Name               Type               Size  Value         
+# ----------------------------------------------------------
+# rx_seqs_item       uvm_sequence_item  -     @199435       
+#   dest_mac_addr    integral           48    'h4a6612b17718
+#   source_mac_addr  integral           48    'h146f6a61cb1a
+#   vcid             integral           8     'h0           
+#   e_type           integral           16    'd800         
+#   payload          da(integral)       104   -             
+#     [0]            integral           8     'h80          
+#     [1]            integral           8     'h63          
+#     [2]            integral           8     'haa          
+#     [3]            integral           8     'h7           
+#     [4]            integral           8     'hf6          
+#     ...            ...                ...   ...           
+#     [99]           integral           8     'hd8          
+#     [100]          integral           8     'hb3          
+#     [101]          integral           8     'hfe          
+#     [102]          integral           8     'h88          
+#     [103]          integral           8     'h41          
+#   total_bytes      integral           32    'd20          
+#   pkt_len          integral           32    'd5           
+#   frame            da(integral)       30    -             
+#     [0]            integral           32    'h4a6612b1    
+#     [1]            integral           32    'h7718146f    
+#     [2]            integral           32    'h6a61cb1a    
+#     [3]            integral           32    'h78990320    
+#     [4]            integral           32    'h8063aa07    
+#     ...            ...                ...   ...           
+#     [25]           integral           32    'haf836fc9    
+#     [26]           integral           32    'h8f52bf8c    
+#     [27]           integral           32    'h325692a8    
+#     [28]           integral           32    'h691c87d8    
+#     [29]           integral           32    'hb3fe8841    
+# ----------------------------------------------------------
+# 
+# UVM_INFO ../ENV/emac_tx2rx_ref_model.sv(17) @ 395000: uvm_test_top.env.ref_model [uvm_test_top.env.ref_model] ----------------------------------------------------------
+# Name               Type               Size  Value         
+# ----------------------------------------------------------
+# tx_seqs_item       uvm_sequence_item  -     @199443       
+#   dest_mac_addr    integral           48    'h91b4fb8deae2
+#   source_mac_addr  integral           48    'haad43411d654
+#   vlan_id          integral           12    'h456         
+#   prior            integral           3     'h3           
+#   dei              integral           1     'h0           
+#   tci              integral           16    'h0           
+#   e_type           integral           16    'd8100        
+#   payload          da(integral)       104   -             
+#     [0]            integral           8     'h6b          
+#     [1]            integral           8     'hd6          
+#     [2]            integral           8     'h6e          
+#     [3]            integral           8     'h9d          
+#     [4]            integral           8     'hee          
+#     ...            ...                ...   ...           
+#     [99]           integral           8     'h4a          
+#     [100]          integral           8     'h4f          
+#     [101]          integral           8     'h64          
+#     [102]          integral           8     'h27          
+#     [103]          integral           8     'h48          
+#   fcs              integral           32    'h74daa40     
+#   port_id          integral           3     4             
+#   total_bytes      integral           32    'd0           
+#   pkt_len          integral           32    'd0           
+#   frame            da(integral)       30    -             
+#     [0]            integral           32    'h91b4fb8d    
+#     [1]            integral           32    'heae2aad4    
+#     [2]            integral           32    'h3411d654    
+#     [3]            integral           32    'h45661fa4    
+#     [4]            integral           32    'h6bd66e9d    
+#     ...            ...                ...   ...           
+#     [25]           integral           32    'haee941dd    
+#     [26]           integral           32    'ha2a7e36a    
+#     [27]           integral           32    'hc3ccc2c3    
+#     [28]           integral           32    'hffb7484a    
+#     [29]           integral           32    'h4f642748    
+# ----------------------------------------------------------
+# 
+# UVM_INFO ../ENV/emac_tx2rx_ref_model.sv(17) @ 395000: uvm_test_top.env.ref_model [uvm_test_top.env.ref_model] ----------------------------------------------------------
+# Name               Type               Size  Value         
+# ----------------------------------------------------------
+# tx_seqs_item       uvm_sequence_item  -     @199451       
+#   dest_mac_addr    integral           48    'h4a6612b17718
+#   source_mac_addr  integral           48    'h146f6a61cb1a
+#   vlan_id          integral           12    'h789         
+#   prior            integral           3     'h4           
+#   dei              integral           1     'h1           
+#   tci              integral           16    'h0           
+#   e_type           integral           16    'd800         
+#   payload          da(integral)       104   -             
+#     [0]            integral           8     'h80          
+#     [1]            integral           8     'h63          
+#     [2]            integral           8     'haa          
+#     [3]            integral           8     'h7           
+#     [4]            integral           8     'hf6          
+#     ...            ...                ...   ...           
+#     [99]           integral           8     'hd8          
+#     [100]          integral           8     'hb3          
+#     [101]          integral           8     'hfe          
+#     [102]          integral           8     'h88          
+#     [103]          integral           8     'h41          
+#   fcs              integral           32    'h8495c0a3    
+#   port_id          integral           3     5             
+#   total_bytes      integral           32    'd0           
+#   pkt_len          integral           32    'd0           
+#   frame            da(integral)       30    -             
+#     [0]            integral           32    'h4a6612b1    
+#     [1]            integral           32    'h7718146f    
+#     [2]            integral           32    'h6a61cb1a    
+#     [3]            integral           32    'h78990320    
+#     [4]            integral           32    'h8063aa07    
+#     ...            ...                ...   ...           
+#     [25]           integral           32    'haf836fc9    
+#     [26]           integral           32    'h8f52bf8c    
+#     [27]           integral           32    'h325692a8    
+#     [28]           integral           32    'h691c87d8    
+#     [29]           integral           32    'hb3fe8841    
+# ----------------------------------------------------------
+# 
+# UVM_INFO ../ENV/EMAC_RX/emac_rx_mon.sv(28) @ 405000: uvm_test_top.env.rx_uvc.rx_agent[0].rx_mon [uvm_test_top.env.rx_uvc.rx_agent[0].rx_mon] ----------------------------------------------------------
+# Name               Type               Size  Value         
+# ----------------------------------------------------------
+# rx_seqs_item       uvm_sequence_item  -     @199463       
+#   dest_mac_addr    integral           48    'h1fb2fe8d8b8 
+#   source_mac_addr  integral           48    'hb39b1f4c36db
+#   vcid             integral           8     'h0           
+#   e_type           integral           16    'd800         
+#   payload          da(integral)       105   -             
+#     [0]            integral           8     'h9b          
+#     [1]            integral           8     'h27          
+#     [2]            integral           8     'hc7          
+#     [3]            integral           8     'h29          
+#     [4]            integral           8     'h41          
+#     ...            ...                ...   ...           
+#     [100]          integral           8     'h39          
+#     [101]          integral           8     'hcd          
+#     [102]          integral           8     'he5          
+#     [103]          integral           8     'h68          
+#     [104]          integral           8     'he1          
+#   total_bytes      integral           32    'd20          
+#   pkt_len          integral           32    'd5           
+#   frame            da(integral)       31    -             
+#     [0]            integral           32    'h1fb2fe8     
+#     [1]            integral           32    'hd8b8b39b    
+#     [2]            integral           32    'h1f4c36db    
+#     [3]            integral           32    'h12370320    
+#     [4]            integral           32    'h9b27c729    
+#     ...            ...                ...   ...           
+#     [26]           integral           32    'h354e063e    
+#     [27]           integral           32    'h5096ee8c    
+#     [28]           integral           32    'hae403ad7    
+#     [29]           integral           32    'h39cde568    
+#     [30]           integral           32    'he118cf3e    
+# ----------------------------------------------------------
+# 
+# UVM_INFO ../ENV/emac_tx2rx_ref_model.sv(17) @ 405000: uvm_test_top.env.ref_model [uvm_test_top.env.ref_model] ----------------------------------------------------------
+# Name               Type               Size  Value         
+# ----------------------------------------------------------
+# tx_seqs_item       uvm_sequence_item  -     @199471       
+#   dest_mac_addr    integral           48    'h1fb2fe8d8b8 
+#   source_mac_addr  integral           48    'hb39b1f4c36db
+#   vlan_id          integral           12    'h123         
+#   prior            integral           3     'h3           
+#   dei              integral           1     'h1           
+#   tci              integral           16    'h0           
+#   e_type           integral           16    'd800         
+#   payload          da(integral)       108   -             
+#     [0]            integral           8     'h9b          
+#     [1]            integral           8     'h27          
+#     [2]            integral           8     'hc7          
+#     [3]            integral           8     'h29          
+#     [4]            integral           8     'h41          
+#     ...            ...                ...   ...           
+#     [103]          integral           8     'h68          
+#     [104]          integral           8     'he1          
+#     [105]          integral           8     'h18          
+#     [106]          integral           8     'hcf          
+#     [107]          integral           8     'h3e          
+#   fcs              integral           32    'h18cf3e7a    
+#   port_id          integral           3     'd3           
+#   total_bytes      integral           32    'd0           
+#   pkt_len          integral           32    'd0           
+#   frame            da(integral)       31    -             
+#     [0]            integral           32    'h1fb2fe8     
+#     [1]            integral           32    'hd8b8b39b    
+#     [2]            integral           32    'h1f4c36db    
+#     [3]            integral           32    'h12370320    
+#     [4]            integral           32    'h9b27c729    
+#     ...            ...                ...   ...           
+#     [26]           integral           32    'h354e063e    
+#     [27]           integral           32    'h5096ee8c    
+#     [28]           integral           32    'hae403ad7    
+#     [29]           integral           32    'h39cde568    
+#     [30]           integral           32    'he118cf3e    
+# ----------------------------------------------------------
+# 
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 405000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
 # 
 # --- UVM Report Summary ---
 # 
 # ** Report counts by severity
-# UVM_INFO :   15
+# UVM_INFO :   18
 # UVM_WARNING :    5
 # UVM_ERROR :    0
 # UVM_FATAL :    0
@@ -409,6 +816,7 @@
 # [RegModel]     5
 # [TEST_DONE]     1
 # [UVMTOP]     1
+# [uvm_test_top.env.ref_model]     3
 # [uvm_test_top.env.rx_uvc.rx_agent[0].rx_mon]     1
 # [uvm_test_top.env.rx_uvc.rx_agent[1].rx_mon]     1
 # [uvm_test_top.env.rx_uvc.rx_agent[2].rx_mon]     1
@@ -420,6 +828,6 @@
 # [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[1]]     1
 # [uvm_test_top.env.vseqr.sanity_vseqs.tx_seqs[2]]     1
 # ** Note: $finish    : /tools/mentor/questa/2023.4/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
-#    Time: 395 ns  Iteration: 68  Instance: /emac_tx2rx_top
-# End time: 13:04:04 on Oct 31,2025, Elapsed time: 0:00:06
-# Errors: 0, Warnings: 6
+#    Time: 405 ns  Iteration: 68  Instance: /emac_tx2rx_top
+# End time: 15:28:59 on Nov 05,2025, Elapsed time: 0:00:05
+# Errors: 0, Warnings: 126

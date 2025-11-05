@@ -13,6 +13,8 @@ class emac_tx2rx_env extends uvm_env;
 	axi_lite_mas_uvc             lite_mas_uvc;
 	emac_tx2rx_reg_block         reg_blk;
 	axi_lite_reg_adapter#(32,32) adapter;
+
+	emac_tx2rx_ref_model			  ref_model;
   
   	`uvm_component_utils_begin(emac_tx2rx_env)
 	`uvm_component_utils_end
@@ -31,6 +33,7 @@ class emac_tx2rx_env extends uvm_env;
 		lite_mas_uvc = axi_lite_mas_uvc::type_id::create("lite_mas_uvc",this);
 		reg_blk = emac_tx2rx_reg_block::type_id::create("reg_blk");
 		adapter = axi_lite_reg_adapter#(32,32)::type_id::create("adapter");
+		ref_model = emac_tx2rx_ref_model::type_id::create("ref_model",this);
 		reg_blk.build();
 		uvm_config_db#(emac_tx2rx_reg_block)::set(this,"*","reg_blk",reg_blk);
   	endfunction : build_phase
@@ -42,6 +45,7 @@ class emac_tx2rx_env extends uvm_env;
 		for(int i = 0;i<tx_cfg.no_of_ports;i++)begin
     		tx_uvc.tx_agent[i].connect_to_axi_str_mas_agnt(str_mas_uvc.master_agent[i]);
 			vseqr.tx_seqr[i] = tx_uvc.tx_agent[i].tx_seqr;
+			tx_uvc.tx_agent[i].tx_mon.txmon_analysis_port.connect(ref_model.txmon_analysis_imp);
 		end
 		for(int i = 0;i<rx_cfg.no_of_ports;i++)begin
     		rx_uvc.rx_agent[i].connect_to_axi_str_slv_agnt(str_slv_uvc.slave_agent[i]);

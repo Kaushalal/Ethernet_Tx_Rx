@@ -16,7 +16,7 @@ class emac_rx_seqs_item#(
 	rand bit [15:0]                   e_type;       //8100,0800 : supported
 	rand bit [PAYLOAD_DATA_WIDTH-1:0] payload[$];    //data 
 	
-	bit [15:0] dummy_vlanid;
+	bit [15:0] dummy_tci;
 	bit [FRAME_DATA_WIDTH-1:0] frame[$];
 
 	int unsigned total_bytes = 20 + payload.size();   //total bytes in a transfer

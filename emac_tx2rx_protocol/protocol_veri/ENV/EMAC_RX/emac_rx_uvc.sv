@@ -32,7 +32,7 @@ class emac_rx_uvc#(
       foreach(rx_agent[i]) begin
 			rx_agent[i] = emac_rx_agent#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)::type_id::create($sformatf("rx_agent[%0d]",i),this);
 			rx_config[i] = emac_rx_config::type_id::create($sformatf("rx_config[%0d]",i),this);
-			rx_config[i].id = i;
+			rx_config[i].id = i+8;
 			rx_config[i].no_of_ports = rx_cfg.no_of_ports; 
 			uvm_config_db#(emac_rx_config)::set(uvm_root::get(),$sformatf("*rx_agent[%0d]*",i),"rx_cfg",rx_config[i]);
 		end

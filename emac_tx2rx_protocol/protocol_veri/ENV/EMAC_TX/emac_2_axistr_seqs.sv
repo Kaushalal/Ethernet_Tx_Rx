@@ -35,7 +35,7 @@ class emac_2_axistr_seqs#(
 	function void emac2axistream_frame();	
     	tx_seqs_item.frame = {>>{tx_seqs_item.dest_mac_addr,
 										 tx_seqs_item.source_mac_addr,
-										 tx_seqs_item.tci,
+										 {tx_seqs_item.vlan_id,tx_seqs_item.prior,tx_seqs_item.dei},
 										 tx_seqs_item.e_type,
 										 tx_seqs_item.payload,
 										 tx_seqs_item.fcs}};
