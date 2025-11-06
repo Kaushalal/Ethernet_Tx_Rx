@@ -3,7 +3,8 @@ typedef struct  {
   logic [11:0] vlan_id;
 } connection_addr_t;
 
-`include "axi_str_inf.sv"
+`include "axi_str_slave_inf.sv"
+`include "axi_str_master_inf.sv"
 `include "axi_lite_inf.sv"
 `include "arbiter.sv"
 `include "header_parser.sv"
@@ -22,15 +23,16 @@ module top #(
   input  logic clk_reg,
 
   // AXI-Stream and AXI-Lite interface ports
-  axi_str_inf.slave  axi_in_inf   [NUM_OF_PORT],
-  axi_str_inf.master axi_out_inf,
+  axi_str_slave_inf.slave  axi_in_inf   [NUM_OF_PORT],
+  axi_str_master_inf.master axi_out_inf,
   axi_lite_inf.slave axi_lite
 );
 
   // ------------------------------------------------------------
-  // Internal signal/interface between Arbiter and Header Parser
+  // Internal connection between Arbiter → Parser
   // ------------------------------------------------------------
-  axi_str_inf #(TDATA_SIZE, USER_SIZE) axi_out_arb();
+  axi_str_master_inf #(TDATA_SIZE, USER_SIZE) axi_out_arb();
+  axi_str_slave_inf #(TDATA_SIZE, USER_SIZE) axi_in_parser();
 
   // ------------------------------------------------------------
   // Arbiter Instance
@@ -47,6 +49,17 @@ module top #(
   );
 
   // ------------------------------------------------------------
+  // Connect Arbiter master → Parser slave (assign mapping)
+  // ------------------------------------------------------------
+  assign axi_in_parser.reset_n = axi_out_arb.reset_n;
+  assign axi_in_parser.tvalid  = axi_out_arb.tvalid;
+  assign axi_in_parser.tlast   = axi_out_arb.tlast;
+  assign axi_in_parser.tdata   = axi_out_arb.tdata;
+  assign axi_in_parser.tkeep   = axi_out_arb.tkeep;
+  assign axi_in_parser.tuser   = axi_out_arb.tuser;
+  assign axi_out_arb.tready    = axi_in_parser.tready;
+
+  // ------------------------------------------------------------
   // Header Parser Instance
   // ------------------------------------------------------------
   header_parser #(
@@ -61,7 +74,7 @@ module top #(
     .reset_n(reset_n),
     .reset_reg(reset_reg),
     .axil_inf(axi_lite),
-    .axis_in_inf(axi_out_arb),
+    .axis_in_inf(axi_in_parser),  // connected to mapped signals
     .axis_out_inf(axi_out_inf)
   );
 
