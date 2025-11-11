@@ -19,6 +19,7 @@ class mac_to_axi_s_virtual_seqr extends uvm_sequencer #(uvm_sequence_item);
    // axi_str_mas_sequencer #(32,32) axi_s_mas_seqr_h[];
    // axi_str_slv_sequencer #(32,32) axi_s_slv_seqr_h[];
    
+   
    mac_tx_seqr mac_tx_seqr_h[];
 
    function new(string name = "axi_virtual_seqr",uvm_component parent = null);

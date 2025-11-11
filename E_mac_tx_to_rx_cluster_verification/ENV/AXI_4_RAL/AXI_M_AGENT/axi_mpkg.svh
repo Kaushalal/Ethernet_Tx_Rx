@@ -25,6 +25,7 @@ package axi_mpkg;
    `include "axi_mseq_item.svh"
    `include "axi_mseqr.svh"
    `include "axi_mdrv.svh"
+   `include "axi_non_pipeline_mdrv.svh"
    `include "axi_mmon.svh"
    `include "axi_magent.svh"
 

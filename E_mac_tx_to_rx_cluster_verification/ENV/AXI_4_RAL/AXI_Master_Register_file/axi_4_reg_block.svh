@@ -10,65 +10,123 @@ class axi_4_reg_block extends uvm_reg_block;
 
    `uvm_object_utils(axi_4_reg_block)
 
-	rand connection_config_mem       cnn_cfg_mem_h[];
-	rand output_port                 output_prt_h[];
-	rand crc                         crc_h;
+    //// All Registers  
+	rand connection_config_reg       conn_cfg_reg_h[];
+	rand output_port_reg                 output_prt_reg_h[];
+	rand crc_reg                         crc_reg_h[];
+	rand vcid_reg                         vcid_reg_h[];
+	
+    //// Maps
+    uvm_reg_map                      vcid_reg_map;    //maps for vcid reg 
+    uvm_reg_map                      cfg_mem_map;    //maps connection_config_mem
+	uvm_reg_map                      misc_reg_map;   //maps output_port_reg and crc_reg
 
- 	function new(string name = "reg_block");
+/*---------------------------------------------------------*/
+/*--------------------- NEW FUNCTION ----------------------*/
+/*---------------------------------------------------------*/
+
+ 	function new(string name = "axi_4_reg_block");
 	 	 super.new(name ,build_coverage(UVM_NO_COVERAGE));
                  endfunction
 
-        function void build();
+/*---------------------------------------------------------*/
+/*-------------------BUILD FUNCTION -----------------------*/
+/*---------------------------------------------------------*/
+     
+     function void build();
 
-                        cnn_cfg_mem_h = new[96];
-                        foreach(cnn_cfg_mem_h[i]) begin
-      			cnn_cfg_mem_h[i] = connection_config_mem::type_id::create($sformatf("cnn_cfg_mem_h[%0d]",i)); 
-      			cnn_cfg_mem_h[i].configure(this);                            
-      			cnn_cfg_mem_h[i].build();                                    
-                        end
+         /*---------------------------------------------------------*/
+         /*-------------------CONFIGURE REGISTER -------------------*/
+         /*---------------------------------------------------------*/
 
-                        output_prt_h = new[3];
-			foreach(output_prt_h[i])begin
-      			output_prt_h[i] = output_port::type_id::create($sformatf("output_prt_h[%0d]",i)); 
-      			output_prt_h[i].configure(this);                            
-      			output_prt_h[i].build();                                    
-                        end
+          conn_cfg_reg_h = new[32768];
+          foreach(conn_cfg_reg_h[i]) begin
+      	  conn_cfg_reg_h[i] = connection_config_reg::type_id::create($sformatf("conn_cfg_reg_h[%0d]",i)); 
+      	  conn_cfg_reg_h[i].configure(this);                            
+      	  conn_cfg_reg_h[i].build();                                    
+          end
 
-                        
-      			crc_h = crc::type_id::create("crc_h"); 
-      			crc_h.configure(this);                            
-      			crc_h.build();                                    
+          output_prt_reg_h = new[32];
+		  foreach(output_prt_reg_h[i])begin
+      	  output_prt_reg_h[i] = output_port_reg::type_id::create($sformatf("output_prt_reg_h[%0d]",i)); 
+      	  output_prt_reg_h[i].configure(this);                            
+      	  output_prt_reg_h[i].build();                                    
+          end
+
+          crc_reg_h = new[32];
+          foreach(crc_reg_h[i]) begin 
+      	  crc_reg_h[i] = crc_reg::type_id::create($sformatf("crc_reg_h[%0d]",i)); 
+      	  crc_reg_h[i].configure(this);                            
+      	  crc_reg_h[i].build(); 
+          end 
+          
+          vcid_reg_h = new[32];
+          foreach(vcid_reg_h[i]) begin 
+      	  vcid_reg_h[i] = vcid_reg::type_id::create($sformatf("vcid_reg_h[%0d]",i)); 
+      	  vcid_reg_h[i].configure(this);                            
+      	  vcid_reg_h[i].build(); 
+          end 
       
+         /*-----------------------------------------------------*/
+         /*-----------------------CREATE MAP -------------------*/
+         /*-----------------------------------------------------*/
 
-  default_map  = create_map(  .name("default_map"),         
-	                        .base_addr('b0),	      
-                                .n_bytes(4),	  	      
-	                        .endian(UVM_LITTLE_ENDIAN),   
-	                        .byte_addressing(1)            
-                           );		
+          vcid_reg_map   = create_map(  .name("vcid_reg_map"),         
+        	                       .base_addr('h2900),	     
+                                   .n_bytes(4),	  	      
+        	                       .endian(UVM_LITTLE_ENDIAN),   
+        	                       .byte_addressing(1)            
+                                   );
 
-  foreach(cnn_cfg_mem_h[i])begin
-  default_map.add_reg(        .rg(cnn_cfg_mem_h[i]),           
-                              .offset(i),                    
-                              .rights("RW"),                    
-                              .unmapped(0),                  
-                              .frontdoor(null)                 
-                           );   
-  end
+          cfg_mem_map   = create_map(  .name("cfg_mem_map"),         
+        	                       .base_addr('h4000),	    
+                                   .n_bytes(4),	  	      
+        	                       .endian(UVM_LITTLE_ENDIAN),   
+        	                       .byte_addressing(1)            
+                                   );		
+        
+          misc_reg_map  = create_map(  .name("misc_reg_map"),         
+        	                       .base_addr('h3000),	     //0x3000; 
+                                   .n_bytes(4),	  	      
+        	                       .endian(UVM_LITTLE_ENDIAN),   
+        	                       .byte_addressing(1)            
+                                   );		
 
-  foreach(output_prt_h[i])begin
-  default_map.add_reg(        .rg(output_prt_h[i]),
-                              .offset(96+i),
-                              .rights("RW")
-                           );  
-  end 
+        /*-----------------------------------------------------*/
+        /*-----------------------ADD_REG_TO_MAP ---------------*/
+        /*-----------------------------------------------------*/
 
-  default_map.add_reg(        .rg(crc_h),
-                              .offset(100),
-                              .rights("RW")
-                           );   
+          foreach(conn_cfg_reg_h[i])begin
+                  cfg_mem_map.add_reg( .rg(conn_cfg_reg_h[i]),           
+                                       .offset(i),                    
+                                       .rights("RW"),                    
+                                       .unmapped(0),                  
+                                       .frontdoor(null)                 
+                                   );   
+                  end
+        
+          foreach(output_prt_reg_h[i])begin
+                  misc_reg_map.add_reg(.rg(output_prt_reg_h[i]),
+                                       .offset(i),
+                                       .rights("RW")
+                                   );  
+                  end
+        
+          foreach(vcid_reg_h[i])begin
+                  vcid_reg_map.add_reg(.rg(vcid_reg_h[i]),
+                                       .offset(i),
+                                       .rights("RW")
+                                   );  
+                  end
 
-	lock_model(); //lock register model for protect.
+          foreach(crc_reg_h[i])begin
+                  misc_reg_map.add_reg(.rg(crc_reg_h[i]),
+                                       .offset('h30+i),
+                                       .rights("RW")
+                                   );   
+                end
+        
+           lock_model(); //lock register model for protect.
 		
 	endfunction
 			

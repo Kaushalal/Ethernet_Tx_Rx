@@ -46,13 +46,20 @@ class mac_tx_seq_item extends uvm_sequence_item;
     `uvm_field_int (fcs, UVM_ALL_ON | UVM_HEX )
   `uvm_object_utils_end 
 
-  constraint payload_size_c { payload_q.size() inside { [46:1500] }; }
+  constraint payload_size_c1 { soft payload_q.size() inside { [46:1500] }; }
   
-  constraint Etype_c { Etype inside { 16'h0800, 16'h8100 }; }
+  constraint Etype_c { soft Etype inside { 16'h0800, 16'h8100 }; }
 
   function void post_randomize();
     tci = {>>{ dei,pri,vlan } };
-    $display( " dei = %b || pri = %b || vlan = %b || tci = %b ",dei,pri,vlan,tci);
+    `uvm_info("TCI_DETIALS",$sformatf(" dei = %b || pri = %b || vlan = %b || tci = %b ",dei,pri,vlan,tci),UVM_FULL);
+
+    if(payload_q.size < 46) begin
+        do begin 
+        payload_q.push_back('b0); end 
+        while (payload_q.size != 46);
+    end
+
   endfunction
 
   function new (string name = "");

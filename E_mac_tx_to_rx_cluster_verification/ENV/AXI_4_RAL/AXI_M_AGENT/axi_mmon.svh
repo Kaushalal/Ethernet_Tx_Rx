@@ -67,7 +67,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
 
   forever begin 
       @( `MMON_CB ) begin
-      if ( `MMON_CB.awvalid && `MMON_CB.awready )begin
+      if ( `MMON_CB.awvalid && `MMON_CB.awready && mvif.areset )begin
 
        if( !witem_arr.exists(`MMON_CB.awid))
             witem_arr[`MMON_CB.awid] = new($sformatf(" witem_arr_m[%0d] ",`MMON_CB.awid));
@@ -97,7 +97,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
   forever begin
       @(`MMON_CB) begin
       
-      if( `MMON_CB.arvalid && `MMON_CB.arready ) begin
+      if( `MMON_CB.arvalid && `MMON_CB.arready && mvif.areset  ) begin
   
           if( !ritem_arr.exists(`MMON_CB.arid) )
               ritem_arr[`MMON_CB.arid] = new($sformatf(" ritem_arr[%0d] ",`MMON_CB.arid));
@@ -121,7 +121,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
   task get_write_data_with_wid ( );
 
   forever begin
-      @(`MMON_CB) begin
+      @(`MMON_CB iff mvif.areset ) begin
        if( `MMON_CB.wvalid  && `MMON_CB.wready ) begin
 
        if(!witem_arr.exists(`MMON_CB.wid))
@@ -148,10 +148,13 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
   int temp_id;
 
   forever begin
-      @(`MMON_CB) begin
+      @(`MMON_CB iff mvif.areset ) begin
        if( `MMON_CB.wvalid  && `MMON_CB.wready ) begin
 
        temp_id = awid_que.pop_back();
+       //// CHANGED 
+       if( !witem_arr.exists(temp_id))
+            witem_arr[temp_id] = new($sformatf(" witem_arr_m[%0d] ",temp_id));
 
        do begin 
        if( witem_arr[temp_id].wdata.size() > 0 ) @(`MMON_CB);
@@ -175,7 +178,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
   task sample_write_response ( );
   
   forever begin 
-      @(`MMON_CB) begin
+      @(`MMON_CB iff mvif.areset ) begin
       if( `MMON_CB.bvalid && `MMON_CB.bready ) begin
 
      witem_arr[`MMON_CB.bid].bid   = `MMON_CB.bid;
@@ -194,7 +197,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
   task sample_read_response ( );
   
   forever begin 
-      @(`MMON_CB) begin
+      @(`MMON_CB iff mvif.areset ) begin
       
       if( `MMON_CB.rvalid && `MMON_CB.rready ) begin
 

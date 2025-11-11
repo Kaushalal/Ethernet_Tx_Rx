@@ -20,40 +20,76 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
 
    mac_tx_base_seqs mac_tx_seqs[];
    mac_tx_seqr mac_tx_seqr_h[];
-   
-   function new(string name = "mac_to_axi_s_base_virtual_seqs");
+
+   rand bit [11:0]  temp_vlan_q[$];
+   rand bit [2:0]   temp_port_id;
+                  
+   rand bit         temp_connection_valid;
+   rand bit [4:0]   temp_connection_id;
+                  
+   rand bit [3:0]   temp_out_port_sel;
+   rand bit [31:0]  temp_crc_val;
+   rand bit [7:0]   temp_vcid_val;
+
+   reg_conn_cfg_seq conn_cfg_seqs;
+  
+   function new(string name = "mac_to_axi_s_base_virtual_seqs", int no_of_ports = 3);
       super.new(name);
-      mac_tx_seqs = new[3];
-      mac_tx_seqr_h = new[3];
+      mac_tx_seqs   = new[no_of_ports];
+      mac_tx_seqr_h = new[no_of_ports];
+      conn_cfg_seqs = new("conn_cfg_seqs");
    endfunction
 
+////-----------------------------------------------------------------////
+////-----------------------------------------------------------------////
+////                       PRE_START
+////-----------------------------------------------------------------////
+////-----------------------------------------------------------------////
+   
    task pre_start();
    foreach( mac_tx_seqr_h[i] ) begin 
    mac_tx_seqr_h[i] = p_sequencer.mac_tx_seqr_h[i];
    end
    endtask 
 
-   task body();
-   fork 
-   begin 
-     //max_tx_seqs[0].randomize() with {no_of_packet== 10; min_payload_size == 100; max_payload_size == 250;}
-     `uvm_do_on_with( mac_tx_seqs[0], mac_tx_seqr_h[0], {no_of_packet== 5; min_payload_size == 50; max_payload_size == 52;} )
-     //max_tx_seqs[0].start(p_sequencer.mac_tx_seqr_h[0]);
-   end
-   begin
-     `uvm_do_on_with( mac_tx_seqs[1], mac_tx_seqr_h[1], {no_of_packet== 5; min_payload_size == 46; max_payload_size == 50;} )
-     //max_tx_seqs[1].randomize() with {no_of_packet== 10; min_payload_size == 150; max_payload_size == 400;}
-     //max_tx_seqs[1].start(p_sequencer.mac_tx_seqr_h[1]);
-   end
-   begin
-     `uvm_do_on_with( mac_tx_seqs[2], mac_tx_seqr_h[2], {no_of_packet== 5; min_payload_size == 48; max_payload_size == 50; da == 'h010203040506; sa == 'h0708090A0B0C ;} )
-
-     //max_tx_seqs[2].randomize() with {no_of_packet== 10; min_payload_size == 150; max_payload_size == 400; da = 'h010203040506; sa = 'h0708090A0B0C} 
-     //max_tx_seqs[2].start(p_sequencer.mac_tx_seqr_h[2]);  
-   end
-   join
+////-----------------------------------------------------------------////
+////-----------------------------------------------------------------////
+////                       BODY
+////-----------------------------------------------------------------////
+////-----------------------------------------------------------------////
    
-   endtask
+   task body();
+   begin
+
+   ////-----------------------------------------------------------------////
+   ////               RAL SEQS 
+   ////-----------------------------------------------------------------////
+     
+         repeat( 10 ) begin 
+            void'(conn_cfg_seqs.randomize with { port_id inside {3,4,5} ; connection_valid == 1'b1 ; out_port_sel inside {8,9,10} ; crc_val == 32'h01020304 ; });
+                conn_cfg_seqs.start(null);
+            temp_vlan_q.push_back(conn_cfg_seqs.vlan);
+         end
+   
+   ////-----------------------------------------------------------------////
+   ////               MAC SEQS 
+   ////-----------------------------------------------------------------////
+      
+      fork 
+          begin 
+            `uvm_do_on_with( mac_tx_seqs[0], mac_tx_seqr_h[0], {no_of_packet== 50; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q.size; foreach(temp_vlan_q[i]) { vlan_q[i] == temp_vlan_q[i];}} )
+          end
+          begin
+            `uvm_do_on_with( mac_tx_seqs[1], mac_tx_seqr_h[1], {no_of_packet== 50; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q.size; foreach(temp_vlan_q[i]) { vlan_q[i] == temp_vlan_q[i];}} )
+          end
+          begin
+            `uvm_do_on_with( mac_tx_seqs[2], mac_tx_seqr_h[2], {no_of_packet== 50; min_payload_size == 48; max_payload_size == 50; vlan_q.size == temp_vlan_q.size; foreach(temp_vlan_q[i]) { vlan_q[i] == temp_vlan_q[i];}} )
+          end
+      join
+   
+      end
+      
+ endtask
 
  
 endclass
