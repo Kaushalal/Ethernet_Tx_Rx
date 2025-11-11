@@ -51,15 +51,19 @@ class mac_to_axi_s_base_test extends uvm_test;
      
      //// AXI_STR slave config for ENV
      env_cfg_h.slv_axi_s_config.no_of_axis_slv = 3;
-     env_cfg_h.slv_axi_s_config.is_active = UVM_PASSIVE;
+     env_cfg_h.slv_axi_s_config.is_active = UVM_ACTIVE;
      
      //// MAC_tx config for ENV
      env_cfg_h.mac_tx_cfg_h.no_of_tx_agent = 3;
      env_cfg_h.mac_tx_cfg_h.is_active = UVM_ACTIVE;
      
-     //// AXI_4_config for ENV
+     //// MAC_rx config for ENV
+     env_cfg_h.mac_rx_cfg_h.no_of_ports = 3;
+     
+     //// AXI_4_master_config for ENV
      env_cfg_h.axi_4_mcfg_h.magt_is_active = UVM_ACTIVE;
      env_cfg_h.axi_4_mcfg_h.no_of_agent = 1;
+     
      uvm_config_db #(mac_to_axi_s_env_cfg)::set(this,"*", "env_cfg", env_cfg_h);
    
    endfunction : build_phase

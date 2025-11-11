@@ -1,5 +1,5 @@
 typedef struct  {
-  logic [2:0]  port_id;
+  logic [3:0]  port_id;
   logic [11:0] vlan_id;
 } connection_addr_t;
 

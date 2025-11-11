@@ -38,7 +38,9 @@ class axi_mdrv #(int DATA_WIDTH = 16 , ADD_WIDTH = 8) extends uvm_driver #(axi_m
   task run_phase (uvm_phase phase);
   fork 
     forever begin 
+      wait( mvif.areset === 1'b1);
       seq_item_port.get( mseq_item );
+      mseq_item.print();
       if ( mseq_item.operation == SIM_WR ) begin
       pending_transaction_wadr.push_back(mseq_item);
       pending_transaction_radr.push_back(mseq_item);
@@ -112,10 +114,10 @@ endtask
       
       wait (pending_transaction_wadr.size() > 0);
       
-      @( mvif.mdrv_cb ) begin
+      @( mvif.mdrv_cb iff mvif.areset ) begin
       
-      if(mvif.mdrv_cb.awvalid == 1'b1)
-          wait (mvif.mdrv_cb.awready == 1'b1);
+      if(mvif.mdrv_cb.awvalid === 1'b1)
+          wait (mvif.mdrv_cb.awready === 1'b1 && mvif.areset === 1'b1);
 
       req = pending_transaction_wadr.pop_front();
       mvif.mdrv_cb.awvalid <= 1'b1;
@@ -133,7 +135,7 @@ endtask
        $display($time," awready = %0d ",mvif.mdrv_cb.awready);
        end
        while ( mvif.mdrv_cb.awready !== 1'b1 );*/       
-       @( mvif.mdrv_cb iff mvif.mdrv_cb.awready )
+       @( mvif.mdrv_cb iff (mvif.mdrv_cb.awready && mvif.areset) )
 
        mvif.mdrv_cb.awvalid <= 1'b0; 
        end
@@ -148,10 +150,10 @@ endtask
       
       wait (pending_transaction_radr.size() > 0);
       
-      @( mvif.mdrv_cb ) begin
+      @( mvif.mdrv_cb iff mvif.areset ) begin
       
-      if(mvif.mdrv_cb.arvalid == 1'b1)
-          wait (mvif.mdrv_cb.arready == 1'b1);
+      if(mvif.mdrv_cb.arvalid === 1'b1)
+          wait ( mvif.mdrv_cb.arready === 1'b1 && mvif.areset === 1'b1 );
       
       req = pending_transaction_radr.pop_front();
       mvif.mdrv_cb.arid    <= req.arid;
@@ -164,9 +166,9 @@ endtask
       if ( pending_transaction_radr.size() == 0 )begin 
        //   wait (mvif.mdrv_cb.arready == 1'b1);
        
-       do @( mvif.mdrv_cb ); // --> @posedge aclk at top then @mdrv_cb here won't work 
-       while ( mvif.mdrv_cb.arready !== 1'b1 ); 
-       //@( mvif.mdrv_cb iff mvif.mdrv_cb.arready )
+       //do @( mvif.mdrv_cb ); // --> @posedge aclk at top then @mdrv_cb here won't work 
+       //while ( mvif.mdrv_cb.arready !== 1'b1 ); 
+       @( mvif.mdrv_cb iff ( mvif.mdrv_cb.arready && mvif.areset ) )
         
        mvif.mdrv_cb.arvalid <= 1'b0; end
 
@@ -181,12 +183,12 @@ endtask
     begin
       wait (pending_transaction_wdata.size() > 0);
       
-      @( mvif.mdrv_cb) begin
+      @( mvif.mdrv_cb iff mvif.areset ) begin
       req = pending_transaction_wdata.pop_front();
       
       while(req.wdata.size() > 0 ) begin
       if(mvif.mdrv_cb.wvalid === 1'b1)
-          wait (mvif.mdrv_cb.wready === 1'b1);
+          wait (mvif.mdrv_cb.wready === 1'b1 && mvif.areset === 1'b1 );
       mvif.mdrv_cb.wid     <= req.wid;
       mvif.mdrv_cb.wvalid  <= 1'b1;
 
@@ -196,12 +198,12 @@ endtask
       if ( req.wdata.size() == 0 )  mvif.mdrv_cb.wlast   <= 1'b1; 
       else mvif.mdrv_cb.wlast   <= 1'b0; 
       
-      if (req.wdata.size() > 0 ) @( mvif.mdrv_cb );
+      if (req.wdata.size() > 0 ) @( mvif.mdrv_cb iff mvif.areset );
      end
      end
       if ( pending_transaction_wdata.size() == 0 ) begin
          // wait (mvif.mdrv_cb.wready == 1'b1);
-        @( mvif.mdrv_cb iff mvif.mdrv_cb.wready )
+        @( mvif.mdrv_cb iff ( mvif.mdrv_cb.wready && mvif.areset ) )
         mvif.mdrv_cb.wvalid  <= 1'b0;
         mvif.mdrv_cb.wlast   <= 1'b0; 
      end 
@@ -211,12 +213,12 @@ endtask
   task sample_write_response ( );
   axi_mseq_item #(DATA_WIDTH,ADD_WIDTH) rsp;
   
-      @(negedge mvif.mdrv_cb.wlast) mvif.mdrv_cb.bready <= 1'b1; 
+      @( negedge mvif.mdrv_cb.wlast iff mvif.areset ) mvif.mdrv_cb.bready <= 1'b1; 
   forever begin 
-      @( mvif.mdrv_cb) begin
+      @( mvif.mdrv_cb iff mvif.areset ) begin
       
       // Callback method to add delay for bready
-      wait ( mvif.mdrv_cb.bvalid && mvif.mdrv_cb.bready ); // TODO
+      wait ( mvif.mdrv_cb.bvalid && mvif.mdrv_cb.bready && mvif.areset ); // TODO
       
       write_resp_arr[ mvif.mdrv_cb.bid ].bid   = mvif.mdrv_cb.bid;
       write_resp_arr[ mvif.mdrv_cb.bid ].bresp = mvif.mdrv_cb.bresp;
@@ -237,9 +239,9 @@ endtask
       mvif.mdrv_cb.rready <= 1'b1; 
   
   forever begin 
-      @( mvif.mdrv_cb ) begin
+      @( mvif.mdrv_cb iff mvif.areset ) begin
 
-      wait( mvif.mdrv_cb.rvalid && mvif.mdrv_cb.rready ) begin
+      wait( mvif.mdrv_cb.rvalid && mvif.mdrv_cb.rready && mvif.areset ) begin
       
       read_resp_arr[ mvif.mdrv_cb.rid ].rid   = mvif.mdrv_cb.rid;
       read_resp_arr[ mvif.mdrv_cb.rid ].rresp.push_back(mvif.mdrv_cb.rresp);

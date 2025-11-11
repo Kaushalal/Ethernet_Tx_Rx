@@ -23,21 +23,40 @@ class mac_to_axi_s_sanity_test extends mac_to_axi_s_base_test;
       super.new(name,parent); 
    endfunction: new 
                    
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+////                      BUILD PHASE
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+
    function void build_phase(uvm_phase phase);
      super.build_phase(phase);
      mac_vseqs = mac_to_axi_s_base_virtual_seqs::type_id::create("mac_vseqs");
      mac_vseqr = mac_to_axi_s_virtual_seqr::type_id::create("mac_vseqr",this);
    endfunction : build_phase
 
-   function void end_of_elaboration_phase(uvm_phase phase);
-     uvm_top.print_topology(); 
-   endfunction : end_of_elaboration_phase
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+////                      CONNECT PHASE
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+
+    function void connect_phase(uvm_phase phase);
+       mac_vseqs.conn_cfg_seqs.axi_4_reg_block_h = env_h.axi_4_reg_block_h;
+    endfunction 
+   
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+////                      RUN PHASE
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
 
 	task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 	       mac_vseqs.start(env_h.vseqr_h);
 		phase.drop_objection(this);
 	endtask
+    
 endclass : mac_to_axi_s_sanity_test
 
 `endif

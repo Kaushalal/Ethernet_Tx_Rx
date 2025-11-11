@@ -48,7 +48,8 @@ class axi_str_mas_driver #(int DATA_SIZE=32,int USER_SIZE=32) extends uvm_driver
   
   virtual task run_phase(uvm_phase phase);
     initialize();
-    if(!vif.areset_n)
+    //if(!vif.areset_n)   
+    if(vif.areset_n !== 1'b1)   //// CHANGE 
     wait_reset_relase();
     forever begin
       fork : RUN
