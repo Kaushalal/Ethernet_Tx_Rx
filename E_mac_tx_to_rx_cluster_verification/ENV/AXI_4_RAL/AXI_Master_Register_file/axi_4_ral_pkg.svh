@@ -22,6 +22,7 @@ package axi_4_ral_pkg;
    `include "register.svh"
    `include "axi_4_reg_block.svh"
    `include "axi_4_adapter.svh"
+   `include "axi_4_ral_seqs.svh"
 
 endpackage 
 

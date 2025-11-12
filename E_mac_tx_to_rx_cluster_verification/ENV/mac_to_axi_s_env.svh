@@ -21,15 +21,19 @@ class mac_to_axi_s_env extends uvm_env;
    axi_str_mas_uvc axi_str_muvc_h;
    
    mac_tx_uvc mac_tx_uvc_h;
+   mac_rx_uvc#(`RX_PAYLOAD_DATA_WIDTH,`RX_FRAME_DATA_WIDTH) mac_rx_uvc_h; 
    
    axi_4_muvc axi_4_muvc_h;
-
+   
    //// Config class of axi_stream 
    axi_str_mas_config mas_axi_s_config; 
    axi_str_slv_config slv_axi_s_config;
    
    //// Config class of mac_tx 
    mac_tx_cfg mac_tx_cfg_h;
+   
+   //// Config class of mac_rx 
+   emac_rx_config mac_rx_cfg_h;
 
    ////Config class of env
    mac_to_axi_s_env_cfg env_cfg_h;
@@ -71,6 +75,7 @@ class mac_to_axi_s_env extends uvm_env;
       axi_4_muvc_h = axi_4_muvc ::type_id::create("axi_4_muvc_h",this);
       
       mac_tx_uvc_h = mac_tx_uvc ::type_id::create("mac_tx_uvc_h",this);
+      mac_rx_uvc_h = mac_rx_uvc#(`RX_PAYLOAD_DATA_WIDTH,`RX_FRAME_DATA_WIDTH) ::type_id::create("mac_rx_uvc_h",this);
      
      //// Virtual sequencer 
      vseqr_h = mac_to_axi_s_virtual_seqr::type_id::create("vseqr_h",this);
@@ -97,14 +102,22 @@ class mac_to_axi_s_env extends uvm_env;
      //// MAC_tx Config class
      mac_tx_cfg_h = mac_tx_cfg ::type_id::create("mac_tx_cfg_h");
      
+     //// MAC_rx Config class
+     mac_rx_cfg_h = emac_rx_config ::type_id::create("mac_rx_cfg_h");
+     
      //// Setting config for no_of_mac_tx_agent and there type 
      mac_tx_cfg_h.no_of_tx_agent = env_cfg_h.mac_tx_cfg_h.no_of_tx_agent;
      mac_tx_cfg_h.is_active = env_cfg_h.mac_tx_cfg_h.is_active;
      
      uvm_config_db #(mac_tx_cfg)::set(this,"*", "no_tx_agent", mac_tx_cfg_h);
+     
+     //// Setting config for no_of_mac_rx_agent and there type 
+     mac_rx_cfg_h.no_of_ports = env_cfg_h.mac_rx_cfg_h.no_of_ports;
+     
+     uvm_config_db #(emac_rx_config)::set(this,"*", "no_ports", mac_rx_cfg_h);
 
      //// AXI_4 agent for register  
-     axi_4_mcfg_h = axi_magt_cfg::type_id::create("axi_4_cfg_h");
+     axi_4_mcfg_h = axi_magt_cfg::type_id::create("axi_4_mcfg_h");
      axi_4_mcfg_h.magt_is_active = env_cfg_h.axi_4_mcfg_h.magt_is_active;
      axi_4_mcfg_h.no_of_agent = env_cfg_h.axi_4_mcfg_h.no_of_agent;
      uvm_config_db #(axi_magt_cfg)::set(this,"*", "mcfg_h", axi_4_mcfg_h);
@@ -127,18 +140,27 @@ class mac_to_axi_s_env extends uvm_env;
    function void connect_phase(uvm_phase phase);
      super.connect_phase(phase);
 
-     //// MAC to AXI_STR sequencer connection 
+     //// MAC_TX to AXI_STR sequencer connection 
      foreach( mac_tx_uvc_h.mac_tx_agent_h[i] )begin
        mac_tx_uvc_h.mac_tx_agent_h[i].connect_to_dut_agent(axi_str_muvc_h.master_agent[i]) ;
+    end
+     
+     //// MAC_RX to AXI_STR sequencer connection 
+     foreach( mac_rx_uvc_h.rx_agent[i] )begin
+       mac_rx_uvc_h.rx_agent[i].connect_to_axi_str_slv_agnt(axi_str_suvc_h.slave_agent[i]) ;
     end
 
      //// Virtual sequencer connection 
      foreach ( vseqr_h.mac_tx_seqr_h[i] ) begin 
        vseqr_h.mac_tx_seqr_h[i] = mac_tx_uvc_h.mac_tx_agent_h[i].mac_tx_seqr_h; end  
-
+     
      //// Set sequencer for Adapter 
-     axi_4_reg_block_h.default_map.set_sequencer(axi_4_muvc_h.axi_4_magent_h[0].mseqr_h, axi_4_ral_adapter_h);
-     axi_4_reg_block_h.default_map.set_base_addr('h0);
+     axi_4_reg_block_h.cfg_mem_map.set_sequencer(axi_4_muvc_h.axi_4_magent_h[0].mseqr_h, axi_4_ral_adapter_h);
+     axi_4_reg_block_h.cfg_mem_map.set_base_addr('h4000);
+     axi_4_reg_block_h.misc_reg_map.set_sequencer(axi_4_muvc_h.axi_4_magent_h[0].mseqr_h, axi_4_ral_adapter_h);
+     axi_4_reg_block_h.misc_reg_map.set_base_addr('h3000);
+     axi_4_reg_block_h.vcid_reg_map.set_sequencer(axi_4_muvc_h.axi_4_magent_h[0].mseqr_h, axi_4_ral_adapter_h);
+     axi_4_reg_block_h.vcid_reg_map.set_base_addr('h2900);
      
   endfunction
 

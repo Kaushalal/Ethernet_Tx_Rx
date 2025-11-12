@@ -17,5 +17,8 @@
 `define AXI_STR_USER_SIZE 32
 `define AXI_4_DATA_SIZE 32
 `define AXI_4_ADD_SIZE 32
+`define AXI_4_ID_SIZE 8
+`define RX_PAYLOAD_DATA_WIDTH 8
+`define RX_FRAME_DATA_WIDTH 32
 
 `endif

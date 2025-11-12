@@ -74,7 +74,7 @@ module top #(
     .reset_n(reset_n),
     .reset_reg(reset_reg),
     .axil_inf(axi_lite),
-    .axis_in_inf(axi_in_parser),  // connected to mapped signals
+    .axis_in_inf(axi_in_parser),  // connected to mapped signal
     .axis_out_inf(axi_out_inf)
   );
 
