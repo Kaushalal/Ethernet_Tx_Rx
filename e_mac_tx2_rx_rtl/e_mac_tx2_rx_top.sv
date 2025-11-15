@@ -11,6 +11,7 @@ typedef struct  {
 
 module top #(
   int NUM_OF_PORT = 3,
+  int NUM_OF_PORT_OUT = 3,
   int ADDR_SIZE   = 32,
   int DATA_SIZE   = 32,
   int ID_SIZE     = 32,
@@ -24,7 +25,7 @@ module top #(
 
   // AXI-Stream and AXI-Lite interface ports
   axi_str_slave_inf.slave  axi_in_inf   [NUM_OF_PORT],
-  axi_str_master_inf.master axi_out_inf,
+  axi_str_master_inf.master axi_out_inf [NUM_OF_PORT_OUT],
   axi_lite_inf.slave axi_lite
 );
 
@@ -67,14 +68,15 @@ module top #(
     .DATA_SIZE(DATA_SIZE),
     .ID_SIZE(ID_SIZE),
     .USER_SIZE(USER_SIZE),
-    .AXIS_DATA_SIZE(TDATA_SIZE)
+    .AXIS_DATA_SIZE(TDATA_SIZE),
+    .NUM_OF_INGRESS_PORTS_OUT(NUM_OF_PORT_OUT)
   ) u_header_parser (
     .reg_clk(clk_reg),
     .clk_n(clk),
     .reset_n(reset_n),
     .reset_reg(reset_reg),
     .axil_inf(axi_lite),
-    .axis_in_inf(axi_in_parser),  // connected to mapped signal
+    .axis_in_inf(axi_in_parser),  // connected to mapped signals
     .axis_out_inf(axi_out_inf)
   );
 
