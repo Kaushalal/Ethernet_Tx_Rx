@@ -1,7 +1,7 @@
 
 #Makefile
 
-PKG= ../ENV/MASTER_AGENT/axi_str_mas_pkg.sv ../ENV/SLAVE_AGENT/axi_str_slv_pkg.sv ../ENV/MAC_TX_AGENT/mac_tx_pkg.svh ../ENV/EMAC_RX/emac_rx_pkg.sv ../ENV/AXI_4_RAL/AXI_M_AGENT/axi_mpkg.svh ../ENV/AXI_4_RAL/AXI_Master_Register_file/axi_4_ral_pkg.svh ../ENV/mac_to_axi_s_env_pkg.svh ../TEST/mac_to_axi_s_test_pkg.svh 
+PKG= ../ENV/MASTER_AGENT/axi_str_mas_pkg.sv ../ENV/SLAVE_AGENT/axi_str_slv_pkg.sv ../ENV/MAC_TX_AGENT/mac_tx_pkg.svh ../ENV/MAC_RX_AGENT/mac_rx_pkg.sv ../ENV/AXI_4_RAL/AXI_M_AGENT/axi_mpkg.svh ../ENV/AXI_4_RAL/AXI_Master_Register_file/axi_4_ral_pkg.svh ../ENV/mac_to_axi_s_env_pkg.svh ../TEST/mac_to_axi_s_test_pkg.svh 
 
 TOP_DIR= ../TOP/mac_to_axi_s_top.sv
 TOP= mac_to_axi_s_top

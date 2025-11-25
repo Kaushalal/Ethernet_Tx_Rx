@@ -113,14 +113,21 @@ module mac_to_axi_s_top();
 //// ------------------------------------------------------- ////
 //// DESIGN OUTPUT ( Header parser ) 
 //// ------------------------------------------------------- ////
-  assign axi_str_mas_design.master.reset_n = tb_reset;
-  assign axi_s_sinf[0].areset_n              = tb_reset;
-  assign axi_s_sinf[0].tvalid                = axi_str_mas_design.tvalid;
-  assign axi_s_sinf[0].tdata                 = axi_str_mas_design.tdata ;
-  assign axi_s_sinf[0].tlast                 = axi_str_mas_design.tlast ;
-  assign axi_s_sinf[0].tkeep                 = axi_str_mas_design.tkeep ;
-  assign axi_s_sinf[0].tuser                 = axi_str_mas_design.tuser ;
-  assign axi_str_mas_design.tready         = axi_s_sinf[0].tready;
+  
+  genvar j;
+
+  generate 
+    for (j=0; j<`NO_OF_OUT_PORT; j++ ) begin 
+      assign axi_str_mas_design[j].reset_n = tb_reset;
+      assign axi_s_sinf[j].areset_n              = tb_reset;
+      assign axi_s_sinf[j].tvalid                = axi_str_mas_design[j].tvalid;
+      assign axi_s_sinf[j].tdata                 = axi_str_mas_design[j].tdata ;
+      assign axi_s_sinf[j].tlast                 = axi_str_mas_design[j].tlast ;
+      assign axi_s_sinf[j].tkeep                 = axi_str_mas_design[j].tkeep ;
+      assign axi_s_sinf[j].tuser                 = axi_str_mas_design[j].tuser ;
+      assign axi_str_mas_design[j].tready         = axi_s_sinf[j].tready;
+    end
+  endgenerate 
 
 
 //// ------------------------------------------------------- ////
@@ -136,8 +143,8 @@ module mac_to_axi_s_top();
 //// DESIGN_INF
 //// ------------------------------------------------------- ////
  axi_lite_inf #(`AXI_4_DATA_SIZE,`AXI_4_ADD_SIZE,`AXI_4_ID_SIZE)  axi_lite_design();
- axi_str_slave_inf #(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)) axi_str_slv_design[3]();
- axi_str_master_inf #(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)) axi_str_mas_design();
+ axi_str_slave_inf #(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)) axi_str_slv_design[`NO_OF_IN_PORT]();
+ axi_str_master_inf #(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)) axi_str_mas_design[`NO_OF_OUT_PORT]();
  
  
 //// ------------------------------------------------------- ////

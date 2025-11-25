@@ -58,7 +58,7 @@ class mac_to_axi_s_base_test extends uvm_test;
      env_cfg_h.mac_tx_cfg_h.is_active = UVM_ACTIVE;
      
      //// MAC_rx config for ENV
-     env_cfg_h.mac_rx_cfg_h.no_of_ports = 3;
+     env_cfg_h.mac_rx_cfg_h.no_of_mac_rx = 3;
      
      //// AXI_4_master_config for ENV
      env_cfg_h.axi_4_mcfg_h.magt_is_active = UVM_ACTIVE;

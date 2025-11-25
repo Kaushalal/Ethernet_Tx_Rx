@@ -17,6 +17,8 @@ class mac_tx_mon extends uvm_monitor;
    `uvm_component_utils(mac_tx_mon)
 
    uvm_analysis_imp#(axi_str_mas_seq_item#(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)) , mac_tx_mon ) mac_tx_mon_imp;
+   
+   uvm_analysis_port#(mac_tx_seq_item ) mac_tx_mon_port;
 
    axi_str_mas_seq_item#(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)) axi_s_sampled_item;
    
@@ -36,7 +38,7 @@ class mac_tx_mon extends uvm_monitor;
 
 ////-------------------------------------------------------------------------------------////
 ////-------------------------------------------------------------------------------------////
-////                WRITE FUNTION 
+////                WRITE FUNTION  
 ////-------------------------------------------------------------------------------------////
 ////-------------------------------------------------------------------------------------////
 
@@ -59,18 +61,21 @@ class mac_tx_mon extends uvm_monitor;
     `uvm_info("TDATA_TO_PKT",$sformatf("AFTER Converision : Tdata_q[%0d] = %h ",i,axi_s_sampled_item.tdata_q[i]),UVM_FULL)
     end 
 
-    {>>{mac_item.da, mac_item.sa, mac_item.tci, mac_item.Etype, mac_item.payload_q, mac_item.fcs }} = axi_s_sampled_item.tdata_q ;
+    {>>{mac_item.da, mac_item.sa, mac_item.tci, mac_item.Etype, mac_item.payload_q }} = axi_s_sampled_item.tdata_q ;
     {>>{mac_item.dei,mac_item.pri,mac_item.vlan}} = mac_item.tci;
 
     foreach( axi_s_sampled_item.tkeep_q[i,j] ) begin
          if( axi_s_sampled_item.tkeep_q[i][j] == 0 ) begin
-             mac_item.fcs = mac_item.fcs >> 8;
-             mac_item.fcs[$left(mac_item.fcs)] = mac_item.payload_q[$] ;
+           //  mac_item.fcs = mac_item.fcs >> 8;
+           //  mac_item.fcs[$left(mac_item.fcs)] = mac_item.payload_q[$] ;
              mac_item.payload_q.pop_back();
          end
-     end 
+     end  
 
     `uvm_info("MAC_MON_MAC_PKT",mac_item.sprint(),UVM_MEDIUM)
+
+    //// WRITE to ref_model ( Expected item ) 
+//    mac_tx_mon_port.write(mac_item);
 
    endfunction 
 
