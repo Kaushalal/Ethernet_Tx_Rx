@@ -18,7 +18,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     `uvm_analysis_imp_decl(_tdata_port0)
     `uvm_analysis_imp_decl(_tdata_port1)
     `uvm_analysis_imp_decl(_tdata_port2)
-
+bit [7:0] global_clean_data_q[$];
     emac_tx2rx_reg_block ral; 
     
     bit [15:0] valid_etypes[$] = '{16'h0800, 16'h8100};
@@ -56,6 +56,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 	 uvm_analysis_port #(emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)) expected_port4;
 	 uvm_analysis_port #(emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)) expected_port5;
 
+	 uvm_analysis_port #(axi_str_mas_seq_item #(32,32)) tdata_expected_port3;
+	 uvm_analysis_port #(axi_str_mas_seq_item #(32,32)) tdata_expected_port4;
+	 uvm_analysis_port #(axi_str_mas_seq_item #(32,32)) tdata_expected_port5;
+   
     uvm_analysis_imp_tdata_port0#(axi_str_mas_seq_item #(32,32), emac_tx2rx_ref_model) tdata_port0;
     uvm_analysis_imp_tdata_port1#(axi_str_mas_seq_item #(32,32), emac_tx2rx_ref_model) tdata_port1;
     uvm_analysis_imp_tdata_port2#(axi_str_mas_seq_item #(32,32), emac_tx2rx_ref_model) tdata_port2;
@@ -79,7 +83,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         tdata_port0 = new ("tdata_port0",this);
         tdata_port1 = new ("tdata_port1",this);
         tdata_port2 = new ("tdata_port2",this);
-
+        tdata_expected_port3 = new("tdata_expected_port3",this);
+        tdata_expected_port4 = new("tdata_expected_port4",this);
+        tdata_expected_port5 = new("tdata_expected_port5",this);
     endfunction
 
     function void build_phase (uvm_phase phase);
@@ -279,6 +285,7 @@ end
                     valid_pkt_etype_port4.push_back(tx_mac_port4[i]);
                 end else begin
                     etype_drop[PORT4_IDX]++;
+                    axis_tdata_port1.delete();
                     `uvm_info("INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT4_IDX], tx_mac_port4[i].e_type), UVM_LOW);
                 end
             end
@@ -297,6 +304,7 @@ end
                     valid_pkt_etype_port5.push_back(tx_mac_port5[i]);
                 end else begin
                     etype_drop[PORT5_IDX]++;
+                    axis_tdata_port2.delete();
                     `uvm_info("INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT5_IDX], tx_mac_port5[i].e_type), UVM_LOW)
                 end
             end
@@ -344,7 +352,7 @@ end
                     valid_mac_pkt_port4.push_back(valid_pkt_etype_port4[i]);
                 end else begin
                     payload_drop[PORT4_IDX]++;
-
+                    axis_tdata_port1.delete();
                     `uvm_info("INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD=%d - DROPPED", port_names[PORT4_IDX], valid_pkt_etype_port4[i].payload.size()), UVM_LOW)
                 end
             end
@@ -362,6 +370,7 @@ end
                     valid_mac_pkt_port5.push_back(valid_pkt_etype_port5[i]);
                 end else begin
                     payload_drop[PORT5_IDX]++;
+                    axis_tdata_port2.delete();
                     `uvm_info("INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD SIZE=%D - DROPPED", port_names[PORT5_IDX], valid_pkt_etype_port5[i].payload.size()), UVM_LOW)
                 end
             end
@@ -435,6 +444,7 @@ end
                         `uvm_info("CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_LOW);
                     end else begin
                         invalid[PORT4_IDX]++;
+                        axis_tdata_port1.delete();
                         `uvm_info("CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_LOW);
                     end
                 end
@@ -464,6 +474,7 @@ end
                         `uvm_info("CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_LOW);
                     end else begin
                         invalid[PORT5_IDX]++;
+                    axis_tdata_port2.delete();
                         `uvm_info("CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_LOW);
                     end
                 end
@@ -497,9 +508,9 @@ end
 
         forever begin
             wait(valid_conn_cfg_port3.size() > 0);
-
+          //  wait(axis_tdata_port0.size() >0);
             current_pkt = valid_conn_cfg_port3.pop_front(); 
-          //  current_tdata = axis_tdata_port0.pop_front();
+            current_tdata = axis_tdata_port0.pop_front();
             cnn_addr = {port_id, current_pkt.vlan_id}; 
             
             if (ral.conn_config_reg_h[cnn_addr] != null) begin
@@ -512,11 +523,12 @@ end
                     vcid_field = ral.vcid_config_reg_h[vcid_addr].vcid;
                     vcid       = vcid_field.get();
                     $display("REF_VCID=%h",vcid); 
-                    `uvm_info("VCID", $sformatf ("VCID_PORT3=%h", vcid), UVM_LOW) // Restored
+                    `uvm_info("VCID_PORT3", $sformatf ("VCID_PORT3=%h", vcid), UVM_LOW) // Restored
 
                     expected_pkt = get_rx_expected(current_pkt, vcid);
                     expected_port3.write(expected_pkt);
-                //    expected_tdata = expected_tdata_pkt(axis_tdata_port0,vcid);
+                    expected_tdata = expected_tdata_pkt(current_tdata,vcid);
+                    tdata_expected_port3.write(expected_tdata);
                 end
             end
        end
@@ -537,7 +549,7 @@ end
             wait(valid_conn_cfg_port4.size() > 0);
 
             current_pkt_p4 = valid_conn_cfg_port4.pop_front(); 
-          //  current_tdata = axis_tdata_port0.pop_front();
+            current_tdata = axis_tdata_port1.pop_front();
             cnn_addr = {port_id, current_pkt_p4.vlan_id}; 
             
             if (ral.conn_config_reg_h[cnn_addr] != null) begin
@@ -554,7 +566,8 @@ end
 
                     expected_pkt_p4 = get_rx_expected(current_pkt_p4, vcid);
                     expected_port4.write(expected_pkt_p4);
-                  //  expected_tdata_p4 = expected_tdata_pkt(axis_tdata_port0,vcid);
+                    expected_tdata_p4 = expected_tdata_pkt(current_tdata,vcid);
+                    tdata_expected_port4.write(expected_tdata_p4);
                 end
             end
        end
@@ -563,7 +576,7 @@ end
     task vcid_fatch_port5();
         emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) expected_pkt_p5;
         emac_tx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) current_pkt_p5;
-        axi_str_mas_seq_item #(32,32) expected_tdata_p4;  
+        axi_str_mas_seq_item #(32,32) expected_tdata_p5;  
         axi_str_mas_seq_item #(32,32) current_tdata;  
         bit [14:0] cnn_addr;
         bit [2:0]  port_id = 5;
@@ -576,7 +589,7 @@ end
             wait(valid_conn_cfg_port5.size() > 0);
 
             current_pkt_p5 = valid_conn_cfg_port5.pop_front(); 
-          //  current_tdata = axis_tdata_port0.pop_front();
+            current_tdata = axis_tdata_port2.pop_front();
             cnn_addr = {port_id, current_pkt_p5.vlan_id}; 
             
             if (ral.conn_config_reg_h[cnn_addr] != null) begin
@@ -593,69 +606,169 @@ end
 
                     expected_pkt_p5 = get_rx_expected(current_pkt_p5, vcid);
                     expected_port5.write(expected_pkt_p5);
-                  //  expected_tdata_p4 = expected_tdata_pkt(axis_tdata_port0,vcid);
+                    expected_tdata_p5 = expected_tdata_pkt(current_tdata,vcid);
+                    tdata_expected_port5.write(expected_tdata_p5);
                 end
             end
        end
     endtask
 
 
-/*function axi_str_mas_seq_item #(32,32) expected_tdata_pkt(axi_str_mas_seq_item #(32,32) original_tdata, bit[7:0] vcid);
+function axi_str_mas_seq_item #(32,32) expected_tdata_pkt(axi_str_mas_seq_item #(32,32) original_tdata, bit[7:0] vcid);
     axi_str_mas_seq_item #(32,32) modified_tdata;
-    bit [7:0] byte_stream[$];
-    bit [15:0] original_tci;
+    bit [7:0] byte_stream[$]; 
+    bit [31:0] temp_word;
+    int valid_bytes_in_last_beat;
+    int padding_bytes;
+    int last_idx;
+    int i;
+
+    if (original_tdata == null) begin
+        `uvm_error("NULL_HANDLE", "Function expected_tdata_pkt received a NULL handle!")
+        return null;
+    end
+
+    `uvm_info("INPUT_DEBUG", "=== ORIGINAL TRANSACTION (FROM MONITOR) ===", UVM_LOW)
+    `uvm_info("INPUT_DEBUG", $sformatf("Total words: %0d", original_tdata.tdata_q.size()), UVM_LOW)
+    `uvm_info("INPUT_DEBUG", $sformatf("Last word: %08h", original_tdata.tdata_q[original_tdata.tdata_q.size()-1]), UVM_LOW)
+    `uvm_info("INPUT_DEBUG", $sformatf("Last TKEEP: %01h", original_tdata.tkeep_q[original_tdata.tkeep_q.size()-1]), UVM_LOW)
+
+    foreach(original_tdata.tdata_q[i]) begin
+        `uvm_info("INPUT_DEBUG", 
+                  $sformatf("Word[%0d]: DATA=%08h, TKEEP=%01h", 
+                           i, original_tdata.tdata_q[i], original_tdata.tkeep_q[i]), 
+                  UVM_LOW)
+    end
+    // Debug original frame
+    `uvm_info("ORIGINAL_DEBUG", 
+              $sformatf("Original: %0d words, Last word: %08h, Last TKEEP: %01h", 
+                       original_tdata.tdata_q.size(),
+                       original_tdata.tdata_q[original_tdata.tdata_q.size()-1],
+                       original_tdata.tkeep_q[original_tdata.tkeep_q.size()-1]), 
+              UVM_HIGH)
+
+    if (!$cast(modified_tdata, original_tdata.clone())) begin
+        `uvm_fatal("CAST_FAIL", "Cast failed")
+    end
     
-    // Clone the original transaction
-    modified_tdata = original_tdata.clone();
-    
-    // Convert tdata_q to byte stream for easier manipulation
-    { >> { byte_stream }} = { >> { original_tdata.tdata_q }};
-    
-    `uvm_info("BYTE_STREAM_DEBUG", $sformatf("Original byte stream size: %0d", byte_stream.size()), UVM_HIGH)
-    
-    // The frame structure in bytes:
-    // Bytes 0-5: DA (6 bytes)
-    // Bytes 6-11: SA (6 bytes) 
-    // Bytes 12-13: TCI (2 bytes) - we want to replace this with VCID (1 byte)
-    // Bytes 14-15: EType (2 bytes)
-    // Bytes 16+: Payload
-    
-    if (byte_stream.size() >= 16) begin  // At least DA+SA+TCI+EType
-        // Remove the 2-byte TCI (bytes 12-13)
-        byte_stream.delete(12);  // Delete byte 12 (TCI high byte)
-        byte_stream.delete(12);  // Delete byte 12 (TCI low byte) - now it's the same position
+
+    foreach(original_tdata.tdata_q[i]) begin
+        temp_word = {<<8{original_tdata.tdata_q[i]}};
         
-        // Insert 1-byte VCID at position 12
-        byte_stream.insert(12, vcid);
+        byte_stream.push_back(temp_word[31:24]);
+        byte_stream.push_back(temp_word[23:16]);
+        byte_stream.push_back(temp_word[15:8]);
+        byte_stream.push_back(temp_word[7:0]);
+    end
+
+    `uvm_info("BYTE_STREAM_BEFORE", 
+              $sformatf("Before TKEEP adjustment: %0d bytes", byte_stream.size()), 
+              UVM_HIGH)
+
+    last_idx = original_tdata.tkeep_q.size() - 1;
+    
+    case(original_tdata.tkeep_q[last_idx])
+        4'h1 : valid_bytes_in_last_beat = 1; 
+        4'h3 : valid_bytes_in_last_beat = 2; 
+        4'h7 : valid_bytes_in_last_beat = 3; 
+        4'hF : valid_bytes_in_last_beat = 4;
+        default: valid_bytes_in_last_beat = 4;
+    endcase
+    
+    padding_bytes = 4 - valid_bytes_in_last_beat;
+    
+    `uvm_info("TKEEP_ADJUST", 
+              $sformatf("Last beat: valid_bytes=%0d, padding_bytes=%0d", 
+                       valid_bytes_in_last_beat, padding_bytes), 
+              UVM_MEDIUM)
+
+    // Remove padding bytes from the end
+    repeat(padding_bytes) void'(byte_stream.pop_back());
+
+    `uvm_info("BYTE_STREAM_AFTER", 
+              $sformatf("After TKEEP adjustment: %0d bytes", byte_stream.size()), 
+              UVM_HIGH)
+
+
+    if (byte_stream.size() >= 14) begin 
+        // Remove 2-byte TCI (bytes 12-13) and insert 1-byte VCID
+        byte_stream.delete(12); // Remove TCI High byte
+        byte_stream.delete(12); // Remove TCI Low byte  
+        byte_stream.insert(12, vcid); // Insert VCID
         
-        `uvm_info("FRAME_MODIFY", 
-                  $sformatf("Replaced TCI with VCID=%0h, New frame length: %0d bytes", 
+        `uvm_info("VCID_INSERT", 
+                  $sformatf("Replaced TCI with VCID=%0h, New frame: %0d bytes", 
                            vcid, byte_stream.size()), 
                   UVM_LOW)
     end else begin
-        `uvm_error("FRAME_TOO_SHORT", $sformatf("Frame too short for VCID insertion. Size: %0d bytes", byte_stream.size()))
+        `uvm_error("FRAME_TOO_SHORT", "Frame too short for VCID insertion")
         return null;
     end
+
     
-    // Convert byte stream back to tdata_q (32-bit words)
     modified_tdata.tdata_q.delete();
-    { >> { modified_tdata.tdata_q }} = { >> { byte_stream }};
-    
-    // Adjust tkeep_q for the new frame size (1 byte shorter)
     modified_tdata.tkeep_q.delete();
-    foreach (modified_tdata.tdata_q[i]) begin
-        if (i == modified_tdata.tdata_q.size() - 1) begin
-            // Last word might have partial bytes
-            int bytes_in_last_word = byte_stream.size() % 4;
-            if (bytes_in_last_word == 0) bytes_in_last_word = 4;
-            modified_tdata.tkeep_q.push_back(bytes_in_last_word);
-        end else begin
-            modified_tdata.tkeep_q.push_back(4'hF); // All bytes valid
-        end
+
+    while(byte_stream.size() > 0) begin
+        bit [31:0] new_word = 0;
+        bit [3:0]  new_keep = 0;
+        int bytes_to_pop;
+
+     bytes_to_pop = (byte_stream.size() >= 4) ? 4 : byte_stream.size();
+
+for (int j = 0; j < bytes_to_pop; j++) begin
+    case(j)
+        0: new_word[31:24] = byte_stream[0];
+        1: new_word[23:16] = byte_stream[0];  
+        2: new_word[15:8]  = byte_stream[0];
+        3: new_word[7:0]   = byte_stream[0];
+    endcase
+    byte_stream.delete(0);
+end        // Set TKEEP based on actual valid bytes
+        case(bytes_to_pop)
+            1: new_keep = 4'h1; // Only byte 0 valid: 0001
+            2: new_keep = 4'h3; // Bytes 0-1 valid: 0011  
+            3: new_keep = 4'h7; // Bytes 0-2 valid: 0111
+            4: new_keep = 4'hF; // All bytes valid: 1111
+        endcase
+        
+        // Swap to Little Endian for AXI bus
+        new_word = {<<8{new_word}};
+
+        modified_tdata.tdata_q.push_back(new_word);
+        modified_tdata.tkeep_q.push_back(new_keep);
+
+        `uvm_info("WORD_PACK", 
+                  $sformatf("Word[%0d]: DATA=%08h, TKEEP=%01h, bytes=%0d", 
+                           modified_tdata.tdata_q.size()-1, new_word, new_keep, bytes_to_pop), 
+                  UVM_HIGH)
     end
     
+    `uvm_info("MODIFIED_DEBUG", 
+              $sformatf("Modified: %0d words, Last word: %08h, Last TKEEP: %01h", 
+                       modified_tdata.tdata_q.size(),
+                       modified_tdata.tdata_q[modified_tdata.tdata_q.size()-1],
+                       modified_tdata.tkeep_q[modified_tdata.tkeep_q.size()-1]), 
+              UVM_HIGH)
+    `uvm_info("OUTPUT_DEBUG", "=== MODIFIED TRANSACTION (AFTER PROCESSING) ===", UVM_LOW)
+    `uvm_info("OUTPUT_DEBUG", $sformatf("Total words: %0d", modified_tdata.tdata_q.size()), UVM_LOW)
+    `uvm_info("OUTPUT_DEBUG", $sformatf("Last word: %08h", modified_tdata.tdata_q[modified_tdata.tdata_q.size()-1]), UVM_LOW)
+    `uvm_info("OUTPUT_DEBUG", $sformatf("Last TKEEP: %01h", modified_tdata.tkeep_q[modified_tdata.tkeep_q.size()-1]), UVM_LOW)
+    
+    foreach(modified_tdata.tdata_q[i]) begin
+        `uvm_info("OUTPUT_DEBUG", 
+                  $sformatf("Word[%0d]: DATA=%08h, TKEEP=%01h", 
+                           i, modified_tdata.tdata_q[i], modified_tdata.tkeep_q[i]), 
+                  UVM_LOW)
+    end
+    
+    $display("INSIDE TDATA FUNCTION");
+     modified_tdata.print();
     return modified_tdata;
-endfunction*/
+endfunction
+
+
+
     function emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) get_rx_expected(
         emac_tx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) valid_expected_pkt,
         bit [7:0] vcid
@@ -677,11 +790,11 @@ endfunction*/
         return expected_pkt;
     endfunction
 
-int total_pkts_received;        // Grand total received across all ports
-int total_conn_invalid_drop;    // Total dropped due to invalid config
-int total_crc_drop;             // FIX: Declared here
-int expected_out_port[NUM_PORTS]; // FIX: Declared here
-int actual_out_port[NUM_PORTS];   // FIX: Declared here
+int total_pkts_received;     
+int total_conn_invalid_drop;  
+int total_crc_drop;            
+int expected_out_port[NUM_PORTS];
+int actual_out_port[NUM_PORTS];  
 // Inside class emac_tx2rx_ref_model
 
 function void final_phase(uvm_phase phase);
