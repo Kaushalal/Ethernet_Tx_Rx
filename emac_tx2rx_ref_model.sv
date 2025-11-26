@@ -7,7 +7,19 @@
   localparam NUM_PORTS = 3;
   localparam PAYLOAD_DATA_WIDTH = 8;
   localparam FRAME_DATA_WIDTH = 32;
+//------------------------------------------------------------------------------------------//
+//port0_imp THIS PORT OF REF MODEL CONNECTS WITH MAC TX MON
+//JUST LIKE THIS PORT1 AND PORT2 ALSO COONECT WITH THAT
+// I WRITE METHOD FOR THAT AT LINE NO 182* METHOD NAME IS (write_tx_port3) and so on..
+// NOW FOR TDATA I COONECT AXI STREAM VIP MONITOR DIRECTLY CONNECTED WITH REF MODEAL
+//CONNECTION OF THAT.. (port0_tdata_imp) THE WRITE METHOD FOR IT IS ON (write_tdata_port0) LINE NO 125*
 
+//NOW CONNECTION FOR SCOREBOARD
+//expected_port3 FOR FRAME COONECT WITH SCOREBOARD ANAYLYSIS IMP PORT (YOU CAN FINE WRITE AT VCID FATCH TASK)
+//tdata_expected_port3 FOR TDATA CONNECT WITH ANAYLYSIS IMP PORT (YOU CAN FIND WRITE AT VCID FATCH TASK)
+
+//OTHER REMAINING PORTS ARE NOT USED YET.
+//..........................................................................................//
 class emac_tx2rx_ref_model extends uvm_scoreboard;
     `uvm_component_utils(emac_tx2rx_ref_model)
     int tdata_ref;
