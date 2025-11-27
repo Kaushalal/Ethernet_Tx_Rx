@@ -1,0 +1,13 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+COV_EN	makefile	/^COV_EN=0$/;"	m
+INCDIR	makefile	/^INCDIR = +incdir+..\/RTL +incdir+..\/RTL\/Interface +incdir+..\/ENV +incdir+..\/TEST +incdir+..\/ENV\/MASTER_AGENT +incdir+..\/ENV\/SLAVE_AGENT +incdir+..\/ENV\/MAC_TX_AGENT +incdir+..\/ENV\/EMAC_RX +incdir+..\/ENV\/AXI_4_RAL\/AXI_4_AGENT +incdir+..\/ENV\/AXI_Master_Register_file +incdir+..\/TOP$/;"	m
+PKG	makefile	/^PKG= ..\/ENV\/MASTER_AGENT\/axi_str_mas_pkg.sv ..\/ENV\/SLAVE_AGENT\/axi_str_slv_pkg.sv ..\/ENV\/MAC_TX_AGENT\/mac_tx_pkg.svh ..\/ENV\/EMAC_RX\/emac_rx_pkg.sv ..\/ENV\/AXI_4_RAL\/AXI_M_AGENT\/axi_mpkg.svh ..\/ENV\/AXI_4_RAL\/AXI_Master_Register_file\/axi_4_ral_pkg.svh ..\/ENV\/mac_to_axi_s_env_pkg.svh ..\/TEST\/mac_to_axi_s_test_pkg.svh $/;"	m
+RTL	makefile	/^RTL= ..\/RTL\/e_mac_tx2_rx_top.sv$/;"	m
+TEST	makefile	/^TEST = mac_to_axi_s_base_test$/;"	m
+TOP	makefile	/^TOP= mac_to_axi_s_top$/;"	m
+TOP_DIR	makefile	/^TOP_DIR= ..\/TOP\/mac_to_axi_s_top.sv$/;"	m

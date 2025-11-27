@@ -25,7 +25,7 @@ package mac_to_axi_s_env_pkg;
    import axi_str_slv_pkg::*;
  
    import mac_tx_pkg::*;
-   import emac_rx_pkg::*;
+   import mac_rx_pkg::*;
    
    import axi_4_ral_pkg::*;
    
@@ -42,7 +42,10 @@ package mac_to_axi_s_env_pkg;
   `include "axi_4_muvc.svh"
   
   `include "mac_tx_uvc.svh"
-  `include "emac_rx_uvc.sv"
+  `include "mac_rx_uvc.sv"
+  
+ // `include "emac_tx2rx_ref_model.sv"
+ // `include "emac_tx2rx_scrbrd.sv"
   
   `include "mac_to_axi_s_env.svh"
 

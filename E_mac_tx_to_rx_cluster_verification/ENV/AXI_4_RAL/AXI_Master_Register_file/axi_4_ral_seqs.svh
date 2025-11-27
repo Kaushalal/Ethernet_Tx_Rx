@@ -47,7 +47,7 @@ class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
  task body();
    uvm_status_e status;
 
-   int unsigned conn_cfg_addr;
+   bit[14:0] conn_cfg_addr;
 
    conn_cfg_addr = {port_id,vlan};
    
@@ -79,14 +79,14 @@ class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
   //--------------------------------------------------------------------------------------------------------------//
    
    axi_4_reg_block_h.crc_reg_h[connection_id].crc_reg_field.write(status,crc_val);
-   `uvm_info("REG : CRC_REG  ",$sformatf("FEILDS : crc_reg : %0d ",crc_val),UVM_MEDIUM)
+   `uvm_info("REG : CRC_REG  ",$sformatf("FEILDS : crc_reg : %h ",crc_val),UVM_MEDIUM)
   
   //--------------------------------------------------------------------------------------------------------------//
   //STEP -2  : VCID -> addr - connection_id
   //--------------------------------------------------------------------------------------------------------------//
   
-   axi_4_reg_block_h.vcid_reg_h[connection_id].vcid.write(status,vcid_val);
-   `uvm_info("REG : VCID_REG  ",$sformatf("FEILDS : vcid_reg : %0d ",vcid_val),UVM_MEDIUM)
+   axi_4_reg_block_h.vcid_reg_h[connection_id].write(status,{24'b0,vcid_val});
+   `uvm_info("REG : VCID_REG  ",$sformatf("FEILDS : vcid_reg : %h ",vcid_val),UVM_MEDIUM)
 
  endtask   
 

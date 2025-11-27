@@ -54,6 +54,8 @@ class mac_to_axi_s_sanity_test extends mac_to_axi_s_base_test;
 	task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 	       mac_vseqs.start(env_h.vseqr_h);
+
+           #2000;
 		phase.drop_objection(this);
 	endtask
     

@@ -26,7 +26,7 @@ class mac_tx_seq_item extends uvm_sequence_item;
 
   rand byte unsigned payload_q[$];
 
-  rand bit [3:0][7:0] fcs;
+//  rand bit [3:0][7:0] fcs;
 
   rand bit [1:0][7:0] tci;
 
@@ -43,16 +43,20 @@ class mac_tx_seq_item extends uvm_sequence_item;
 
     `uvm_field_queue_int (payload_q, UVM_ALL_ON | UVM_HEX )
 
-    `uvm_field_int (fcs, UVM_ALL_ON | UVM_HEX )
+//    `uvm_field_int (fcs, UVM_ALL_ON | UVM_HEX )
   `uvm_object_utils_end 
 
   constraint payload_size_c1 { soft payload_q.size() inside { [46:1500] }; }
   
   constraint Etype_c { soft Etype inside { 16'h0800, 16'h8100 }; }
+  
+  constraint pri_c { soft pri == 0; }
+  
+  constraint dei_c { soft dei == 0; }
 
   function void post_randomize();
     tci = {>>{ dei,pri,vlan } };
-    `uvm_info("TCI_DETIALS",$sformatf(" dei = %b || pri = %b || vlan = %b || tci = %b ",dei,pri,vlan,tci),UVM_FULL);
+    `uvm_info("TCI_DETIALS",$sformatf(" dei = %b || pri = %b || vlan = %b || tci = %b ",dei,pri,vlan,tci),UVM_MEDIUM);
 
     if(payload_q.size < 46) begin
         do begin 
