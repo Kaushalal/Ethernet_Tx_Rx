@@ -125,7 +125,7 @@
       foreach (act_que[i,j]) begin
          if (act_que[i][j].size() != 0)
             `uvm_error(get_name(), $sformatf("%0d actual transactions not compared for id=%0h",
-                                             act_que[i][j].size(), i))
+   act_que[i][j].size(), i))
       end
       `uvm_info("SCOREBOARD", $sformatf("Final Result: PASS=%0d FAIL=%0d", pass_cnt, fail_cnt), UVM_LOW);
 
