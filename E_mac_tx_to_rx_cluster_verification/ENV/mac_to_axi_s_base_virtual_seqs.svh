@@ -30,7 +30,7 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
                   
    rand bit [3:0]   temp_out_port_sel;
    rand bit [31:0]  temp_crc_val;
-   rand bit [7:0]   temp_vcid_val;
+   rand bit [7:0]   temp_vcid_val[int][int];
    
   
    function new(string name = "mac_to_axi_s_base_virtual_seqs", int no_of_seqs = 1, int no_of_ports = 3);
@@ -40,6 +40,13 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
       mac_tx_seqs[5]   = new[no_of_seqs];
       mac_tx_seqr_h = new[no_of_ports];
       conn_cfg_seqs = new("conn_cfg_seqs");
+   endfunction
+
+////---------------------------------------------------------------------------------////
+////              Function to collect vcid id 
+////---------------------------------------------------------------------------------////
+   function void collect_vcid( bit[2:0] port_id, bit[4:0] conn_id, bit[7:0] vcid );
+      temp_vcid_val[port_id][conn_id] = vcid;
    endfunction
 
 ////---------------------------------------------------------------------------------////
@@ -68,6 +75,7 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
             
             conn_cfg_seqs.start(null);
             
+            collect_vcid( conn_cfg_seqs.port_id,conn_cfg_seqs.connection_id, conn_cfg_seqs.vcid_val );
             collect_vlan_id( conn_cfg_seqs.port_id, conn_cfg_seqs.vlan );
             collect_conn_id( conn_cfg_seqs.port_id, conn_cfg_seqs.connection_id );
             
