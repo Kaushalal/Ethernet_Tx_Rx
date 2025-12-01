@@ -11,7 +11,7 @@
 `ifndef TX2RX_CLUSTER_SCOREBOARD
 `define TX2RX_CLUSTER_SCOREBOARD
 
-typedef bit [`DATA_WIDTH] tdata_q_array_type[$];
+typedef bit [`AXI_STR_DATA_SIZE] tdata_q_array_type[$];
 
    `include"final_out_of_order_scr_emac.sv"
 
@@ -35,7 +35,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    `uvm_component_utils_end
 
    //For tdata comparison 
-   uvm_out_oder_scorboard_lib#( bit [`DATA_WIDTH] ,int)    scrbd;
+   uvm_out_oder_scorboard_lib#( bit [`AXI_STR_DATA_SIZE] ,int)    scrbd;
 
    //For frame comparison 
    uvm_out_oder_scorboard_lib#( bit [47:0] ,int)           scrbd_da;
@@ -57,7 +57,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
             super.new(name, parent);
 
             if(tdata_comparison)
-	       scrbd           = uvm_out_oder_scorboard_lib#(bit [`DATA_WIDTH],int)::type_id::create("scrbd",this); 
+	       scrbd           = uvm_out_oder_scorboard_lib#(bit [`AXI_STR_DATA_SIZE],int)::type_id::create("scrbd",this); 
             if(frame_comparison) 
 	       begin
 	       scrbd_da        = uvm_out_oder_scorboard_lib#(bit [47:0],int)::type_id::create("scrbd_da",this); 
