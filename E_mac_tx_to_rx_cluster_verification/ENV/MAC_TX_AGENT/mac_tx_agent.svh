@@ -16,10 +16,9 @@ class mac_tx_agent extends uvm_agent;
 
    `uvm_component_utils(mac_tx_agent)
    
-   mac_tx_cfg mac_tx_cfg_h;
-   // MAC components 
-   mac_tx_seqr mac_tx_seqr_h;
-   mac_tx_mon mac_tx_mon_h;
+   mac_tx_cfg       mac_tx_cfg_h;
+   mac_tx_seqr      mac_tx_seqr_h;
+   mac_tx_mon       mac_tx_mon_h;
 
    // Conversion seqs 
    mac_to_axi_s_conv_seqs conv_seqs;

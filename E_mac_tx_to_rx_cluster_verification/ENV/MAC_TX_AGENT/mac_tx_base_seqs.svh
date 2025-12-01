@@ -23,7 +23,7 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
 
   rand bit [7:0][1:0] temp_Etype;
 
-  rand bit [11:0] vlan_q[$];
+  randc bit [11:0] vlan_q[$];
   
   rand int min_payload_size;
   rand int max_payload_size;
@@ -43,11 +43,11 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   endfunction
 
   task body ();
+  `uvm_create(mac_pkt);
   
   repeat(no_of_packet) begin
       
-     `uvm_create(mac_pkt);
-     `uvm_do_with( mac_pkt, { payload_q.size inside { [min_payload_size:max_payload_size] };
+     `uvm_rand_send_with( mac_pkt, { payload_q.size inside { [min_payload_size:max_payload_size] };
                                 sa    == temp_sa;
                                 da    == temp_da;
                                 Etype == temp_Etype;

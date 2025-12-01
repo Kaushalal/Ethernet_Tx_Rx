@@ -1,31 +1,46 @@
-`ifndef MAC_RX_UVC
-`define MAC_RX_UVC
+`ifndef EMAC_RX_UVC_SV
+`define EMAC_RX_UVC_SV
 
-class mac_rx_uvc extends uvm_component;
-    `uvm_component_utils(mac_rx_uvc)
-	 
-     mac_rx_cfg mac_rx_cfg_h[];
-	 mac_rx_cfg mac_rx_config;
-     
-     mac_rx_agent mac_rx_agent_h[];
-     
-     function new (string name="",uvm_component parent);
-        super.new(name,parent);
-     endfunction
+class mac_rx_uvc extends uvm_agent; 
 
-     function void build_phase(uvm_phase phase);
-      if(!uvm_config_db #(mac_rx_cfg)::get(this,"","no_master",mac_rx_config))
-        `uvm_warning(get_full_name(),"number of master default value")
-        mac_rx_cfg_h=new[mac_rx_config.no_of_mac_rx];
-        mac_rx_agent_h=new[mac_rx_config.no_of_mac_rx];
-       
-       foreach(mac_rx_cfg_h[i]) begin
-        mac_rx_cfg_h[i] = mac_rx_cfg::type_id::create($sformatf("mac_rx_cfg_h[%0d]",i));
-        mac_rx_agent_h[i] = mac_rx_agent::type_id::create($sformatf("mac_rx_agent_h[%0d]",i),this);
-    //    mas_cfg[i].id = i;
-        mac_rx_cfg_h[i].is_active = mac_rx_config.is_active;
-        uvm_config_db #(mac_rx_cfg)::set(uvm_root::get(),$sformatf("*mac_rx_agent_h[%0d]*",i),"rx_cfg",mac_rx_cfg_h[i]);
-      end
-     endfunction
-endclass
+   parameter int PAYLOAD_DATA_WIDTH = 8;
+   parameter int FRAME_DATA_WIDTH = 32;
+   
+   //config settings
+   emac_rx_config rx_cfg;
+   
+   emac_rx_config rx_config[];
+
+   //agent 
+   emac_rx_agent#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) rx_agent[];
+
+  `uvm_component_utils_begin(mac_rx_uvc)
+  `uvm_component_utils_end 
+   
+   function new (string name="emac_rx_uvc", uvm_component parent=null); 
+      super.new(name,parent); 
+   endfunction: new 
+   
+   function void build_phase(uvm_phase phase);
+      if (!uvm_config_db#(emac_rx_config)::get(this,"","no_ports",rx_cfg)) begin
+    		`uvm_warning(get_full_name(), "rx_cfg not found in config_db , using default configuration")
+    		rx_cfg = emac_rx_config::type_id::create("rx_cfg");
+    		rx_cfg.no_of_ports = 1;
+ 	 	end
+
+		rx_config = new[rx_cfg.no_of_ports];
+		rx_agent = new[rx_cfg.no_of_ports];
+
+      foreach(rx_agent[i]) begin
+			rx_agent[i] = emac_rx_agent#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)::type_id::create($sformatf("rx_agent[%0d]",i),this);
+			rx_config[i] = emac_rx_config::type_id::create($sformatf("rx_config[%0d]",i),this);
+			rx_config[i].id = i;
+			rx_config[i].no_of_ports = rx_cfg.no_of_ports; 
+			uvm_config_db#(emac_rx_config)::set(uvm_root::get(),$sformatf("*rx_agent[%0d]*",i),"rx_cfg",rx_config[i]);
+		end
+   endfunction : build_phase
+	
+endclass : mac_rx_uvc
+
 `endif
+

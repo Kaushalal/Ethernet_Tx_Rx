@@ -4,7 +4,7 @@
 
 * Purpose : build and run sequence
 
-* Creation Date : 07-10-2025
+* Creation Date : 
 
 * Last Modified :
 
@@ -21,9 +21,10 @@ class mac_to_axi_s_base_test extends uvm_test;
   mac_to_axi_s_env_cfg env_cfg_h;
   mac_to_axi_s_env env_h;
   
-  axi_str_mas_base_seqs#(32,32) master_seq;
-
-  `uvm_component_utils(mac_to_axi_s_base_test) 
+   mac_to_axi_s_base_virtual_seqs mac_vseqs; 
+   mac_to_axi_s_virtual_seqr mac_vseqr;
+   
+   `uvm_component_utils(mac_to_axi_s_base_test) 
    
    function new (string name="axi_str_mas_base_test", uvm_component parent=null); 
       super.new(name,parent); 
@@ -42,9 +43,6 @@ class mac_to_axi_s_base_test extends uvm_test;
      env_h = mac_to_axi_s_env::type_id::create("env_h",this);
      env_cfg_h = mac_to_axi_s_env_cfg::type_id::create("env_cfg_h");
      
-     //// Base seqs of master axi_str agent 
-     master_seq = axi_str_mas_base_seqs#(32,32) ::type_id::create("master_seq");
-
      //// AXI_STR master config for ENV 
      env_cfg_h.mas_axi_s_config.no_of_axis_mas = 3;
      env_cfg_h.mas_axi_s_config.is_active = UVM_ACTIVE;
@@ -57,8 +55,8 @@ class mac_to_axi_s_base_test extends uvm_test;
      env_cfg_h.mac_tx_cfg_h.no_of_tx_agent = 3;
      env_cfg_h.mac_tx_cfg_h.is_active = UVM_ACTIVE;
      
-     //// MAC_rx config for ENV
-     env_cfg_h.mac_rx_cfg_h.no_of_mac_rx = 3;
+       //// MAC_rx config for ENV
+     env_cfg_h.mac_rx_cfg_h.no_of_ports = 3;
      
      //// AXI_4_master_config for ENV
      env_cfg_h.axi_4_mcfg_h.magt_is_active = UVM_ACTIVE;
@@ -67,6 +65,20 @@ class mac_to_axi_s_base_test extends uvm_test;
      uvm_config_db #(mac_to_axi_s_env_cfg)::set(this,"*", "env_cfg", env_cfg_h);
    
    endfunction : build_phase
+
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+////           CONNECT_PHASE (topology)
+////----------------------------------------------------------------------/////
+////----------------------------------------------------------------------/////
+   
+   function void connect_phase(uvm_phase phase);
+     super.connect_phase(phase);
+     //  mac_vseqs.conn_cfg_seqs.axi_4_reg_block_h = env_h.axi_4_reg_block_h; 
+     // Insteed of manually pointing the reg_block in every test we simply call super.connect_phase ( in case of overriding ).
+
+     uvm_config_db#(axi_4_reg_block)::set(null,"", "reg_block",env_h.axi_4_reg_block_h);
+   endfunction 
 
 ////----------------------------------------------------------------------/////
 ////----------------------------------------------------------------------/////
@@ -86,7 +98,10 @@ class mac_to_axi_s_base_test extends uvm_test;
 	
     task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
-	       master_seq.start(env_h.axi_str_muvc_h.master_agent[0].master_seqr);
+           mac_vseqs = mac_to_axi_s_base_virtual_seqs::type_id::create("mac_vseqs");
+	       mac_vseqs.start(env_h.vseqr_h);
+
+           #2000;
 		phase.drop_objection(this);
 	endtask
 

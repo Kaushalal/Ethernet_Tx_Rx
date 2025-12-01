@@ -33,7 +33,7 @@ class mac_to_axi_s_env extends uvm_env;
    mac_tx_cfg mac_tx_cfg_h;
    
    //// Config class of mac_rx 
-   mac_rx_cfg mac_rx_cfg_h;
+   emac_rx_config mac_rx_cfg_h;
 
    ////Config class of env
    mac_to_axi_s_env_cfg env_cfg_h;
@@ -50,9 +50,9 @@ class mac_to_axi_s_env extends uvm_env;
    //// AXI_4 config
    axi_magt_cfg axi_4_mcfg_h;
    
-   //// REF_MODEL and SCORE_BOARD 
-  // emac_tx2rx_scrbd mac_tx_to_rx_scrbrd_h;
-  // emac_tx2rx_ref_model mac_tx_to_rx_ref_model_h;
+ //// REF_MODEL and SCORE_BOARD 
+   emac_tx2rx_scrbd                   mac_tx_to_rx_scrbrd_h;
+   emac_tx2rx_ref_model               mac_tx_to_rx_ref;
 
 ////----------------------------------------------------------------------/////
 ////----------------------------------------------------------------------/////
@@ -71,9 +71,10 @@ class mac_to_axi_s_env extends uvm_env;
 ////----------------------------------------------------------------------/////
    function void build_phase(uvm_phase phase);
      super.build_phase(phase);
-      
-   //   mac_tx_to_rx_scrbrd_h = emac_tx2rx_scrbd::type_id::create("mac_tx_to_rx_scrbrd_h",this);
-   //   mac_tx_to_rx_ref_model_h = emac_tx2rx_ref_model::type_id::create("mac_tx_to_rx_ref_model_h",this);
+  
+    mac_tx_to_rx_scrbrd_h = emac_tx2rx_scrbd::type_id::create("mac_tx_to_rx_scrbrd_h",this);
+     mac_tx_to_rx_ref    = emac_tx2rx_ref_model::type_id::create("mac_tx_to_rx_ref",this);
+     uvm_config_db#(int)::set(this,"*","ref_type",0);
       
       //// All uvc's
       axi_str_suvc_h = axi_str_slv_uvc::type_id::create("axi_str_suvc_h",this);
@@ -110,7 +111,7 @@ class mac_to_axi_s_env extends uvm_env;
      mac_tx_cfg_h = mac_tx_cfg ::type_id::create("mac_tx_cfg_h");
      
      //// MAC_rx Config class
-     mac_rx_cfg_h = mac_rx_cfg ::type_id::create("mac_rx_cfg_h");
+    mac_rx_cfg_h = emac_rx_config ::type_id::create("mac_rx_cfg_h");
      
      //// Setting config for no_of_mac_tx_agent and there type 
      mac_tx_cfg_h.no_of_tx_agent = env_cfg_h.mac_tx_cfg_h.no_of_tx_agent;
@@ -119,9 +120,9 @@ class mac_to_axi_s_env extends uvm_env;
      uvm_config_db #(mac_tx_cfg)::set(this,"*", "no_tx_agent", mac_tx_cfg_h);
      
      //// Setting config for no_of_mac_rx_agent and there type 
-     mac_rx_cfg_h.no_of_mac_rx = env_cfg_h.mac_rx_cfg_h.no_of_mac_rx;
+     mac_rx_cfg_h.no_of_ports = env_cfg_h.mac_rx_cfg_h.no_of_ports;
      
-     uvm_config_db #(mac_rx_cfg)::set(this,"*", "no_master", mac_rx_cfg_h);
+     uvm_config_db #(emac_rx_config)::set(this,"*", "no_ports", mac_rx_cfg_h);
 
      //// AXI_4 agent for register  
      axi_4_mcfg_h = axi_magt_cfg::type_id::create("axi_4_mcfg_h");
@@ -146,25 +147,35 @@ class mac_to_axi_s_env extends uvm_env;
 
    function void connect_phase(uvm_phase phase);
      super.connect_phase(phase);
+
+      //                  ------   SCOREBOARD CONNECTION AND REF_MODEL CONNECTION
+
+      foreach( mac_rx_uvc_h.rx_agent[i] )  mac_rx_uvc_h.rx_agent[i].rx_mon.rxmon_analysis_port.connect(mac_tx_to_rx_scrbrd_h.act_frame_mon_port[i]);
+      foreach( axi_str_suvc_h.slave_agent[i]) axi_str_suvc_h.slave_agent[i].slave_mon.item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_tdata_mon_port[i]);
+
+      foreach( mac_tx_to_rx_ref.frame_scrbd_port[i])mac_tx_to_rx_ref.frame_scrbd_port[i].connect(mac_tx_to_rx_scrbrd_h.exp_frame_ref_port[i]);
+      foreach( mac_tx_to_rx_ref.tdata_scrbd_port[i])mac_tx_to_rx_ref.tdata_scrbd_port[i].connect(mac_tx_to_rx_scrbrd_h.exp_tdata_ref_port[i]);
+
+       axi_str_muvc_h.master_agent[0].master_mon.item_collected_port.connect(mac_tx_to_rx_ref.tdata_port0_imp);
+       axi_str_muvc_h.master_agent[1].master_mon.item_collected_port.connect(mac_tx_to_rx_ref.tdata_port1_imp);
+       axi_str_muvc_h.master_agent[2].master_mon.item_collected_port.connect(mac_tx_to_rx_ref.tdata_port2_imp);
+       
+       mac_tx_uvc_h.mac_tx_agent_h[0].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.frame_port0_imp);
+       mac_tx_uvc_h.mac_tx_agent_h[1].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.frame_port1_imp);
+       mac_tx_uvc_h.mac_tx_agent_h[2].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.frame_port2_imp);
+     
+     
+       mac_tx_to_rx_ref.ral = axi_4_reg_block_h; 
+
    
      //// MAC_TX to AXI_STR sequencer connection 
      foreach( mac_tx_uvc_h.mac_tx_agent_h[i] )begin
        mac_tx_uvc_h.mac_tx_agent_h[i].connect_to_dut_agent(axi_str_muvc_h.master_agent[i]);
     end
      
-   /*    mac_tx_uvc_h.mac_tx_agent_h[0].mac_tx_mon_port.connect(mac_tx_to_rx_ref_model_h.port0_imp);
-       mac_tx_uvc_h.mac_tx_agent_h[1].mac_tx_mon_port.connect(mac_tx_to_rx_ref_model_h.port1_imp);
-       mac_tx_uvc_h.mac_tx_agent_h[2].mac_tx_mon_port.connect(mac_tx_to_rx_ref_model_h.port2_imp);
-     
-     mac_tx_to_rx_ref_model_h.ral = axi_4_reg_block_h; 
-     
-     foreach( axi_str_suvc_h.slave_agent[i] )begin
-       axi_str_suvc_h.slave_agent[i].item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_mon_port[i]);
-     end   */
-     
      //// MAC_RX to AXI_STR sequencer connection 
-     foreach( mac_rx_uvc_h.mac_rx_agent_h[i] )begin
-       mac_rx_uvc_h.mac_rx_agent_h[i].connect_to_axis_slave_mon(axi_str_suvc_h.slave_agent[i]);
+    foreach( mac_rx_uvc_h.rx_agent[i]  )begin
+       mac_rx_uvc_h.rx_agent[i].connect_to_axi_str_slv_agnt(axi_str_suvc_h.slave_agent[i]);
      //// axi_str_suvc_h.slave_agent[i].item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_mon_port[i]);
      end
 

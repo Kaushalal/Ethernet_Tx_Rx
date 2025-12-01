@@ -1,3 +1,13 @@
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+*	File_Name     : emac_rx_config.sv
+*	Purpose       : This class is used by the EMAC RX agent (emac_rx_agent) to 
+						 configure how many ports to monitor and their IDs. It is 
+						 typically set in the uvm_config_db for agent instantiation.
+*  Created By    : Meet_Patel
+
+-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
+
 `ifndef EMAC_RX_CONFIG_SV
 `define EMAC_RX_CONFIG_SV
 

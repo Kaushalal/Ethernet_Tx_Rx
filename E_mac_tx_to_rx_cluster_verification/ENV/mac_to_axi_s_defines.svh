@@ -20,5 +20,7 @@
 `define AXI_4_ID_SIZE 8
 `define RX_PAYLOAD_DATA_WIDTH 8
 `define RX_FRAME_DATA_WIDTH 32
+`define NO_OF_OUTPUT_PORT   3
+
 
 `endif

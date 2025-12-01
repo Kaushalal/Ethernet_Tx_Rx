@@ -43,7 +43,7 @@ class axi_non_pipeline_mdrv #(int DATA_WIDTH = 16 , ADD_WIDTH = 8) extends uvm_d
 
       wait( mvif.areset === 1'b1);
       seq_item_port.get_next_item( mseq_item );
-      mseq_item.print();
+      `uvm_info("AXI_4_CONNECTION_CONFIGURATION",mseq_item.sprint(),UVM_FULL);
 
       if ( mseq_item.operation == SIM_WR ) begin
       pending_transaction_wadr.push_back(mseq_item);
@@ -64,7 +64,7 @@ class axi_non_pipeline_mdrv #(int DATA_WIDTH = 16 , ADD_WIDTH = 8) extends uvm_d
       
       $cast(write_resp_arr[ mseq_item.awid ],mseq_item.clone());
       write_resp_arr[ mseq_item.awid ].set_id_info(mseq_item);
-      $display($time," MASTER DRIVER RAISE OBJ [WRITE] ");
+      //$display($time," MASTER DRIVER RAISE OBJ [WRITE] ");
       phase.raise_objection (this, " Raise Objection At Master Driver [WRITE] ");
       
       drop_obj_write.wait_trigger();
@@ -76,7 +76,7 @@ class axi_non_pipeline_mdrv #(int DATA_WIDTH = 16 , ADD_WIDTH = 8) extends uvm_d
       
       $cast(read_resp_arr[ mseq_item.arid ],mseq_item.clone());
       read_resp_arr[ mseq_item.arid ].set_id_info(mseq_item);
-      $display($time," MASTER DRIVER RAISE OBJ [READ] ");
+      //$display($time," MASTER DRIVER RAISE OBJ [READ] ");
       phase.raise_objection (this, " Raise Objection At Master Driver [READ] ");
       
       drop_obj_read.wait_trigger();
@@ -231,7 +231,7 @@ endtask
       
       write_resp_arr[ mvif.mdrv_cb.bid ].bid   = mvif.mdrv_cb.bid;
       write_resp_arr[ mvif.mdrv_cb.bid ].bresp = mvif.mdrv_cb.bresp;
-      $display($time," MASTER DRIVER WRITE RESPONSE ");
+      //$display($time," MASTER DRIVER WRITE RESPONSE ");
       //rsp.print();
       //seq_item_port.put_response(write_resp_arr[ mvif.mdrv_cb.bid ]);
       drop_obj_write.trigger();
@@ -258,7 +258,7 @@ endtask
       read_resp_arr[ mvif.mdrv_cb.rid ].rdata.push_back(mvif.mdrv_cb.rdata); 
       
       if ( mvif.mdrv_cb.rlast === 1'b1 )begin      
-      $display($time," MASTER DRIVER READ RESPONSE ");
+      //$display($time," MASTER DRIVER READ RESPONSE ");
       //seq_item_port.put_response(read_resp_arr[ mvif.mdrv_cb.rid ]);
       drop_obj_read.trigger();
       read_resp_arr.delete(mvif.mdrv_cb.rid);

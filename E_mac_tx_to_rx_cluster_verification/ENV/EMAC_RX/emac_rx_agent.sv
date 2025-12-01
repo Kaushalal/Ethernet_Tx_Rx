@@ -1,3 +1,13 @@
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+*	File_Name     : emac_rx_agent.sv
+*	Purpose       : Implements the EMAC RX agent, which contains the RX monitor 
+						 and configuration, and connects to the AXI-Stream slave agent 
+						 to capture and process received Ethernet frame data.
+*  Created By    : Meet_Patel
+
+-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
+
 `ifndef EMAC_RX_AGENT_SV
 `define EMAC_RX_AGENT_SV
 

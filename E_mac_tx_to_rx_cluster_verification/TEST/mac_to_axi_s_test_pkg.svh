@@ -22,11 +22,15 @@ package mac_to_axi_s_test_pkg;
 
    import axi_str_mas_pkg::*;
    import axi_str_slv_pkg::*;
- 
+   
+   import axi_4_ral_pkg::*;
+   
    import mac_tx_pkg::*;
+   
    import mac_to_axi_s_env_pkg::*;
   
   `include "mac_to_axi_s_base_test.svh"
+  `include "mac_tx_to_rx_sanity_vseqs.svh"
   `include "mac_to_axi_s_sanity_test.svh"
 
 endpackage 

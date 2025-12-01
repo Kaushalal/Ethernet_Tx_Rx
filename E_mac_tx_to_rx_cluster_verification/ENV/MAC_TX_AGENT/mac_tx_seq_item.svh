@@ -18,7 +18,7 @@ class mac_tx_seq_item extends uvm_sequence_item;
   rand bit [5:0][7:0] da;
   rand bit [5:0][7:0] sa;
 
-  rand bit [11:0] vlan;
+  randc bit [11:0] vlan;
   rand bit [2:0] pri;
   rand bit dei;
 
@@ -56,7 +56,7 @@ class mac_tx_seq_item extends uvm_sequence_item;
 
   function void post_randomize();
     tci = {>>{ dei,pri,vlan } };
-    `uvm_info("TCI_DETIALS",$sformatf(" dei = %b || pri = %b || vlan = %b || tci = %b ",dei,pri,vlan,tci),UVM_MEDIUM);
+    `uvm_info("TCI_DETIALS",$sformatf(" dei = %b || pri = %b || vlan = %b || tci = %b ",dei,pri,vlan,tci),UVM_DEBUG);
 
     if(payload_q.size < 46) begin
         do begin 

@@ -32,7 +32,7 @@ class mac_tx_mon extends uvm_monitor;
 
    function new( string name = "mac_tx_mon", uvm_component parent = null);
    super.new(name,parent);
-
+   mac_tx_mon_port = new("mac_tx_mon_port",this);
    mac_tx_mon_imp = new("mac_tx_mon_imp",this);
    endfunction
 
@@ -72,10 +72,10 @@ class mac_tx_mon extends uvm_monitor;
          end
      end  
 
-    `uvm_info("MAC_MON_MAC_PKT",mac_item.sprint(),UVM_MEDIUM)
+    `uvm_info("MAC_TX_MON_MAC_PKT",mac_item.sprint(),UVM_MEDIUM)
 
     //// WRITE to ref_model ( Expected item ) 
-//    mac_tx_mon_port.write(mac_item);
+        mac_tx_mon_port.write(mac_item);
 
    endfunction 
 

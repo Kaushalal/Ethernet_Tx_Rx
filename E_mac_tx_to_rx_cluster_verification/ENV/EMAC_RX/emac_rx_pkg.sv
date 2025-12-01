@@ -1,3 +1,12 @@
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+
+*	File_Name     : emac_rx_pkg.sv
+*	Purpose       : Provides all components and configuration for monitoring 
+						 and verifying received Ethernet frames in the EMAC RX VIP.
+*  Created By    : Meet_Patel
+
+-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
+
 package emac_rx_pkg;
 
 	localparam shortint USER_SIZE = 32;
@@ -7,7 +16,6 @@ package emac_rx_pkg;
 	import uvm_pkg::*;
 
 	//VIP
-	import axi_str_mas_pkg::*;
 	import axi_str_slv_pkg::*;
 
 	`include "emac_rx_config.sv"

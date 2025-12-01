@@ -83,7 +83,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
          if ( witem_arr[`MMON_CB.awid].wdata.size() == ( witem_arr[`MMON_CB.awid].awlen + 1 ) ) begin  // To ensure that all the data has also arrived 
            witem_arr[`MMON_CB.awid].operation = WRITE;  
            anl_mport.write( witem_arr[`MMON_CB.awid] );
-           $display($time," *** Master Monitor Write ADDR*** ");
+           //$display($time," *** Master Monitor Write ADDR*** ");
           //witem_arr[`MMON_CB.awid].print();
         end
        end
@@ -109,7 +109,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
      ritem_arr[`MMON_CB.arid].arburst = `MMON_CB.arburst;
      
      ritem_arr[`MMON_CB.arid].operation = READ;  
-     $display($time," *** Master Monitor READ ADDR *** ");
+     //$display($time," *** Master Monitor READ ADDR *** ");
      //ritem_arr[`MMON_CB.arid].print();
      anl_mport.write( ritem_arr[`MMON_CB.arid] );
 
@@ -135,7 +135,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
          if( witem_arr[`MMON_CB.wid].wid == witem_arr[`MMON_CB.wid].awid ) begin
              witem_arr[`MMON_CB.wid].operation = WRITE;  
              anl_mport.write( witem_arr[`MMON_CB.wid] );
-             $display($time," *** Master Monitor Write Data *** ");
+             //$display($time," *** Master Monitor Write Data *** ");
              //witem_arr[`MMON_CB.wid].print();
          end
        end 
@@ -185,7 +185,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
      witem_arr[`MMON_CB.bid].bresp = `MMON_CB.bresp;
          
      //anl_mport.write( witem_arr[`MMON_CB.bid] );
-     $display($time," *** Master Monitor Write Data with response *** ");
+    // $display($time," *** Master Monitor Write Data with response *** ");
      //witem_arr[`MMON_CB.bid].print();
      // Delete existing transaction from array 
      witem_arr.delete(`MMON_CB.bid);
@@ -205,7 +205,7 @@ class axi_mmon #(int DATA_WIDTH = 32 , ADD_WIDTH = 32) extends uvm_monitor;
       ritem_arr[`MMON_CB.rid].rdata.push_back(`MMON_CB.rdata); 
       if ( `MMON_CB.rlast === 1'b1 ) begin
            //anl_mport.write( ritem_arr[`MMON_CB.rid] );
-           $display($time," *** Master Monitor READ Data with response *** ");
+           //$display($time," *** Master Monitor READ Data with response *** ");
            //ritem_arr[`MMON_CB.rid].print();
            ritem_arr.delete(`MMON_CB.rid);
        end

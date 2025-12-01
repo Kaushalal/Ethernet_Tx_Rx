@@ -15,36 +15,13 @@
 class mac_to_axi_s_sanity_test extends mac_to_axi_s_base_test; 
  
   `uvm_component_utils(mac_to_axi_s_sanity_test) 
-  
-   mac_to_axi_s_base_virtual_seqs mac_vseqs; 
-   mac_to_axi_s_virtual_seqr mac_vseqr;
-
+   
+   mac_tx_to_rx_sanity_vseqs mac_sanity_vseqs;
+   
    function new (string name="axi_str_mas_base_test", uvm_component parent=null); 
       super.new(name,parent); 
    endfunction: new 
                    
-////----------------------------------------------------------------------/////
-////----------------------------------------------------------------------/////
-////                      BUILD PHASE
-////----------------------------------------------------------------------/////
-////----------------------------------------------------------------------/////
-
-   function void build_phase(uvm_phase phase);
-     super.build_phase(phase);
-     mac_vseqs = mac_to_axi_s_base_virtual_seqs::type_id::create("mac_vseqs");
-     mac_vseqr = mac_to_axi_s_virtual_seqr::type_id::create("mac_vseqr",this);
-   endfunction : build_phase
-
-////----------------------------------------------------------------------/////
-////----------------------------------------------------------------------/////
-////                      CONNECT PHASE
-////----------------------------------------------------------------------/////
-////----------------------------------------------------------------------/////
-
-    function void connect_phase(uvm_phase phase);
-       mac_vseqs.conn_cfg_seqs.axi_4_reg_block_h = env_h.axi_4_reg_block_h;
-    endfunction 
-   
 ////----------------------------------------------------------------------/////
 ////----------------------------------------------------------------------/////
 ////                      RUN PHASE
@@ -53,7 +30,9 @@ class mac_to_axi_s_sanity_test extends mac_to_axi_s_base_test;
 
 	task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
-	       mac_vseqs.start(env_h.vseqr_h);
+           //// Base virtual seqs 
+           mac_sanity_vseqs = mac_tx_to_rx_sanity_vseqs::type_id::create("mac_sanity_vseqs");
+	       mac_sanity_vseqs.start(env_h.vseqr_h);
 
            #2000;
 		phase.drop_objection(this);

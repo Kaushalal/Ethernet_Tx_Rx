@@ -16,7 +16,7 @@ class mac_to_axi_s_env_cfg extends uvm_object;
 
    //// Config class of mac_tx agent
    mac_tx_cfg mac_tx_cfg_h;
-   mac_rx_cfg mac_rx_cfg_h;
+  emac_rx_config mac_rx_cfg_h;
    
    //// Config class of axi_stream 
    axi_str_mas_config mas_axi_s_config; 
@@ -34,8 +34,7 @@ class mac_to_axi_s_env_cfg extends uvm_object;
       slv_axi_s_config = axi_str_slv_config::type_id::create("slv_axi_s_config");
       
       mac_tx_cfg_h = mac_tx_cfg ::type_id::create("mac_tx_cfg_h");
-      mac_rx_cfg_h = mac_rx_cfg ::type_id::create("mac_rx_cfg_h");
-      
+     mac_rx_cfg_h = emac_rx_config ::type_id::create("mac_rx_cfg_h");      
       axi_4_mcfg_h = axi_magt_cfg ::type_id::create("axi_4_mcfg_h");
    endfunction
 
