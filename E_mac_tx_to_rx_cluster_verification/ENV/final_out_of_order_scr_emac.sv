@@ -50,9 +50,8 @@
    // argument :- id, expected data
    // description :- API for pushing expected/actual data in queue array according to id
    // -----------------------------
-    virtual function void set_exp_buffer(id_type id, T exp_data );
-     // exp_que[id][exp_pkt_num] = exp_data;
-      exp_que[id][exp_pkt_num].push_back(exp_data);
+    virtual function void set_exp_buffer(id_type id, T exp_data [$]);
+      exp_que[id][exp_pkt_num] = exp_data;
 	  exp_pkt_num++;
 	  $display("[%s] SCRBRD EXPECTED : ID = %0d ",get_full_name(),id);
     endfunction
@@ -62,9 +61,8 @@
    // argument :- id, actual data
    // description :- API for pushing expected/actual data in queue array according to id
    // -----------------------------
-   virtual function void set_act_buffer(id_type id, T act_data );
-      //act_que[id][act_pkt_num] = act_data;
-      act_que[id][act_pkt_num].push_back(act_data);
+   virtual function void set_act_buffer(id_type id, T act_data [$] );
+      act_que[id][act_pkt_num] = act_data;
 	  act_pkt_num++;
       this.id = id;
       ev.trigger();
@@ -101,6 +99,9 @@
 
             exp_data = exp_que[id][pkt_num];
             act_data = act_que[id][pkt_num];
+
+            exp_que[id].delete(pkt_num);
+            act_que[id].delete(pkt_num);
 
             foreach(exp_data[i]) begin
 			  $display("================ Comaparing packet Number : 'd%0d ================",pkt_num);

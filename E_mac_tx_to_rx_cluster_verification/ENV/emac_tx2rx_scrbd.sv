@@ -11,7 +11,7 @@
 `ifndef TX2RX_CLUSTER_SCOREBOARD
 `define TX2RX_CLUSTER_SCOREBOARD
 
-typedef bit [`AXI_STR_DATA_SIZE] tdata_q_array_type[$];
+typedef bit [`DATA_WIDTH] tdata_q_array_type[$];
 
    `include"final_out_of_order_scr_emac.sv"
 
@@ -35,7 +35,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    `uvm_component_utils_end
 
    //For tdata comparison 
-   uvm_out_oder_scorboard_lib#( bit [`AXI_STR_DATA_SIZE] ,int)    scrbd;
+   uvm_out_oder_scorboard_lib#( bit [`DATA_WIDTH] ,int)    scrbd;
 
    //For frame comparison 
    uvm_out_oder_scorboard_lib#( bit [47:0] ,int)           scrbd_da;
@@ -56,12 +56,15 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
             super.new(name, parent);
 
-            scrbd           = uvm_out_oder_scorboard_lib#(bit [`AXI_STR_DATA_SIZE],int)::type_id::create("scrbd",this); 
-            scrbd_da        = uvm_out_oder_scorboard_lib#(bit [47:0],int)::type_id::create("scrbd_da",this); 
-            scrbd_sa        = uvm_out_oder_scorboard_lib#(bit [47:0],int)::type_id::create("scrbd_sa",this); 
-            scrbd_payload   = uvm_out_oder_scorboard_lib#(bit [7:0] ,int)::type_id::create("scrbd_payload",this); 
-            scrbd_etype     = uvm_out_oder_scorboard_lib#(bit [15:0],int)::type_id::create("scrbd_etype",this); 
-
+            if(tdata_comparison)
+	       scrbd           = uvm_out_oder_scorboard_lib#(bit [`DATA_WIDTH],int)::type_id::create("scrbd",this); 
+            if(frame_comparison) 
+	       begin
+	       scrbd_da        = uvm_out_oder_scorboard_lib#(bit [47:0],int)::type_id::create("scrbd_da",this); 
+               scrbd_sa        = uvm_out_oder_scorboard_lib#(bit [47:0],int)::type_id::create("scrbd_sa",this); 
+               scrbd_payload   = uvm_out_oder_scorboard_lib#(bit [7:0] ,int)::type_id::create("scrbd_payload",this); 
+               scrbd_etype     = uvm_out_oder_scorboard_lib#(bit [15:0],int)::type_id::create("scrbd_etype",this); 
+               end
             //For frame
             exp_frame_ref_port    = new[`NO_OF_OUTPUT_PORT];
             foreach(exp_frame_ref_port[i]) exp_frame_ref_port[i] = new($sformatf("exp_frame_ref_port[%0d]",i), this); 
@@ -87,8 +90,8 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
    function write_frame_mon(emac_rx_seqs_item#(`RX_PAYLOAD_DATA_WIDTH,`RX_FRAME_DATA_WIDTH) act_trans);
             
+/*
 	    if(frame_comparison) begin 
-
                scrbd_da.set_act_buffer( act_trans.vcid, act_trans.dest_mac_addr); 
                scrbd_sa.set_act_buffer( act_trans.vcid, act_trans.source_mac_addr); 
 
@@ -97,13 +100,13 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
                scrbd_etype.set_act_buffer( act_trans.vcid, act_trans.e_type); 
 	       end
-
+*/
             endfunction
  
    function write_frame_ref(emac_rx_seqs_item#(`RX_PAYLOAD_DATA_WIDTH,`RX_FRAME_DATA_WIDTH)  exp_trans);
 
+/*
 	    if(frame_comparison) begin 
-
                scrbd_da.set_exp_buffer( exp_trans.vcid, exp_trans.dest_mac_addr); 
                scrbd_sa.set_exp_buffer( exp_trans.vcid, exp_trans.source_mac_addr); 
                  
@@ -112,7 +115,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
                scrbd_etype.set_exp_buffer( exp_trans.vcid, exp_trans.e_type); 	
                end
-
+*/
             endfunction
 
    function write_tdata_mon(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
@@ -121,11 +124,13 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 	    act_vc_id = act_trans.tdata_q[3][31 -: 8];
             act_vcid_q.push_back(act_vc_id);
 
+	    /*
 	    if(tdata_comparison)begin
 	       foreach(act_trans.tdata_q[i])
                scrbd.set_act_buffer( act_vc_id , act_trans.tdata_q[i]);
 	       end
-
+*/
+               scrbd.set_act_buffer( act_vc_id , act_trans.tdata_q);
             endfunction
  
    function write_tdata_ref(axi_str_mas_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) exp_trans);
@@ -133,12 +138,13 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
             exp_vc_id = exp_trans.tdata_q[3][31 -: 8];
             exp_vcid_q.push_back(exp_vc_id);
-
+/*
             if(tdata_comparison)begin
 	       foreach(exp_trans.tdata_q[i])
                scrbd.set_exp_buffer( exp_vc_id, exp_trans.tdata_q[i]); 
                end
-
+*/
+               scrbd.set_exp_buffer( exp_vc_id, exp_trans.tdata_q); 
             endfunction
 
              
@@ -146,14 +152,14 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
             super.run_phase(phase);
             if(tdata_comparison) scrbd.run_phase(phase);
-            if(frame_comparison)
+  /*          if(frame_comparison)
 	       fork
                scrbd_da.run_phase(phase);
                scrbd_sa.run_phase(phase);
                scrbd_payload.run_phase(phase);
                scrbd_etype.run_phase(phase);
                join
-
+*/
             endtask
   
    function void check_phase(uvm_phase phase);
