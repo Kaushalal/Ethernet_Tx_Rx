@@ -74,7 +74,7 @@ class mac_to_axi_s_env extends uvm_env;
       
      mac_tx_to_rx_scrbrd_h = emac_tx2rx_scrbd::type_id::create("mac_tx_to_rx_scrbrd_h",this);
      mac_tx_to_rx_ref    = emac_tx2rx_ref_model::type_id::create("mac_tx_to_rx_ref",this);
-     uvm_config_db#(int)::set(this,"*","ref_type",1);
+     uvm_config_db#(int)::set(this,"*","ref_type",0);
       
       //// All uvc's
       axi_str_suvc_h = axi_str_slv_uvc::type_id::create("axi_str_suvc_h",this);
@@ -147,32 +147,29 @@ class mac_to_axi_s_env extends uvm_env;
 
    function void connect_phase(uvm_phase phase);
      super.connect_phase(phase);
-   
-     //                  ------   SCOREBOARD CONNECTION
-
-      foreach( mac_rx_uvc_h.rx_agent[i] )begin
-                mac_rx_uvc_h.rx_agent[i].rx_mon.rxmon_analysis_port.connect(mac_tx_to_rx_scrbrd_h.act_mon_port[i]);
-                end   
+     
+     //   ------ CONNECTION OF REF_MODEL 
 
        mac_tx_to_rx_ref.expected_port3.connect(mac_tx_to_rx_scrbrd_h.exp_ref_port[0]);
        mac_tx_to_rx_ref.expected_port4.connect(mac_tx_to_rx_scrbrd_h.exp_ref_port[1]);
        mac_tx_to_rx_ref.expected_port5.connect(mac_tx_to_rx_scrbrd_h.exp_ref_port[2]);
-      
-     //// MAC_TX to AXI_STR sequencer connection 
-     foreach( mac_tx_uvc_h.mac_tx_agent_h[i] )begin
-              mac_tx_uvc_h.mac_tx_agent_h[i].connect_to_dut_agent(axi_str_muvc_h.master_agent[i]);
-              end
-        
+       
        mac_tx_uvc_h.mac_tx_agent_h[0].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.port0_imp);
        mac_tx_uvc_h.mac_tx_agent_h[1].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.port1_imp);
        mac_tx_uvc_h.mac_tx_agent_h[2].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.port2_imp);
-     
+      
        mac_tx_to_rx_ref.ral = axi_4_reg_block_h; 
      
-
+     //// MAC_TX to AXI_STR sequencer connection 
+     foreach( mac_tx_uvc_h.mac_tx_agent_h[i] )begin
+          mac_tx_uvc_h.mac_tx_agent_h[i].connect_to_dut_agent(axi_str_muvc_h.master_agent[i]);
+     end
+     
      //// MAC_RX to AXI_STR sequencer connection 
      foreach( mac_rx_uvc_h.rx_agent[i]  )begin
        mac_rx_uvc_h.rx_agent[i].connect_to_axi_str_slv_agnt(axi_str_suvc_h.slave_agent[i]);
+
+       //// SCOREBORAD CONNECTION WITH RX_MON 
        mac_rx_uvc_h.rx_agent[i].rx_mon.rxmon_analysis_port.connect(mac_tx_to_rx_scrbrd_h.act_mon_port[i]);
      end
 

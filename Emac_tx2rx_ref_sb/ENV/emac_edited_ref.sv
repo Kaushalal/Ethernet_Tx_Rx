@@ -22,6 +22,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     `uvm_analysis_imp_decl(_tdata_port2)
      
      bit [7:0] global_clean_data_q[$];
+     
+     bit [7:0] vcid_q[$];
  
     // -----------------------------------------------------------------
     // PORTS
@@ -450,6 +452,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     // Generate MAC expected
                     expected_pkt = get_rx_expected(current_pkt, vcid);
                     expected_port3.write(expected_pkt);
+
+                    vcid_q.push_back(expected_pkt.vcid);
                     
                     // Generate TDATA expected (With Null Check)
                     if(current_tdata != null) begin
@@ -664,6 +668,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     // FINAL REPORT
     // -----------------------------------------------------------------
     function void final_phase(uvm_phase phase);
+
+    $display(" EXPECTED REF VCID_Q = %p",vcid_q);
         super.final_phase(phase);
         
         total_pkts_received = 0;

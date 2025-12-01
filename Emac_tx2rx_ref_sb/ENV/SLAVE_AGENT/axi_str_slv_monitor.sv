@@ -100,7 +100,7 @@ class axi_str_slv_monitor #(shortint DATA_SIZE=32,int USER_SIZE=32) extends uvm_
 
        if(vif.mon_cb.tlast) begin
         end_time_calc(itr);
-        `uvm_info("COLLECT_PKT",$sformatf("data monitoring is : %0s",sampled_pkt_q[itr].sprint()),UVM_LOW);
+        `uvm_info("COLLECT_PKT",$sformatf("data monitoring is : %0s",sampled_pkt_q[itr].sprint()),UVM_DEBUG);
 		
 		// Populate the transaction
         item_collected_port.write(sampled_pkt_q[itr]);

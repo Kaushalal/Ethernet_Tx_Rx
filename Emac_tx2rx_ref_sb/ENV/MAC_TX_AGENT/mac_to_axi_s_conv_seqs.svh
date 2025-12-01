@@ -73,7 +73,7 @@ class mac_to_axi_s_conv_seqs extends axi_str_mas_base_seqs #(.DATA_SIZE(`AXI_STR
     `uvm_create(req_axi_s)
     `uvm_rand_send_with(req_axi_s, { total_bytes == total_no_of_bytes;  foreach(data_q[i]) {req_axi_s.tdata_q[i] == data_q[i];}})
     
-    `uvm_info("CONVERTED_TDATA",req_axi_s.sprint(),UVM_MEDIUM)
+    `uvm_info("CONVERTED_TDATA",req_axi_s.sprint(),UVM_DEBUG)
     mac_tx_seqr_conv.item_done();
    end 
 

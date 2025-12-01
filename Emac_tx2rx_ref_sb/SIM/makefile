@@ -25,7 +25,7 @@ sim_cmd:
 	vsim -vopt $(TOP) -c -do "run -all; exit" +UVM_TESTNAME=$(TEST) 
 
 sim:
-	vsim -vopt $(TOP) -assertdebug -do "run -all; exit" +UVM_TESTNAME=$(TEST)  
+	vsim -vopt $(TOP) -assertdebug -do "run -all; do wave.do exit" +UVM_TESTNAME=$(TEST)  
 
 sim_coverage:
 	vsim -coverage -vopt $(TOP) -c -do "coverage save -onexit -directive -cvg -codeall AXI_CVG.ucdb; run -all; exit" +UVM_TESTNAME=$(TEST) -l TEST.log

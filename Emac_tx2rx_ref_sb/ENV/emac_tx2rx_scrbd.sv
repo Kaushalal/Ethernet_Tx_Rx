@@ -65,8 +65,6 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    /*--------------------------WRITE_METHOD OF ANALYSIS_PORTS----------------------------*/
 
    function write_mon(emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) act_trans);
-               
-	        
             
 	    if(tdata_comparison)begin
             // scrbd.set_act_buffer( act_vc_id , act_trans.tdata_q);
@@ -76,17 +74,15 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
                scrbd_da.set_act_buffer( act_trans.vcid, act_trans.dest_mac_addr); 
                scrbd_sa.set_act_buffer( act_trans.vcid, act_trans.source_mac_addr); 
+               scrbd_etype.set_act_buffer( act_trans.vcid, act_trans.e_type); 
 
 	       foreach(act_trans.payload[i]) 
                scrbd_payload.set_act_buffer( act_trans.vcid, act_trans.payload[i]); 
-
-               scrbd_etype.set_act_buffer( act_trans.vcid, act_trans.e_type); 
 	       end
+
             endfunction
  
    function write_ref(emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)  exp_trans);
-          
-	    
 
             if(tdata_comparison)begin
             //scrbd.set_exp_buffer( exp_trans.tdata_q[3][31 -: 8], exp_trans.tdata_q); 
@@ -96,12 +92,12 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 	    if(frame_comparison) begin 
                scrbd_da.set_exp_buffer( exp_trans.vcid, exp_trans.dest_mac_addr); 
                scrbd_sa.set_exp_buffer( exp_trans.vcid, exp_trans.source_mac_addr); 
+               scrbd_etype.set_exp_buffer( exp_trans.vcid, exp_trans.e_type); 	
                  
 	       foreach(exp_trans.payload[i])  
                scrbd_payload.set_exp_buffer( exp_trans.vcid, exp_trans.payload[i]); 
 
-               scrbd_etype.set_exp_buffer( exp_trans.vcid, exp_trans.e_type); 	
-               end
+         end
 
             endfunction
 

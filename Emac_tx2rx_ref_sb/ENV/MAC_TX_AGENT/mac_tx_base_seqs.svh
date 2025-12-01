@@ -23,7 +23,7 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
 
   rand bit [7:0][1:0] temp_Etype;
 
-  rand bit [11:0] vlan_q[$];
+  randc bit [11:0] vlan_q[$];
   
   rand int min_payload_size;
   rand int max_payload_size;

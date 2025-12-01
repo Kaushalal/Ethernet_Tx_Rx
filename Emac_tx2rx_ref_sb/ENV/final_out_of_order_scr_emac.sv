@@ -5,12 +5,12 @@
 `define compare(check_name, id, act_data, exp_data, name, pass_cnt, fail_cnt) \
    if(act_data == exp_data) begin \
       pass_cnt++; \
-      `uvm_info(check_name, $sformatf("PASS! [id='h%0h] \nACT_%0s='h%0h \nEXP_%0s='h%0h", \
+      `uvm_info(check_name, $sformatf("PASS! [id='d%0d] \nACT_%0s='h%0h \nEXP_%0s='h%0h", \
                                       id, name, act_data, name, exp_data), UVM_LOW); \
    end \
    else begin \
       fail_cnt++; \
-      `uvm_error(check_name, $sformatf("FAIL! [id='h%0h] \nACT_%0s='h%0h \nEXP_%0s='h%0h", \
+      `uvm_error(check_name, $sformatf("FAIL! [id='d%0d] \nACT_%0s='h%0h \nEXP_%0s='h%0h", \
                                        id, name, act_data, name, exp_data)); \
    end
 
@@ -54,7 +54,7 @@
      // exp_que[id][exp_pkt_num] = exp_data;
       exp_que[id][exp_pkt_num].push_back(exp_data);
 	  exp_pkt_num++;
-	  $display(" SCRBRD EXPECTED");
+	  $display("[%s] SCRBRD EXPECTED : ID = %0d ",get_full_name(),id);
     endfunction
 
    // -----------------------------
@@ -68,6 +68,7 @@
 	  act_pkt_num++;
       this.id = id;
       ev.trigger();
+	  $display("[%s] SCRBRD ACTUAL : ID = %0d ",get_full_name(),id);
    endfunction
 
    // -----------------------------
@@ -119,12 +120,12 @@
    virtual function void check_phase(uvm_phase phase);
       foreach (exp_que[i,j]) begin
          if (exp_que[i][j].size() != 0)
-            `uvm_error(get_name(), $sformatf("%0d expected transactions not compared for id=%0h",
+            `uvm_error(get_name(), $sformatf("%0d expected transactions not compared for id=%0d",
                                              exp_que[i][j].size(), i))
       end
       foreach (act_que[i,j]) begin
          if (act_que[i][j].size() != 0)
-            `uvm_error(get_name(), $sformatf("%0d actual transactions not compared for id=%0h",
+            `uvm_error(get_name(), $sformatf("%0d actual transactions not compared for id=%0d",
    act_que[i][j].size(), i))
       end
       `uvm_info("SCOREBOARD", $sformatf("Final Result: PASS=%0d FAIL=%0d", pass_cnt, fail_cnt), UVM_LOW);

@@ -18,7 +18,7 @@ class mac_tx_seq_item extends uvm_sequence_item;
   rand bit [5:0][7:0] da;
   rand bit [5:0][7:0] sa;
 
-  rand bit [11:0] vlan;
+  randc bit [11:0] vlan;
   rand bit [2:0] pri;
   rand bit dei;
 

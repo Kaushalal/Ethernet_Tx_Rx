@@ -72,7 +72,7 @@ class mac_tx_mon extends uvm_monitor;
          end
      end  
 
-    `uvm_info("MAC_MON_MAC_PKT",mac_item.sprint(),UVM_MEDIUM)
+    `uvm_info("MAC_TX_MON_MAC_PKT",mac_item.sprint(),UVM_MEDIUM)
 
     //// WRITE to ref_model ( Expected item ) 
         mac_tx_mon_port.write(mac_item);
