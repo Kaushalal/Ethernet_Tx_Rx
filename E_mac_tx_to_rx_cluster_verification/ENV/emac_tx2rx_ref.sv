@@ -472,7 +472,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
                     if (conn_valid_bit == 1) begin
                         valid[PORT4_IDX]++;
-                        conn_cfg_valid_pkt_q[2].push_back(payload_valid_pkt_q[1][i]);
+                        conn_cfg_valid_pkt_q[1].push_back(payload_valid_pkt_q[1][i]);
                         `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_LOW);
                     end else begin
                         invalid[PORT4_IDX]++;
@@ -502,7 +502,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
                     if (conn_valid_bit == 1) begin
                         valid[PORT5_IDX]++;
-                        conn_cfg_valid_pkt_q[3].push_back(payload_valid_pkt_q[2][i]);
+                        conn_cfg_valid_pkt_q[2].push_back(payload_valid_pkt_q[2][i]);
                         `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_LOW);
                     end else begin
                         invalid[PORT5_IDX]++;
@@ -583,9 +583,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         uvm_reg_field vcid_field;
 
         forever begin
-            wait(conn_cfg_valid_pkt_q[2].size() > 0);
+            wait(conn_cfg_valid_pkt_q[1].size() > 0);
 
-            current_pkt_p4 = conn_cfg_valid_pkt_q[2].pop_front(); 
+            current_pkt_p4 = conn_cfg_valid_pkt_q[1].pop_front(); 
             current_tdata = tdata_pkt_q[1].pop_front();
             cnn_addr = {port_id, current_pkt_p4.vlan}; 
             
@@ -623,9 +623,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         uvm_reg_field vcid_field;
 
         forever begin
-            wait(conn_cfg_valid_pkt_q[3].size() > 0);
+            wait(conn_cfg_valid_pkt_q[2].size() > 0);
 
-            current_pkt_p5 = conn_cfg_valid_pkt_q[3].pop_front(); 
+            current_pkt_p5 = conn_cfg_valid_pkt_q[2].pop_front(); 
             current_tdata = tdata_pkt_q[2].pop_front();
             cnn_addr = {port_id, current_pkt_p5.vlan}; 
             
@@ -644,6 +644,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     expected_pkt_p5 = get_rx_expected(current_pkt_p5, vcid);
                     frame_scrbd_port[2].write(expected_pkt_p5);
                     expected_tdata_p5 = expected_tdata_pkt(current_tdata,vcid);
+                    $display("PORT 10 DEBUG");
+                    expected_tdata_p5.print();
                     tdata_scrbd_port[2].write(expected_tdata_p5);
                 end
             end

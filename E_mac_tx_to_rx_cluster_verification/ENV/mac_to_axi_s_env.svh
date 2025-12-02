@@ -164,7 +164,6 @@ class mac_to_axi_s_env extends uvm_env;
        mac_tx_uvc_h.mac_tx_agent_h[1].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.frame_port1_imp);
        mac_tx_uvc_h.mac_tx_agent_h[2].mac_tx_mon_h.mac_tx_mon_port.connect(mac_tx_to_rx_ref.frame_port2_imp);
      
-     
        mac_tx_to_rx_ref.ral = axi_4_reg_block_h; 
 
    

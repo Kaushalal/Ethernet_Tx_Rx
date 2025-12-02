@@ -29,7 +29,9 @@ class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
 /*--------------- CONSTRAINT -------------------------*/
 /*---------------------------------------------------------*/
 
- constraint VALID_CNSTR {soft connection_valid == 1'b1;}
+ constraint valid_CNSTR {soft connection_valid == 1'b1;}
+ constraint port_id_CNSTR {soft port_id inside {3,4,5} ;}
+ constraint out_port_sel_CNSTR {soft out_port_sel inside {8,9,10};}
 
 /*---------------------------------------------------------*/
 /*--------------- PRE_BODY -------------------------*/
@@ -80,7 +82,7 @@ class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
   //STEP -3  : CRC -> addr - connection_id
   //--------------------------------------------------------------------------------------------------------------//
    
-   axi_4_reg_block_h.crc_reg_h[connection_id].crc_reg_field.write(status,crc_val);
+   axi_4_reg_block_h.crc_reg_h[connection_id].write(status,crc_val);
    `uvm_info("REG : CRC_REG  ",$sformatf("FEILDS : crc_reg : %h ",crc_val),UVM_DEBUG)
   
   //--------------------------------------------------------------------------------------------------------------//
@@ -90,7 +92,7 @@ class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
    axi_4_reg_block_h.vcid_reg_h[connection_id].write(status,{24'b0,vcid_val});
    `uvm_info("REG : VCID_REG  ",$sformatf("FEILDS : vcid_reg : %h ",vcid_val),UVM_DEBUG)
    
-   `uvm_info(" == CONNECTION_CONFIGURATION_SUMMARY == ",$sformatf("FEILDS : port_id = %0d || vlan = 'h%0h || connection_id = 'd%0d || vcid_reg : 'd%0d ",port_id,vlan,connection_id,vcid_val),UVM_MEDIUM)
+   `uvm_info(" == CONNECTION_CONFIGURATION_SUMMARY == ",$sformatf("FEILDS : port_id = %0d || vlan = 'h%0h || connection_id = 'd%0d || vcid_reg : 'd%0d || out_port_sel = %0d ",port_id,vlan,connection_id,vcid_val,out_port_sel),UVM_MEDIUM)
 
 
  endtask   
