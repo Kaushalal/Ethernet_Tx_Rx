@@ -18,8 +18,8 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
 
   mac_tx_seq_item mac_pkt;
   
-  rand bit [7:0][5:0] temp_da;
-  rand bit [7:0][5:0] temp_sa;
+  rand bit [7:0][5:0] temp_da[$];  //// QUE because without it was taking same da and sa for every packet  
+  rand bit [7:0][5:0] temp_sa[$];
 
   rand bit [7:0][1:0] temp_Etype;
 
@@ -33,6 +33,8 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   constraint no_of_pkt_c { soft no_of_packet == 10 ;}
   constraint min_payload_size_c { soft min_payload_size == 46 ;}
   constraint max_payload_size_c { soft max_payload_size == 1500 ;}
+  constraint da_c { soft temp_da.size == no_of_packet ;}
+  constraint sa_c { soft temp_sa.size == no_of_packet ;}
   
   constraint vlan_q_c { soft vlan_q.size() == no_of_packet ;}
   
@@ -48,8 +50,8 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   repeat(no_of_packet) begin
       
      `uvm_rand_send_with( mac_pkt, { payload_q.size inside { [min_payload_size:max_payload_size] };
-                                sa    == temp_sa;
-                                da    == temp_da;
+                                sa    inside {temp_sa};
+                                da    inside {temp_da};
                                 Etype == temp_Etype;
                                 vlan inside {vlan_q} ;    } )
       
