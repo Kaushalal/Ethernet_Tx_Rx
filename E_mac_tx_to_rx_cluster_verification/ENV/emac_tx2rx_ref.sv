@@ -9,7 +9,9 @@
   localparam PAYLOAD_DATA_WIDTH = 8;
   localparam FRAME_DATA_WIDTH = 32;
 
-
+  localparam PORT8_IDX = 0;
+  localparam PORT9_IDX = 1;
+  localparam PORT10_IDX = 2;
 
     // Analysis Imp declarations
     `uvm_analysis_imp_decl(_tx_mon_port0)
@@ -51,6 +53,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
     bit [15:0]           valid_etypes[$] = '{16'h0800, 16'h8100};
     string               port_names[NUM_PORTS] = '{"PORT3", "PORT4", "PORT5"};
+    string               port_names_tdata[NUM_PORTS] = '{"PORT8", "PORT9", "PORT10"};
     int                  tdata_ref;
     bit [7:0]            global_clean_data_q[$];
     axi_4_reg_block      ral; 
@@ -60,6 +63,11 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     int                  pkt_in_port[NUM_PORTS];
     int                  valid[NUM_PORTS];
     int                  invalid[NUM_PORTS];
+    int total_pkts_received;     
+    int total_conn_invalid_drop;  
+    int total_crc_drop;            
+    int expected_out_port[NUM_PORTS];
+    int actual_out_port[NUM_PORTS];  
 
 
     `uvm_component_utils(emac_tx2rx_ref_model)
@@ -520,13 +528,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     // -----------------------------------------------------------------
     task vcid_fetch();
        fork
-          vcid_fetch_port0();
+          vcid_fetch_and_outport_sel_port0();
           vcid_fetch_port1();
           vcid_fetch_port2();
        join_none
     endtask
 
-    task vcid_fetch_port0();
+    task vcid_fetch_and_outport_sel_port0();
 
         emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) expected_pkt;
         mac_tx_seq_item               current_pkt;
@@ -536,9 +544,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         bit [2:0]  port_id = 3;
         bit [4:0]  vcid_addr;
         bit [7:0]  vcid;
+        bit [3:0] out_sel;
         uvm_reg_field conn_id_field;
         uvm_reg_field vcid_field;
-
+        uvm_reg_field out_port_sel;
         forever begin
 
             wait(conn_cfg_valid_pkt_q[0].size() > 0);
@@ -552,6 +561,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                 conn_id_field = ral.conn_cfg_reg_h[cnn_addr].connection_id;
                 vcid_addr     = conn_id_field.get();
 
+                out_port_sel = ral.output_prt_reg_h[vcid_addr].output_port_sel;
+                out_sel = out_port_sel.get();
+                $display("output sel=%0d",out_sel);
+
                 `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT3=%h", vcid_addr), UVM_LOW) // Restored
 
                 if (ral.vcid_reg_h[vcid_addr] != null) begin
@@ -562,10 +575,41 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     `uvm_info("REF_VCID_PORT0", $sformatf ("VCID_PORT3=%h", vcid), UVM_LOW) // Restored
 
                     expected_pkt = get_rx_expected(current_pkt, vcid);
-                    frame_scrbd_port[0].write(expected_pkt);
-
                     expected_tdata = expected_tdata_pkt(current_tdata,vcid);
-                    tdata_scrbd_port[0].write(expected_tdata);
+                 //   tdata_scrbd_port[0].write(expected_tdata);
+
+                   // frame_scrbd_port[0].write(expected_pkt);
+          /*          
+                    case(out_sel)
+                     8: begin
+                        frame_scrbd_port[0].write(expected_pkt);
+                        expected_out_port[PORT8_IDX]++;
+                     end
+                     9: begin
+                        frame_scrbd_port[1].write(expected_pkt);
+                        expected_out_port[PORT9_IDX]++;
+                     end
+                    10: begin
+                        frame_scrbd_port[2].write(expected_pkt);
+                        expected_out_port[PORT10_IDX]++;
+                    end
+                    endcase
+          */
+                    case(out_sel)
+                     8: begin
+                        tdata_scrbd_port[0].write(expected_tdata);
+                        expected_out_port[PORT8_IDX]++;
+                     end
+                     9: begin
+                        tdata_scrbd_port[1].write(expected_tdata);
+                        expected_out_port[PORT9_IDX]++;
+                     end
+                    10: begin
+                        tdata_scrbd_port[2].write(expected_tdata);
+                        expected_out_port[PORT10_IDX]++;
+                    end
+                    default $error("INVALID OUTPORT SEL FACHED");
+                    endcase
                 end
             end
         end
@@ -579,8 +623,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         bit [2:0]  port_id = 4;
         bit [4:0]  vcid_addr;
         bit [7:0]  vcid;
+        bit [3:0] out_sel;
         uvm_reg_field conn_id_field;
         uvm_reg_field vcid_field;
+        uvm_reg_field out_port_sel;
 
         forever begin
             wait(conn_cfg_valid_pkt_q[1].size() > 0);
@@ -592,7 +638,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
             if (ral.conn_cfg_reg_h[cnn_addr] != null) begin
                 conn_id_field = ral.conn_cfg_reg_h[cnn_addr].connection_id;
                 vcid_addr     = conn_id_field.get();
-                
+                out_port_sel = ral.output_prt_reg_h[vcid_addr].output_port_sel;
+                out_sel = out_port_sel.get();
+                $display("output sel=%0d",out_sel); 
                 `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT4=%h", vcid_addr), UVM_LOW) // Restored
                 
                 if (ral.vcid_reg_h[vcid_addr] != null) begin
@@ -602,9 +650,41 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     `uvm_info("REF_VCID", $sformatf ("VCID_PORT4=%h", vcid), UVM_LOW) // Restored
 
                     expected_pkt_p4 = get_rx_expected(current_pkt_p4, vcid);
-                    frame_scrbd_port[2].write(expected_pkt_p4);
+                  //  frame_scrbd_port[2].write(expected_pkt_p4);
                     expected_tdata_p4 = expected_tdata_pkt(current_tdata,vcid);
-                    tdata_scrbd_port[2].write(expected_tdata_p4);
+                  //  tdata_scrbd_port[2].write(expected_tdata_p4);
+/*
+                    case(out_sel)
+                     8: begin
+                        frame_scrbd_port[0].write(expected_pkt_p4);
+                        expected_out_port[PORT8_IDX]++;
+                     end
+                     9: begin
+                        frame_scrbd_port[1].write(expected_pkt_p4);
+                        expected_out_port[PORT9_IDX]++;
+                     end
+                    10: begin
+                        frame_scrbd_port[2].write(expected_pkt_p4);
+                        expected_out_port[PORT10_IDX]++;
+                    end
+                    endcase
+*/
+                    case(out_sel)
+                     8: begin
+                        tdata_scrbd_port[0].write(expected_tdata_p4);
+                        expected_out_port[PORT8_IDX]++;
+                     end
+                     9: begin
+                        tdata_scrbd_port[1].write(expected_tdata_p4);
+                        expected_out_port[PORT9_IDX]++;
+                     end
+                    10: begin
+                        tdata_scrbd_port[2].write(expected_tdata_p4);
+                        expected_out_port[PORT10_IDX]++;
+                    end
+                    endcase
+
+
                 end
             end
        end
@@ -619,9 +699,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         bit [2:0]  port_id = 5;
         bit [4:0]  vcid_addr;
         bit [7:0]  vcid;
+         bit [3:0] out_sel;
         uvm_reg_field conn_id_field;
         uvm_reg_field vcid_field;
-
+        uvm_reg_field out_port_sel;
         forever begin
             wait(conn_cfg_valid_pkt_q[2].size() > 0);
 
@@ -632,7 +713,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
             if (ral.conn_cfg_reg_h[cnn_addr] != null) begin
                 conn_id_field = ral.conn_cfg_reg_h[cnn_addr].connection_id;
                 vcid_addr     = conn_id_field.get();
-                
+                out_port_sel = ral.output_prt_reg_h[vcid_addr].output_port_sel;
+                out_sel = out_port_sel.get();
+                $display("output sel=%0d",out_sel); 
+ 
                 `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT5=%h", vcid_addr), UVM_LOW) // Restored
                 
                 if (ral.vcid_reg_h[vcid_addr] != null) begin
@@ -642,11 +726,41 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     `uvm_info("REF_VCID", $sformatf ("VCID_PORT5=%h", vcid), UVM_LOW) // Restored
 
                     expected_pkt_p5 = get_rx_expected(current_pkt_p5, vcid);
-                    frame_scrbd_port[2].write(expected_pkt_p5);
+                 //   frame_scrbd_port[2].write(expected_pkt_p5);
                     expected_tdata_p5 = expected_tdata_pkt(current_tdata,vcid);
-                    $display("PORT 10 DEBUG");
-                    expected_tdata_p5.print();
-                    tdata_scrbd_port[2].write(expected_tdata_p5);
+                 //   tdata_scrbd_port[2].write(expected_tdata_p5);
+/*
+                    case(out_sel)
+                     8: begin
+                        frame_scrbd_port[0].write(expected_pkt_p5);
+                        expected_out_port[PORT8_IDX]++;
+                     end
+                     9: begin
+                        frame_scrbd_port[1].write(expected_pkt_p5);
+                        expected_out_port[PORT9_IDX]++;
+                     end
+                    10: begin
+                        frame_scrbd_port[2].write(expected_pkt_p5);
+                        expected_out_port[PORT10_IDX]++;
+                    end
+                    endcase
+*/
+                    case(out_sel)
+                     8: begin
+                        tdata_scrbd_port[0].write(expected_tdata_p5);
+                        expected_out_port[PORT8_IDX]++;
+                     end
+                     9: begin
+                        tdata_scrbd_port[1].write(expected_tdata_p5);
+                        expected_out_port[PORT9_IDX]++;
+                     end
+                    10: begin
+                        tdata_scrbd_port[2].write(expected_tdata_p5);
+                        expected_out_port[PORT10_IDX]++;
+                    end
+                    endcase
+
+
                 end
             end
        end
@@ -829,11 +943,6 @@ endfunction
         return expected_pkt;
     endfunction
 
-int total_pkts_received;     
-int total_conn_invalid_drop;  
-int total_crc_drop;            
-int expected_out_port[NUM_PORTS];
-int actual_out_port[NUM_PORTS];  
 // Inside class emac_tx2rx_ref_model
 
 function void final_phase(uvm_phase phase);
@@ -871,9 +980,9 @@ function void final_phase(uvm_phase phase);
  //   $display("No of packet dropped due to incorrect CRC = %0d", total_crc_drop);
 
     // Expected Output Counts
-    $display("No of expected packet at out_port0 = %0d", expected_out_port[PORT3_IDX]);
-    $display("No of expected packet at out_port1 = %0d", expected_out_port[PORT4_IDX]);
-    $display("No of expected packet at out_port2 = %0d", expected_out_port[PORT5_IDX]);
+    $display("No of expected packet at out_port0 = %0d", expected_out_port[PORT8_IDX]);
+    $display("No of expected packet at out_port1 = %0d", expected_out_port[PORT9_IDX]);
+    $display("No of expected packet at out_port2 = %0d", expected_out_port[PORT10_IDX]);
 
     // Actual Output Counts
     $display("No of actual packet at out_port0 = %0d", actual_out_port[PORT3_IDX]);
