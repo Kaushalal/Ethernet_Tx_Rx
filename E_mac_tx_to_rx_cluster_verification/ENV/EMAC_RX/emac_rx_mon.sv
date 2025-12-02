@@ -43,7 +43,7 @@ class emac_rx_mon#(
 
 	function void axistream2emac_frame(axi_str_slv_seq_item #(DATA_SIZE,USER_SIZE) sampled_pkt);
 		rx_seqs_item = emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH)::type_id::create("rx_seqs_item");
-		for(int i = 0;i < sampled_pkt.tdata_q.size()-1 ; i++)  //excluding fcs
+		for(int i = 0;i < sampled_pkt.tdata_q.size() ; i++)  //excluding fcs
 			rx_seqs_item.frame[i] = {<<8{sampled_pkt.tdata_q[i]}};
 		`uvm_info(get_full_name(),$sformatf("frame size = %0d",rx_seqs_item.frame.size()),UVM_DEBUG)
 		if(rx_seqs_item.frame.size() != 0) begin
