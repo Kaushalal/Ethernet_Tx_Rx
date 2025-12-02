@@ -85,7 +85,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
             endfunction
 
    function write_tdata_mon(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
-            byte act_vc_id;
+            byte unsigned act_vc_id;
             int temp_act_vcid;
 	     
 	    temp_act_vcid      = {<<8{act_trans.tdata_q[3]}};
@@ -96,7 +96,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
             endfunction
  
    function write_tdata_ref(axi_str_mas_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) exp_trans);
-            byte exp_vc_id;
+            byte unsigned exp_vc_id;
             int temp_exp_vcid;
 
             temp_exp_vcid      = {<<8{exp_trans.tdata_q[3]}};
