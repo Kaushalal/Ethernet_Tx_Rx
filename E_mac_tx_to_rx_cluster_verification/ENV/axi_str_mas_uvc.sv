@@ -21,7 +21,7 @@ class axi_str_mas_uvc extends uvm_component;
   `uvm_component_utils(axi_str_mas_uvc) 
   
    //agent 
-   axi_str_mas_agent #(`AXI_STR_DATA_SIZE,`AXI_STR_DATA_SIZE) master_agent[];
+   axi_str_mas_agent #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) master_agent[];
    //config settings
    axi_str_mas_config mas_cfg[];
    axi_str_mas_config mas_config;
@@ -41,7 +41,7 @@ class axi_str_mas_uvc extends uvm_component;
       
       foreach(mas_cfg[i]) begin
          mas_cfg[i] = axi_str_mas_config ::type_id::create($sformatf("mas_cfg[%0d]",i));
-         master_agent[i] = axi_str_mas_agent #(`AXI_STR_DATA_SIZE,`AXI_STR_DATA_SIZE)::type_id::create($sformatf("master_agent[%0d]",i),this);
+         master_agent[i] = axi_str_mas_agent #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE)::type_id::create($sformatf("master_agent[%0d]",i),this);
          
          mas_cfg[i].id = i;   //// setting id of agent 
          mas_cfg[i].is_active = mas_config.is_active;
