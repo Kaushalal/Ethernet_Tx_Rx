@@ -68,13 +68,13 @@ class mac_tx_mon extends uvm_monitor;
          if( axi_s_sampled_item.tkeep_q[i][j] == 0 ) begin
            //  mac_item.fcs = mac_item.fcs >> 8;
            //  mac_item.fcs[$left(mac_item.fcs)] = mac_item.payload_q[$] ;
-             mac_item.payload_q.pop_back();
+             void'( mac_item.payload_q.pop_back() );
          end
      end  
 
     `uvm_info("MAC_TX_MON_MAC_PKT",mac_item.sprint(),UVM_MEDIUM)
 
-    //// WRITE to ref_model ( Expected item ) 
+         //// WRITE to ref_model ( Expected item ) 
         mac_tx_mon_port.write(mac_item);
 
    endfunction 
