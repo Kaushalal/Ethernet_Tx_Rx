@@ -26,6 +26,9 @@ module mac_to_axi_s_top();
 
  import mac_to_axi_s_test_pkg::*;
 
+ uvm_event reg_reset_evt = new("reg_reset_evt");
+ uvm_event rtl_reset_evt = new("rtl_reset_evt"); 
+
   `define NO_OF_IN_PORT 3
   `define NO_OF_OUT_PORT 3
  
@@ -162,22 +165,65 @@ module mac_to_axi_s_top();
 //// ------------------------------------------------------- ////
  //// INITIAL RESET
 //// ------------------------------------------------------- ////
- initial 
-    begin : RESET
-      @(posedge tb_clk);
-      tb_reset     = 1'b0;
-      tb_reset_reg = 1'b0;
-      @(posedge tb_clk);
-      tb_reset     = 1'b1;
-      tb_reset_reg = 1'b1;
-    end : RESET
+
+// Task that performs a synchronous reset assertion/de-assertion aligned to tb_clk
+  task reg_reset_assertion();
+    // align to rising edge then assert
+    @(posedge tb_clk);
+    tb_reset_reg = 1'b0;
+    repeat (2) @(posedge tb_clk);
+    // de-assert
+    tb_reset_reg = 1'b1;
+  endtask :reg_reset_assertion 
+
+  task rtl_reset_assertion();
+    // align to rising edge then assert
+    @(posedge tb_clk);
+    tb_reset     = 1'b0;
+    repeat (2) @(posedge tb_clk);
+    // de-assert
+    tb_reset     = 1'b1;
+  endtask :rtl_reset_assertion 
+
+
+
+  // initial trigger: power-up reset
+  initial begin
+    fork
+      reg_reset_assertion();
+      rtl_reset_assertion();
+    join
+  end
+
+
+// two parallel waiters; each will service its event when triggered
+initial begin
+  fork
+    begin : REG_RESET_WATCHER
+      forever begin
+        reg_reset_evt.wait_trigger();                // wait for reg-reset request
+        `uvm_info("TOP","reg_reset_evt triggered", UVM_LOW)
+        reg_reset_assertion();                       // example: tb_reset_reg only
+      end
+    end
+
+    begin : RTL_RESET_WATCHER
+      forever begin
+        rtl_reset_evt.wait_trigger();               // wait for rtl-reset request
+        `uvm_info("TOP","rtl_reset_evt triggered", UVM_LOW)
+        rtl_reset_assertion();                       // example: tb_reset only
+      end
+    end
+  join_none
+end
+ 
 
 
 
   initial
     begin
-      // uvm_top.set_report_verbosity_level(UVM_DEBUG);
-      
+      //uvm_top.set_report_verbosity_level(UVM_DEBUG);
+     
       uvm_config_db #(virtual axi_str_mas_inf#(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)))::set(null,"*.axi_str_muvc_h.master_agent[0]*","vinf",axi_s_minf[0]);
       uvm_config_db #(virtual axi_str_mas_inf#(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)))::set(null,"*.axi_str_muvc_h.master_agent[1]*","vinf",axi_s_minf[1]);
       uvm_config_db #(virtual axi_str_mas_inf#(.DATA_SIZE(`AXI_STR_DATA_SIZE),.USER_SIZE(`AXI_STR_USER_SIZE)))::set(null,"*.axi_str_muvc_h.master_agent[2]*","vinf",axi_s_minf[2]);
@@ -188,6 +234,10 @@ module mac_to_axi_s_top();
       
       uvm_config_db #(virtual axi_minf #(`AXI_4_DATA_SIZE,`AXI_4_ADD_SIZE))::set(null,"*.axi_4_magent_h*","mvif", axi_4_minf1);
 
+    // make available to sequences via uvm_config_db
+    uvm_config_db#(uvm_event)::set(null, "*", "reg_reset_evt", reg_reset_evt);
+    uvm_config_db#(uvm_event)::set(null, "*", "rtl_reset_evt", rtl_reset_evt);
+      
       run_test("mac_to_axi_s_base_test");
     end
 endmodule
