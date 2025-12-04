@@ -18,11 +18,11 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
   
   `uvm_declare_p_sequencer(mac_to_axi_s_virtual_seqr)
 
-   mac_tx_base_seqs mac_tx_seqs[int][]; //// 1st index (ID) -> port_id  //// Associative arr -> in case u want to start multiple seqs on a single port ( ex- continous toggling between valid and invalid scenarios )
+   mac_tx_base_seqs mac_tx_seqs[int][]; //// 1st index (ID) -> port_no  //// Associative arr -> in case u want to start multiple seqs on a single port ( ex- continous toggling between valid and invalid scenarios )
    mac_tx_seqr mac_tx_seqr_h[];
    reg_conn_cfg_seq conn_cfg_seqs;
 
-   rand bit [11:0]  temp_vlan_q[int][$];  //// 1st index (ID) -> port_id
+   rand bit [11:0]  temp_vlan_q[int][$];  //// 1st index (ID) -> port_no
    rand bit [2:0]   temp_port_id;
                   
    rand bit         temp_connection_valid;
@@ -31,7 +31,7 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
    rand bit [3:0]   temp_out_port_sel;
    rand bit [31:0]  temp_crc_val;
                                
-   rand bit [7:0]   temp_vcid_val[int][int];   //// 1st id -> port_id //// 2nd id -> connection_id ////
+   rand bit [7:0]   temp_vcid_val[int][int];   //// 1st id -> port_no //// 2nd id -> connection_id ////
 
   
    function new(string name = "mac_to_axi_s_base_virtual_seqs", int no_of_seqs = 1, int no_of_ports = 3);
