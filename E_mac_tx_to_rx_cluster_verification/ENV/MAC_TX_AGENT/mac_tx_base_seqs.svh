@@ -18,7 +18,7 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
 
   mac_tx_seq_item mac_pkt;
   
-  rand bit [7:0][5:0] temp_da[$];  //// QUE because without it was taking same da and sa for every packet  
+  rand bit [7:0][5:0] temp_da[$];  //// because without que it was taking same da and sa for every packet  
   rand bit [7:0][5:0] temp_sa[$];
 
   rand bit [7:0][1:0] temp_Etype;
@@ -45,6 +45,7 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   endfunction
 
   task body ();
+  int i = 0;
   `uvm_create(mac_pkt);
   
   repeat(no_of_packet) begin
@@ -53,8 +54,8 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
                                 sa    inside {temp_sa};
                                 da    inside {temp_da};
                                 Etype == temp_Etype;
-                                vlan inside {vlan_q} ;    } )
-      
+                                (i<no_of_packet)->(vlan == vlan_q[i]) ; (i>=no_of_packet)->(vlan inside {vlan_q}) ; } )
+      i++;
      `uvm_info( "MAC_PKT",$sformatf(mac_pkt.sprint()),UVM_DEBUG)
 
   end
