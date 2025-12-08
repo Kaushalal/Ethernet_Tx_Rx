@@ -37,8 +37,8 @@
    // trigger event
     id_type id;
     uvm_event ev;
-	protected int exp_pkt_num;
-	protected int act_pkt_num;
+	protected int exp_pkt_num [int];
+	protected int act_pkt_num [int];
 
    function new(string name="uvm_out_oder_scorboard_lib", uvm_component parent=null);
       super.new(name,parent);
@@ -51,9 +51,9 @@
    // description :- API for pushing expected/actual data in queue array according to id
    // -----------------------------
     virtual function void set_exp_buffer(id_type id, T exp_data [$]);
-      exp_que[id][exp_pkt_num] = exp_data;
-	  exp_pkt_num++;
-	  $display("[%s] SCRBRD EXPECTED : ID = %0d ",get_full_name(),id);
+      exp_que[id][exp_pkt_num[id]] = exp_data;
+	  exp_pkt_num[id]++;
+	  $display($time, " : [%s] SCRBRD EXPECTED : ID = %0d ",get_full_name(),id);
     endfunction
 
    // -----------------------------
@@ -62,11 +62,11 @@
    // description :- API for pushing expected/actual data in queue array according to id
    // -----------------------------
    virtual function void set_act_buffer(id_type id, T act_data [$] );
-      act_que[id][act_pkt_num] = act_data;
-	  act_pkt_num++;
+      act_que[id][act_pkt_num[id]] = act_data;
+	  act_pkt_num[id]++;
       this.id = id;
       ev.trigger();
-	  $display("[%s] SCRBRD ACTUAL : ID = %0d ",get_full_name(),id);
+	  $display($time, " :[%s] SCRBRD ACTUAL : ID = %0d ",get_full_name(),id);
    endfunction
 
    // -----------------------------
@@ -89,24 +89,31 @@
    virtual task run_phase(uvm_phase phase);
       T exp_data [$];
       T act_data [$];
+	  int pkt_num_ar [int];
 	  int pkt_num;
       forever begin
           ev.wait_trigger;
 
          if (exp_que.exists(id) && act_que.exists(id)) begin
-            if (exp_que[id].size() == 0 || act_que[id].size() == 0)
-               continue;
+             if (exp_que[id].size() == 0 || act_que[id].size() == 0)
+	     begin
+	     `uvm_error(get_name,$sformatf("Exp_que or act_que is empty of id == 'd%0d ", id))
+              continue;
+             end 
+	     else
+          //  $display("SCR : exp : %0p pkt_no : %0d vcid : %0d", exp_que[id], pkt_num_ar[id] , id);
+          //  $display("SCR : act : %0p pkt_no : %0d vcid : %0d", act_que[id], pkt_num_ar[id] , id);
+            exp_data = exp_que[id][pkt_num_ar[id]];
+            act_data = act_que[id][pkt_num_ar[id]];
 
-            exp_data = exp_que[id][pkt_num];
-            act_data = act_que[id][pkt_num];
-
-            exp_que[id].delete(pkt_num);
-            act_que[id].delete(pkt_num);
+            exp_que[id].delete(pkt_num_ar[id]);
+            act_que[id].delete(pkt_num_ar[id]);
 
             foreach(exp_data[i]) begin
 			  $display("================ Comaparing packet Number : 'd%0d ================",pkt_num);
 			  compare(exp_data[i], act_data[i], id);
 			end
+			pkt_num_ar[id]++;
 			pkt_num++;
          end
       end

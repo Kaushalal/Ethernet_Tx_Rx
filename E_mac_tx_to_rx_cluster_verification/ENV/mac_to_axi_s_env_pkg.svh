@@ -36,6 +36,7 @@ package mac_to_axi_s_env_pkg;
   `include "mac_to_axi_s_virtual_seqr.svh"
   `include "mac_to_axi_s_base_virtual_seqs.svh"
 
+  `include "emac_tx2rx_base_vseqs.sv"
   `include "axi_str_mas_uvc.sv"
   `include "axi_str_slv_uvc.sv"
   

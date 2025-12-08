@@ -151,10 +151,16 @@ class mac_to_axi_s_env extends uvm_env;
       //                  ------   SCOREBOARD CONNECTION AND REF_MODEL CONNECTION
 
       foreach( mac_rx_uvc_h.rx_agent[i] )  mac_rx_uvc_h.rx_agent[i].rx_mon.rxmon_analysis_port.connect(mac_tx_to_rx_scrbrd_h.act_frame_mon_port[i]);
-      foreach( axi_str_suvc_h.slave_agent[i]) axi_str_suvc_h.slave_agent[i].slave_mon.item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_tdata_mon_port[i]);
+      //foreach( axi_str_suvc_h.slave_agent[i]) axi_str_suvc_h.slave_agent[i].slave_mon.item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_tdata_mon_port[i]);
+      axi_str_suvc_h.slave_agent[0].slave_mon.item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_tdata_mon_port0);
+      axi_str_suvc_h.slave_agent[1].slave_mon.item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_tdata_mon_port1);
+      axi_str_suvc_h.slave_agent[2].slave_mon.item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_tdata_mon_port2);
 
       foreach( mac_tx_to_rx_ref.frame_scrbd_port[i])mac_tx_to_rx_ref.frame_scrbd_port[i].connect(mac_tx_to_rx_scrbrd_h.exp_frame_ref_port[i]);
-      foreach( mac_tx_to_rx_ref.tdata_scrbd_port[i])mac_tx_to_rx_ref.tdata_scrbd_port[i].connect(mac_tx_to_rx_scrbrd_h.exp_tdata_ref_port[i]);
+      //foreach( mac_tx_to_rx_ref.tdata_scrbd_port[i])mac_tx_to_rx_ref.tdata_scrbd_port[i].connect(mac_tx_to_rx_scrbrd_h.exp_tdata_ref_port[i]);
+      mac_tx_to_rx_ref.tdata_scrbd_port[0].connect(mac_tx_to_rx_scrbrd_h.exp_tdata_ref_port0);
+      mac_tx_to_rx_ref.tdata_scrbd_port[1].connect(mac_tx_to_rx_scrbrd_h.exp_tdata_ref_port1);
+      mac_tx_to_rx_ref.tdata_scrbd_port[2].connect(mac_tx_to_rx_scrbrd_h.exp_tdata_ref_port2);
 
        axi_str_muvc_h.master_agent[0].master_mon.item_collected_port.connect(mac_tx_to_rx_ref.tdata_port0_imp);
        axi_str_muvc_h.master_agent[1].master_mon.item_collected_port.connect(mac_tx_to_rx_ref.tdata_port1_imp);
