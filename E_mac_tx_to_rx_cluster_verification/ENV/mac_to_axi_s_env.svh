@@ -177,7 +177,9 @@ class mac_to_axi_s_env extends uvm_env;
        mac_rx_uvc_h.rx_agent[i].connect_to_axi_str_slv_agnt(axi_str_suvc_h.slave_agent[i]);
      //// axi_str_suvc_h.slave_agent[i].item_collected_port.connect(mac_tx_to_rx_scrbrd_h.act_mon_port[i]);
      end
-
+    axi_str_suvc_h.slave_agent[0].slave_mon.item_collected_port.connect(mac_tx_to_rx_ref.acctual_tdata_port0_imp);
+    axi_str_suvc_h.slave_agent[1].slave_mon.item_collected_port.connect(mac_tx_to_rx_ref.acctual_tdata_port1_imp);
+    axi_str_suvc_h.slave_agent[2].slave_mon.item_collected_port.connect(mac_tx_to_rx_ref.acctual_tdata_port2_imp);
      //// Virtual sequencer connection 
      foreach ( vseqr_h.mac_tx_seqr_h[i] ) begin 
        vseqr_h.mac_tx_seqr_h[i] = mac_tx_uvc_h.mac_tx_agent_h[i].mac_tx_seqr_h; end  
