@@ -192,7 +192,8 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
    function void report_phase(uvm_phase phase);
             super.report_phase(phase);
-           foreach(exp_vcid_q[i]) 
+          /*
+	   foreach(exp_vcid_q[i]) 
 	   begin
 	   $display("");
 	   $display("  ----  Scoreboard exp - act VCID's  for port %0d  ", i );
@@ -204,7 +205,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
            $display("\nACUTAL");      
 	   foreach(act_vcid_q[i][j]) $write(" [%0d] : 'd%0d  " , j,  act_vcid_q[i][j]);
 	   $display("");
-           end
+           end*/
            endfunction 
 endclass 
 `endif
