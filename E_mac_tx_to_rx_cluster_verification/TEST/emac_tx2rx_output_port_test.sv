@@ -1,5 +1,5 @@
 /******************************************************************************************************************************************
- File Name   : emac_tx2rx_output_port_test.sv
+ File Name   : emac_tx2rx_vcid_test.sv
  Author Name : Jyoti Vishwakarma
  Date        : Dec 1
  Description : These is seqs to test working of output port
@@ -43,25 +43,9 @@ class emac_tx2rx_output_ports_test extends mac_to_axi_s_base_test;
       endtask
       
    function void report_phase(uvm_phase  phase);
-      $display("****************************************************************************");
-      $display("\n                      ---  SEQUENCE SUMMARY  ---  ");
-      $display("\nTOTAL PKT form all input ports : %0d \n  Pkt per port -> port0: %0d port1 : %0d port2 : %0d", output_prt_vseqs.no_pkt[0]+output_prt_vseqs.no_pkt[1]+output_prt_vseqs.no_pkt[2] , output_prt_vseqs.no_pkt[0] ,output_prt_vseqs.no_pkt[1], output_prt_vseqs.no_pkt[2]);
-
-      $display("****************************************************************************");
-      foreach(output_prt_vseqs.vcid_q[i]) begin
-      $display("\n   --- Port [%0d]", i);
-      $display("| VCID | :"); 
-      foreach(output_prt_vseqs.vcid_q[i][j]) $write(" [%0d]:'d%0d ",  j, output_prt_vseqs.vcid_q[i][j]);
-      $display("\n-----------------------------------------------------");
-      $display("| VLAN | :");
-      foreach(output_prt_vseqs.vln_q[i][j]) $write(" [%0d]:'d%0d ",  j, output_prt_vseqs.vln_q[i][j]);
-      $display("\n-----------------------------------------------------");
-      $display("| CONN_ID | : ");
-      foreach(output_prt_vseqs.vcid_q[i][j]) $write(" [%0d]:'d%0d ",  j,output_prt_vseqs.conn_id_q[i][j]);
-      $display("\n****************************************************************************");
-      end
-      $display("****************************************************************************");
     
+      output_prt_vseqs.seqs_summary();
+
 
    endfunction
     

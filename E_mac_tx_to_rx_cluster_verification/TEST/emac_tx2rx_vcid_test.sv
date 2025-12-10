@@ -1,19 +1,19 @@
 /******************************************************************************************************************************************
- File Name   : emac_tx2rx_output_ports_vseqs.sv
+ File Name   : emac_tx2rx_vcid_vseqs.sv
  Author Name : Jyoti Vishwakarma
- Date        : Dec 1
+ Date        : Dec 9
  Description : These is seqs to test working of output port
  ****************************************************************************************************************************************/
 
-`ifndef EMAC_TX2RX_OUTPUT_PORTS_VIRTUAL_SEQS
-`define EMAC_TX2RX_OUTPUT_PORTS_VIRTUAL_SEQS
+`ifndef EMAC_TX2RX_VCID_VIRTUAL_SEQS
+`define EMAC_TX2RX_VCID_VIRTUAL_SEQS
 
-class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
+class emac_tx2rx_vcid_vseqs extends emac_tx2rx_base_vseqs;
 
-  `uvm_object_utils(emac_tx2rx_output_ports_vseqs)
+  `uvm_object_utils(emac_tx2rx_vcid_vseqs)
   
 
-   function new(string name = "emac_tx2rx_output_ports_vseqs");
+   function new(string name = "emac_tx2rx_vcid_vseqs");
 
       super.new(name);
 
@@ -22,8 +22,7 @@ class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
 
   task body(); 
      begin       
-     
-     //Register Configuration      
+           
      int i = 0, j = 0, k = 0;
      repeat(no_pkt[0]) begin 
 
@@ -48,7 +47,7 @@ class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
 
 
    
-      //Seqs driving on Inputs
+      
        fork 
            begin 
            `uvm_do_on_with( emac_tx_seqs[0], mac_tx_seqr_h[0],
@@ -68,7 +67,7 @@ class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
            `uvm_do_on_with( emac_tx_seqs[2], mac_tx_seqr_h[2],
 	                    {no_of_packet== no_pkt[2];
 			     min_payload_size == min_pyld_size[2];
-			     max_payload_size == max_pyld_size[2]; 
+			     max_payload_size == max_pyld_size[2];
 			     vlan_q.size == no_pkt[2]; foreach(vlan_q[i]) vlan_q[i] == vln_q[2][i];} )
            end 
        join
@@ -79,3 +78,51 @@ endclass
 
 `endif
 
+
+/*******************************************************************************************************************************************/
+`ifndef EMAC_TX2RX_VCID_TEST
+`define EMAC_TX2RX_VCID_TEST
+
+class emac_tx2rx_vcid_test extends mac_to_axi_s_base_test; 
+ 
+  `uvm_component_utils(emac_tx2rx_vcid_test) 
+   
+   emac_tx2rx_vcid_vseqs vcid_vseqs;
+   
+   function new (string name="emac_tx2rx_vcid_test", uvm_component parent=null); 
+
+      super.new(name,parent); 
+      vcid_vseqs = emac_tx2rx_vcid_vseqs::type_id::create("vcid_vseqs");
+      endfunction: new 
+
+   function void connect_phase(uvm_phase phase);
+
+      super.connect_phase(phase);
+      endfunction 
+                  
+
+   task run_phase(uvm_phase phase);
+
+      phase.raise_objection(this);
+     
+
+      if(!vcid_vseqs.randomize() with {no_pkt[0] == 1; no_pkt[1] == 4; no_pkt[2] == 4;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
+      vcid_vseqs.sprint();
+
+      vcid_vseqs.start(env_h.vseqr_h);
+
+
+      #10000;
+
+      phase.drop_objection(this);
+      endtask
+      
+   function void report_phase(uvm_phase  phase);
+        
+      vcid_vseqs.seqs_summary();
+
+   endfunction
+    
+endclass : emac_tx2rx_vcid_test
+
+`endif

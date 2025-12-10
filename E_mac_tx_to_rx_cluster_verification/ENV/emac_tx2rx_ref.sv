@@ -1011,77 +1011,30 @@ function void final_phase(uvm_phase phase);
     `uvm_info(get_full_name(), 
         "\n--------------------------- Expected Packet Summary ---------------------------------------", UVM_DEBUG)
 
-    $display("\n");
-  //  $display("////////////////////////////////////////////");
-    $display("Total Packets received on all input ports = %0d", total_pkts_received);
-    // Consolidated Input Port Counts using the single array:
-    $display("No. of packet received at in_port0 = %0d", pkt_in_port[PORT3_IDX]);
-    $display("No. of packet received at in_port1 = %0d", pkt_in_port[PORT4_IDX]);
-    $display("No. of packet received at in_port2 = %0d", pkt_in_port[PORT5_IDX]);
-   // $display("////////////////////////////////////////////");
+     $display("    ---  ETYPE CHECK  ----   ");
+     foreach(etype_matched_count[i])
+     $display("Port[%0d]    -> Valid :  %10d packets  Invalid :  %10d packet", i, etype_matched_count[i], etype_mismatched_count[i]);
+     $display("Ttl pkt    -> Valid :  %10d packets  Invalid :  %10d packet",total_pkts_etype_matched,total_pkts_etype_missmached);
 
-    $display("\n");
-    $display("No. of packet with valid etype in_port0 = %0d", etype_matched_count[PORT3_IDX]);
-    $display("No. of packet with valid etype in_port1 = %0d", etype_matched_count[PORT4_IDX]);
-    $display("No. of packet with valid etype in_port2 = %0d", etype_matched_count[PORT5_IDX]);
-    $display("total No of packets with valid etype=%0d",total_pkts_etype_matched);
-  //  $display("////////////////////////////////////////////");
+     $display("    ---  PAYLOAD CHECK  ----   ");
+     foreach(payload_matched_count[i])
+     $display("Port[%0d]    -> Valid :  %10d packets  Invalid :  %10d packet", i, payload_matched_count[i], payload_mismatched_count[i]);
+     $display("Ttl pkt    -> Valid :  %10d packets  Invalid :  %10d packet",total_pkts_payload_size_matched,total_pkts_payload_size_missmatched);
 
-    $display("\n");
-    $display("No. of packet with invalid etype in_port0 = %0d", etype_mismatched_count[PORT3_IDX]);
-    $display("No. of packet with invalid etype in_port1 = %0d", etype_mismatched_count[PORT4_IDX]);
-    $display("No. of packet with invalid etype in_port2 = %0d", etype_mismatched_count[PORT5_IDX]);
-    $display("total No of packets with valid etype=%0d",total_pkts_etype_missmached);
-   // $display("////////////////////////////////////////////");
+     $display("    ---  CONNECTION_VALID CHECK  ----   ");
+     foreach(payload_matched_count[i])
+     $display("Port[%0d]    -> Valid :  %10d packets  Invalid :  %10d packet", i, valid[i], invalid[i]);
+     $display("Ttl pkt    -> Valid :  %10d packets  Invalid :  %10d packet",total_conn_valid,total_conn_invalid_drop);       
 
-    $display("\n");
-    $display("No. of packet with valid payload size in_port0 = %0d", payload_matched_count[PORT3_IDX]);
-    $display("No. of packet with valid payload size in_port1 = %0d", payload_matched_count[PORT4_IDX]);
-    $display("No. of packet with valid payload size in_port2 = %0d", payload_matched_count[PORT5_IDX]);
-    $display("total No of packets with valid payload size=%0d",total_pkts_payload_size_matched);
-   // $display("////////////////////////////////////////////");
- 
-    $display("\n");
-    $display("No. of packet with invalid payload size in_port0 = %0d", payload_mismatched_count[PORT3_IDX]);
-    $display("No. of packet with invalid payload size in_port1 = %0d", payload_mismatched_count[PORT4_IDX]);
-    $display("No. of packet with invalid payload size in_port2 = %0d", payload_mismatched_count[PORT5_IDX]);
-    $display("total No of packets with invalid payload size=%0d",total_pkts_payload_size_missmatched);
-    //$display("////////////////////////////////////////////");
- 
-    $display("\n"); 
-    $display("No. of packet with connection valid = %0d", valid[PORT3_IDX]);
-    $display("No. of packet with connection valid = %0d", valid[PORT4_IDX]);
-    $display("No. of packet with connection valid = %0d", valid[PORT5_IDX]);
-    $display("Total No. of packet with connection valid = %0d", total_conn_valid);
- //   $display("////////////////////////////////////////////");
+     $display("    ---  EXPECTED Packet at OUTPUT  ----   ");
+     foreach(expected_out_port[i])
+     $display("Port[%0d]    -> EXP   :  %10d packets  ACTUAL  :  %10d packet", i, expected_out_port[i], actual_out_port[i]);
+     $display("Ttl pkt    -> EXP   :  %10d packets  ACTUAL  :  %10d packet",total_pkts_out_from_ref,total_acctual_pkt);
 
-    $display("\n"); 
-    $display("No. of packet with connection invalid = %0d", invalid[PORT3_IDX]);
-    $display("No. of packet with connection invalid = %0d", invalid[PORT4_IDX]);
-    $display("No. of packet with connection invalid = %0d", invalid[PORT5_IDX]);
-    $display("No. of packet dropped due to connection invalid = %0d", total_conn_invalid_drop);
- //   $display("////////////////////////////////////////////");
- //   $display("No of packet dropped due to incorrect CRC = %0d", total_crc_drop);
 
-    // Expected Output Counts
-    $display("\n"); 
-    $display("No of expected packet at out_port0 = %0d", expected_out_port[PORT8_IDX]);
-    $display("No of expected packet at out_port1 = %0d", expected_out_port[PORT9_IDX]);
-    $display("No of expected packet at out_port2 = %0d", expected_out_port[PORT10_IDX]);
-    $display("Total No of expected pacaket out from ref = %0d",total_pkts_out_from_ref);
- //   $display("////////////////////////////////////////////");
-
-    // Actual Output Counts
-    $display("\n"); 
-    $display("No of actual packet at out_port0 = %0d", actual_out_port[PORT3_IDX]);
-    $display("No of actual packet at out_port1 = %0d", actual_out_port[PORT4_IDX]);
-    $display("No of actual packet at out_port2 = %0d", actual_out_port[PORT5_IDX]);
-    $display("Total no of acctual packet=%d",total_acctual_pkt);
-//    $display("////////////////////////////////////////////");
 
     $display("\n");
     `uvm_info(get_full_name(), 
-        "------------------------------------------------------------------------------------------\n", UVM_DEBUG)
-endfunction
+        "------------------------------------------------------------------------------------------\n", UVM_DEBUG)endfunction
 endclass
 `endif

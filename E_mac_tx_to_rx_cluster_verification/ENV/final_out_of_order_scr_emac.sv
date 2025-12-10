@@ -87,22 +87,25 @@
    //                and comapre call when id is same for actual data and expected data
    // -----------------------------
    virtual task run_phase(uvm_phase phase);
-      T exp_data [$];
-      T act_data [$];
-	  int pkt_num_ar [int];
-	  int pkt_num;
-      forever begin
-          ev.wait_trigger;
+      T   exp_data [$];
+      T   act_data [$];
+      int pkt_num_ar [int];
+      int pkt_num;
 
-         if (exp_que.exists(id) && act_que.exists(id)) begin
-             if (exp_que[id].size() == 0 || act_que[id].size() == 0)
-	     begin
-	     `uvm_error(get_name,$sformatf("Exp_que or act_que is empty of id == 'd%0d ", id))
-              continue;
-             end 
-	     else
-          //  $display("SCR : exp : %0p pkt_no : %0d vcid : %0d", exp_que[id], pkt_num_ar[id] , id);
-          //  $display("SCR : act : %0p pkt_no : %0d vcid : %0d", act_que[id], pkt_num_ar[id] , id);
+      forever begin
+
+         ev.wait_trigger;
+         if(exp_que.exists(id) && act_que.exists(id)) begin
+            if (exp_que[id].size() == 0 || act_que[id].size() == 0)
+	    begin
+	    //`uvm_error(get_name,$sformatf("Exp_que or act_que is empty of id == 'd%0d ", id))
+             continue;
+            end 
+	    
+	    else
+            begin
+            //  $display("SCR : exp : %0p pkt_no : %0d vcid : %0d", exp_que[id], pkt_num_ar[id] , id);
+            //  $display("SCR : act : %0p pkt_no : %0d vcid : %0d", act_que[id], pkt_num_ar[id] , id);
             exp_data = exp_que[id][pkt_num_ar[id]];
             act_data = act_que[id][pkt_num_ar[id]];
 
@@ -113,8 +116,9 @@
 			  $display("================ Comaparing packet Number : 'd%0d ================",pkt_num);
 			  compare(exp_data[i], act_data[i], id);
 			end
-			pkt_num_ar[id]++;
-			pkt_num++;
+            pkt_num_ar[id]++;
+            pkt_num++;
+	    end
          end
       end
    endtask
