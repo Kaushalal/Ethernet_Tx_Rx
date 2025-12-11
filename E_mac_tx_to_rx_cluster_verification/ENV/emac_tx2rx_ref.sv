@@ -49,7 +49,12 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
   
     // ---   Ports that will be connected to  SCOREBOARD to send expected data in tdata_q format
     uvm_analysis_port #(axi_str_mas_seq_item #(32,32))                                               tdata_scrbd_port[];
-   
+ 
+ 
+    uvm_phase drped_pkt_drop_obj_phase; 
+ 
+ 
+ 
     //stores input frame packet coming form tx_mon
 
     axi_str_mas_seq_item #(32,32)     tdata_pkt_q[][$];
@@ -59,14 +64,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     mac_tx_seq_item                   etype_valid_pkt_q[][$];
     mac_tx_seq_item                   payload_valid_pkt_q[][$];
     mac_tx_seq_item                   conn_cfg_valid_pkt_q[][$];
-
+ 
     bit [15:0]           valid_etypes[$] = '{16'h0800, 16'h8100};
     string               port_names[NUM_PORTS] = '{"PORT3", "PORT4", "PORT5"};
     string               port_names_tdata[NUM_PORTS] = '{"PORT8", "PORT9", "PORT10"};
     int                  tdata_ref;
     bit [7:0]            global_clean_data_q[$];
     axi_4_reg_block      ral; 
-     
     int                  etype_matched_count[NUM_PORTS];
     int                  etype_mismatched_count[NUM_PORTS];
     int                  payload_matched_count[NUM_PORTS];
@@ -328,6 +332,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end
 	         else
                     begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     etype_mismatched_count[PORT3_IDX]++;
                     tdata_pkt_q[0].delete();
                     `uvm_info("REF_INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT3_IDX], packet_q[0][i].Etype), UVM_LOW);
@@ -351,6 +356,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end 
 		else 
 	            begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+                    etype_mismatched_count[PORT3_IDX]++;
                     etype_mismatched_count[PORT4_IDX]++;
                     tdata_pkt_q[1].delete();
                     `uvm_info("REF_INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT4_IDX], packet_q[1][i].Etype), UVM_LOW);
@@ -374,6 +381,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end
 	        else
                     begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+                    etype_mismatched_count[PORT3_IDX]++;
                     etype_mismatched_count[PORT5_IDX]++;
                     tdata_pkt_q[2].delete();
                     `uvm_info("REF_INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT5_IDX], packet_q[2][i].Etype), UVM_LOW)
@@ -430,6 +439,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     payload_matched_count[PORT4_IDX]++;
                     payload_valid_pkt_q[1].push_back(etype_valid_pkt_q[1][i]);
                 end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+                    etype_mismatched_count[PORT3_IDX]++;
                     payload_mismatched_count[PORT4_IDX]++;
                     tdata_pkt_q[1].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD=%d - DROPPED", port_names[PORT4_IDX], etype_valid_pkt_q[1][i].payload_q.size()), UVM_LOW)
@@ -449,6 +460,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     payload_matched_count[PORT5_IDX]++;
                     payload_valid_pkt_q[2].push_back(etype_valid_pkt_q[2][i]);
                 end else begin
+
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+                    etype_mismatched_count[PORT3_IDX]++;
                     payload_mismatched_count[PORT5_IDX]++;
                     tdata_pkt_q[2].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD SIZE=%D - DROPPED", port_names[PORT5_IDX], etype_valid_pkt_q[2][i].payload_q.size()), UVM_LOW)
@@ -492,7 +506,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                         conn_cfg_valid_pkt_q[0].push_back(payload_valid_pkt_q[0][i]);
                         `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT3_IDX], conn_valid_bit), UVM_DEBUG);
                     end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                       tdata_pkt_q[0].delete();
+                    etype_mismatched_count[PORT3_IDX]++;
                         invalid[PORT3_IDX]++;
                         `uvm_info("REF_CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT3_IDX], conn_valid_bit), UVM_LOW);
                     end
@@ -523,6 +539,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                         conn_cfg_valid_pkt_q[1].push_back(payload_valid_pkt_q[1][i]);
                         `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_DEBUG);
                     end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+                    etype_mismatched_count[PORT3_IDX]++;
                         invalid[PORT4_IDX]++;
                         tdata_pkt_q[1].delete();
                         `uvm_info("REF_CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_LOW);
@@ -553,8 +571,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                         conn_cfg_valid_pkt_q[2].push_back(payload_valid_pkt_q[2][i]);
                         `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_DEBUG);
                     end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+                    etype_mismatched_count[PORT3_IDX]++;
                         invalid[PORT5_IDX]++;
-                    tdata_pkt_q[2].delete();
+                        tdata_pkt_q[2].delete();
                         `uvm_info("REF_CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_LOW);
                     end
                 end
@@ -1035,6 +1055,9 @@ function void final_phase(uvm_phase phase);
 
     $display("\n");
     `uvm_info(get_full_name(), 
-        "------------------------------------------------------------------------------------------\n", UVM_DEBUG)endfunction
+        "------------------------------------------------------------------------------------------\n", UVM_DEBUG)
+    endfunction
+
+   
 endclass
 `endif

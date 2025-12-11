@@ -23,7 +23,7 @@ class emac_tx2rx_base_vseqs extends mac_to_axi_s_base_virtual_seqs;
    rand int         no_pkt[`NO_OF_INPUT_PORT];          //It indicates port number as index and value at that index as number of packet driven at that port  
    rand int         min_pyld_size[`NO_OF_INPUT_PORT]; 
    rand int         max_pyld_size[`NO_OF_INPUT_PORT]; 
-  
+   rand int         total_num_packet; 
    function new(string name = "emac_tx2rx_base_vseqs");
 
       super.new(name);
@@ -64,18 +64,18 @@ class emac_tx2rx_base_vseqs extends mac_to_axi_s_base_virtual_seqs;
 //Incase repeatation of connection_id off constraint unique_connection_id -> this is per port
 //  constraint unique_connection_id { foreach( conn_id_q[i])    unique{conn_id_q[i]};};
 //  constraint unique_vc_id         { foreach( vcid_q[i]   )    unique{vcid_q[i]   };};
-//  constraint unique_vlan          { foreach( vln_q[i]    )    unique{vln_q[i]    };};
+    constraint unique_vlan          { foreach( vln_q[i]    )    unique{vln_q[i]    };};
 
 	
 
-  constraint no_pkt_range         { foreach(no_pkt[i]) soft no_pkt[i] inside {1};};
+  constraint no_pkt_range         { foreach(no_pkt[i]) soft no_pkt[i] inside {1}; total_num_packet == no_pkt.sum();};
  
 
    function seqs_summary();
       $display("****************************************************************************");
       $display("\n                      ---  SEQUENCE SUMMARY  ---  ");
       $display("\nTOTAL NUM OF PKT : %0d \nNUM_PACKET : Port[0]: %0d Port[1] : %0d Port[2] : %0d"
-      , no_pkt[0]+no_pkt[1]+no_pkt[2] ,no_pkt[0] ,no_pkt[1], no_pkt[2]);
+      , total_num_packet ,no_pkt[0] ,no_pkt[1], no_pkt[2]);
       $display("****************************************************************************");
       $display(" | PAYLOAD_RANGE | :");
       foreach(min_pyld_size[i]) $write("Port[%0d]-> [%0d : %0d] | ", i, min_pyld_size[i], max_pyld_size[i]); 

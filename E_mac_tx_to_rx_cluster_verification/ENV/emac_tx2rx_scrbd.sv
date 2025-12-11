@@ -36,7 +36,8 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    `uvm_field_int(tdata_comparison ,UVM_ALL_ON)
    `uvm_field_int(frame_comparison ,UVM_ALL_ON)
    `uvm_component_utils_end
-
+  
+   uvm_phase drop_obj_phase;
    //For tdata comparison 
    uvm_out_oder_scorboard_lib#( bit [`AXI_STR_DATA_SIZE] ,int)    scrbd[];
 
@@ -112,6 +113,8 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
             act_vcid_q[0].push_back(act_vc_id);
 
 	    scrbd[0].set_act_buffer( act_vc_id , act_trans.tdata_q);
+            drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+            $display("drop_objection called!");
             endfunction
 
    function write_tdata_mon1(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
@@ -123,6 +126,8 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
             act_vcid_q[1].push_back(act_vc_id);
 
 	    scrbd[1].set_act_buffer( act_vc_id , act_trans.tdata_q);
+            drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+            $display("drop_objection called!");
             endfunction
 
    function write_tdata_mon2(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
@@ -134,6 +139,8 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
             act_vcid_q[2].push_back(act_vc_id);
 
 	    scrbd[2].set_act_buffer( act_vc_id , act_trans.tdata_q);
+            drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
+            $display("drop_objection called!");
             endfunction
 
  
@@ -192,7 +199,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
    function void report_phase(uvm_phase phase);
             super.report_phase(phase);
-          /*
+          
 	   foreach(exp_vcid_q[i]) 
 	   begin
 	   $display("");
@@ -205,7 +212,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
            $display("\nACUTAL");      
 	   foreach(act_vcid_q[i][j]) $write(" [%0d] : 'd%0d  " , j,  act_vcid_q[i][j]);
 	   $display("");
-           end*/
+           end
            endfunction 
 endclass 
 `endif
