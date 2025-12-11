@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// File Name     : mac_to_axi_s_payload_test.svh
+// File Name     : mac_tx_to_rx_payload_test.svh
 //
 // Purpose       : To verify that the design transfers payload only when the
 //                 payload size is within the valid range of 46 to 1500 bytes.
@@ -12,22 +12,22 @@
 //------------------------------------------------------------------------------
 
 
-`ifndef MAC_TO_AXI_S_PAYLOAD_TEST_SV
-`define MAC_TO_AXI_S_PAYLOAD_TEST_SV
+`ifndef MAC_TX_TO_RX_PAYLOAD_TEST_SV
+`define MAC_TX_TO_RX_PAYLOAD_TEST_SV
 
 // -----------------------------------------------------------------------------
-// mac_to_axi_s_payload_seqs
+// mac_tx_to_rx_payload_seqs
 // To verify DUT payload-size handling using per-port
 // mac_tx sequences. Uses pre-configured VLAN data from temp_vlan_q and
 // executes valid ([46:1500]) and invalid ([0:45], [1501:1600]) payload tests
 // using constrained `uvm_do_on_with`.
 // -----------------------------------------------------------------------------
-class mac_to_axi_s_payload_seqs extends mac_to_axi_s_base_virtual_seqs;
+class mac_tx_to_rx_payload_seqs extends mac_to_axi_s_base_virtual_seqs;
 	
-	`uvm_object_utils_begin(mac_to_axi_s_payload_seqs)
+	`uvm_object_utils_begin(mac_tx_to_rx_payload_seqs)
 	`uvm_object_utils_end
 
-	function new(string name = "mac_to_axi_s_payload_seqs");
+	function new(string name = "mac_tx_to_rx_payload_seqs");
 		super.new(name);
 	endfunction : new
 
@@ -157,18 +157,18 @@ class mac_to_axi_s_payload_seqs extends mac_to_axi_s_base_virtual_seqs;
       join
     end
 	endtask : body
-endclass : mac_to_axi_s_payload_seqs	
+endclass : mac_tx_to_rx_payload_seqs	
 
 
 
-class mac_to_axi_s_payload_test extends mac_to_axi_s_base_test;
+class mac_tx_to_rx_payload_test extends mac_to_axi_s_base_test;
     
-	mac_to_axi_s_payload_seqs payload_seqs;
+	mac_tx_to_rx_payload_seqs payload_seqs;
   
-  `uvm_component_utils_begin(mac_to_axi_s_payload_test)
+  `uvm_component_utils_begin(mac_tx_to_rx_payload_test)
 	`uvm_component_utils_end
   
-  function new(string name="mac_to_axi_s_payload_test",uvm_component parent=null);
+  function new(string name="mac_tx_to_rx_payload_test",uvm_component parent=null);
     super.new(name,parent);
   endfunction : new
  
@@ -180,14 +180,14 @@ class mac_to_axi_s_payload_test extends mac_to_axi_s_base_test;
     //super.run_phase(phase);
 	
     // Create the sequence instance and start it on the virtual sequencer
-    payload_seqs = mac_to_axi_s_payload_seqs::type_id::create("payload_seqs");
+    payload_seqs = mac_tx_to_rx_payload_seqs::type_id::create("payload_seqs");
     phase.raise_objection(this); // keep simulation running while sequence runs
 		payload_seqs.start(env_h.vseqr_h);
 		#50us; // wait for test activity (timing is test-specific)
 		phase.drop_objection(this); // allow simulation to finish
   endtask : run_phase 
   
-endclass : mac_to_axi_s_payload_test
+endclass : mac_tx_to_rx_payload_test
 
 `endif 
 
