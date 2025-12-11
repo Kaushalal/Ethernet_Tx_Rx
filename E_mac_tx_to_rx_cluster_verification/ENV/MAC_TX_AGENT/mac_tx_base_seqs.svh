@@ -54,7 +54,7 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
                                 sa    inside {temp_sa};
                                 da    inside {temp_da};
                                 Etype == temp_Etype;
-                                (i<no_of_packet)->(vlan == vlan_q[i]) ; (i>=no_of_packet)->(vlan inside {vlan_q}) ; } )
+                                (i<vlan_q.size())->(vlan == vlan_q[i]) ; (i>=vlan_q.size())->(vlan inside {vlan_q}) ; } )
       i++;
      `uvm_info( "MAC_PKT",$sformatf(mac_pkt.sprint()),UVM_DEBUG)
 

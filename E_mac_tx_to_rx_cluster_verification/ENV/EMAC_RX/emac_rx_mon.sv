@@ -21,8 +21,6 @@ class emac_rx_mon#(
 
 	emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH) rx_seqs_item;
 
-    int vcid_q[$];
-
   `uvm_component_param_utils_begin(emac_rx_mon#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH))
   `uvm_component_utils_end 
    
@@ -59,14 +57,10 @@ class emac_rx_mon#(
 		endcase 
 		`uvm_info(get_full_name(),rx_seqs_item.sprint(),UVM_MEDIUM)
 
-        vcid_q.push_back(rx_seqs_item.vcid);
 		rxmon_analysis_port.write(rx_seqs_item);
 		end
 	endfunction : axistream2emac_frame
 
-    function void report_phase ( uvm_phase phase );
-    $display(" ACTUA_RX_VCID_Q = %p ",vcid_q);
-    endfunction 
 
 endclass : emac_rx_mon
 

@@ -18,20 +18,20 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
   
   `uvm_declare_p_sequencer(mac_to_axi_s_virtual_seqr)
 
-   mac_tx_base_seqs mac_tx_seqs[int][]; //// 1st index (ID) -> port_no  //// Associative arr -> in case u want to start multiple seqs on a single port ( ex- continous toggling between valid and invalid scenarios )
+   mac_tx_base_seqs mac_tx_seqs[int][]; //// 1st index -> port_no  //// Associative arr -> in case u want to start multiple seqs on a single port ( ex- continous toggling between valid and invalid scenarios )
    mac_tx_seqr mac_tx_seqr_h[];
    reg_conn_cfg_seq conn_cfg_seqs;
 
-   rand bit [11:0]  temp_vlan_q[int][$];  //// 1st index (ID) -> port_no
+   rand bit [11:0]  temp_vlan_q[int][$];  //// 1st index -> port_no
    rand bit [2:0]   temp_port_id;
                   
    rand bit         temp_connection_valid;
-   rand bit [4:0]   temp_connection_id[$];
+   rand bit [4:0]   temp_connection_id[int][$];    //// 1st index -> port_no
                   
    rand bit [3:0]   temp_out_port_sel;
    rand bit [31:0]  temp_crc_val;
                                
-   rand bit [7:0]   temp_vcid_val[int][int];   //// 1st id -> port_no //// 2nd id -> connection_id ////
+   rand bit [7:0]   temp_vcid_val[int][int];   //// 1st index -> port_no //// 2nd id -> connection_id ////
 
   
    function new(string name = "mac_to_axi_s_base_virtual_seqs", int no_of_seqs = 1, int no_of_ports = 3);
@@ -60,8 +60,8 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
 ////---------------------------------------------------------------------------------////
 ////              Function to collect connection id 
 ////---------------------------------------------------------------------------------////
-   virtual function void collect_conn_id( bit[4:0] conn_id );
-      temp_connection_id.push_back(conn_id);
+   virtual function void collect_conn_id( int port_no, bit[4:0] conn_id );
+      temp_connection_id[port_no].push_back(conn_id);
    endfunction
 
 ////---------------------------------------------------------------------------------////
@@ -83,7 +83,7 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
          repeat( no_of_configurations ) begin 
 
             void'(conn_cfg_seqs.randomize with { 
-            (in_port_no == 0)->(port_id == 3); 
+            (in_port_no==0)->(port_id==3); 
             (in_port_no==1)->(port_id==4); 
             (in_port_no==2)->(port_id==5);
             port_id inside {3,4,5};
@@ -92,11 +92,13 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
             (out_port_no==1)->(out_port_sel==9);
             (out_port_no==2)->(out_port_sel==10); 
             out_port_sel inside {8,9,10}; 
-            !(connection_id inside {temp_connection_id}) ; 
-            !(vlan inside {temp_vlan_q});
+            if(temp_connection_id.size>0){ (port_id==3)-> foreach(temp_connection_id[i]){ (i!=0) -> !(connection_id inside {temp_connection_id[i]}) };
+                                           (port_id==4)-> foreach(temp_connection_id[i]){ (i!=1) -> !(connection_id inside {temp_connection_id[i]}) };
+                                           (port_id==5)-> foreach(temp_connection_id[i]){ (i!=2) -> !(connection_id inside {temp_connection_id[i]}) }; }
+            (temp_vlan_q[port_id].size < 4096)-> !(vlan inside {temp_vlan_q});   //// to make it work like randc 
             (range_of_vlan==0)->(vlan inside {[0:500]});
             (range_of_vlan==1)->(vlan inside {[1000:2000]});
-            (range_of_vlan==2)->(vlan inside{[3095:4095]}); 
+            (range_of_vlan==2)->(vlan inside {[3095:4095]}); 
             (range_of_conn_id==0)->(connection_id inside {[0:10]});
             (range_of_conn_id==1)->(connection_id inside {[10:20]}); 
             (range_of_conn_id==2)->(connection_id inside {[20:31]});         });
@@ -104,13 +106,11 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
             conn_cfg_seqs.start(null);
             
             if( collect_data == 1 ) begin 
-            collect_vcid( port_no[conn_cfg_seqs.port_id],conn_cfg_seqs.connection_id, conn_cfg_seqs.vcid_val );
+            collect_vcid( port_no[conn_cfg_seqs.port_id], conn_cfg_seqs.connection_id, conn_cfg_seqs.vcid_val );
             collect_vlan_id( port_no[conn_cfg_seqs.port_id], conn_cfg_seqs.vlan );
-            collect_conn_id( conn_cfg_seqs.connection_id );
+            collect_conn_id( port_no[conn_cfg_seqs.port_id], conn_cfg_seqs.connection_id );
             end 
             
-            if( temp_connection_id.size == 32 )
-                 temp_connection_id.delete();
          end 
    endtask
 
@@ -170,10 +170,10 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
 
  task post_body();
  foreach( temp_vlan_q[i] )
- `uvm_info("\n Configured VLAN_IDS",$sformatf(" vlan_q[%0d] = %p \n",i,temp_vlan_q[i]),UVM_LOW)
+ `uvm_info("\n Configured_VLAN_IDS",$sformatf(" vlan_q[%0d] = %p \n",i,temp_vlan_q[i]),UVM_HIGH)
 
  foreach( temp_vcid_val[i,j] )
- `uvm_info("\nConfigured VCID_IDS",$sformatf(" vlan_q[PORT_NO : %0d][CONNECTION_ID : %0d] = %p \n",i,j,temp_vcid_val[i][j]),UVM_LOW)
+ `uvm_info("\n Configured_VCID_IDS",$sformatf(" vcid_q[PORT_NO : %0d][CONNECTION_ID : %0d] = %p \n",i,j,temp_vcid_val[i][j]),UVM_HIGH)
  endtask 
 
  

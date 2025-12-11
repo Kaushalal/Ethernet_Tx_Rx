@@ -10,12 +10,12 @@
 class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
 
    randc bit [11:0]  vlan;
-   randc bit [2:0]    port_id;
+   rand bit [2:0]    port_id;
 
    rand bit          connection_valid;
-   randc bit [4:0]    connection_id;
+   rand bit [4:0]    connection_id;
 
-   randc bit [3:0]    out_port_sel;
+   rand bit [3:0]    out_port_sel;
    rand bit [31:0]   crc_val;
    randc bit [7:0]    vcid_val;
    
@@ -92,7 +92,7 @@ class reg_conn_cfg_seq extends uvm_sequence#(uvm_sequence_item);
    axi_4_reg_block_h.vcid_reg_h[connection_id].write(status,{24'b0,vcid_val});
    `uvm_info("REG : VCID_REG  ",$sformatf("FEILDS : vcid_reg : %h ",vcid_val),UVM_DEBUG)
    
-   `uvm_info(" == CONNECTION_CONFIGURATION_SUMMARY == ",$sformatf("FEILDS : port_id = %0d || vlan = 'h%0h || connection_id = 'd%0d || vcid_reg : 'd%0d || out_port_sel = %0d ",port_id,vlan,connection_id,vcid_val,out_port_sel),UVM_MEDIUM)
+   `uvm_info(" == CONNECTION_CONFIGURATION_SUMMARY == ",$sformatf("FEILDS : port_id = %0d || vlan = 'h%0h || connection_id = 'd%0d || connection_valid = %b || vcid_reg : 'd%0d || out_port_sel = %0d ",port_id,vlan,connection_id,connection_valid,vcid_val,out_port_sel),UVM_MEDIUM)
 
 
  endtask   
