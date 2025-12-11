@@ -1,20 +1,27 @@
-/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+//------------------------------------------------------------------------------
+// File Name     : mac_to_axi_s_payload_test.svh
+//
+// Purpose       : To verify that the design transfers payload only when the
+//                 payload size is within the valid range of 46 to 1500 bytes.
+//                 Packets above 1500 are expected to be dropped and packets below 46 are padded to 46
+//
+// Creation Date : 02-12-2025
+// Last Modified : --
+//
+// Created By    : Joel Joseph
+//------------------------------------------------------------------------------
 
-* File Name : mac_to_axi_s_payload_test.svh
-
-* Purpose : to check whether the design is transfering the payload only when the range is between 46 to 1500 else dropping it. 
-
-* Creation Date : 02-12-2025
-
-* Last Modified :
-
-* Created By : Joel Joseph  
-
-_._._._._._._._._._._._._._._._._._._._._.*/
 
 `ifndef MAC_TO_AXI_S_PAYLOAD_TEST_SV
 `define MAC_TO_AXI_S_PAYLOAD_TEST_SV
 
+// -----------------------------------------------------------------------------
+// mac_to_axi_s_payload_seqs
+// To verify DUT payload-size handling using per-port
+// mac_tx sequences. Uses pre-configured VLAN data from temp_vlan_q and
+// executes valid ([46:1500]) and invalid ([0:45], [1501:1600]) payload tests
+// using constrained `uvm_do_on_with`.
+// -----------------------------------------------------------------------------
 class mac_to_axi_s_payload_seqs extends mac_to_axi_s_base_virtual_seqs;
 	
 	`uvm_object_utils_begin(mac_to_axi_s_payload_seqs)
@@ -26,164 +33,132 @@ class mac_to_axi_s_payload_seqs extends mac_to_axi_s_base_virtual_seqs;
 
 	task body();
 
-		
-		repeat(1) begin
-
-    $display(" RAL SEQS ");
-		  //port - 3
-		  if(!conn_cfg_seqs.randomize() with {
-        connection_valid == 1'b1; vlan == 'h7; port_id == 'd3; out_port_sel == 'd8;
-      })
-			  `uvm_error(get_full_name(),"Randomization Failed!!")
-			conn_cfg_seqs.start(null);
-      temp_vlan_q[conn_cfg_seqs.port_id].push_back(conn_cfg_seqs.vlan);
-		
+    // -------------------------------------------------------------
+    // Randomize port_id and out_port_sel based on in_port_no/out_port_no
+    // Generate unique VLAN and Connection IDs
+    // Program the registers via conn_cfg_seqs
+    // Collect VLAN/VCID/Connection ID into temp_* queues for later use		  
+    // -------------------------------------------------------------
+		repeat(7) begin
+      $display(" RAL SEQS ");
+		  
+      //port - 3
+		  configure_connection(.in_port_no(0),.out_port_no(0),.conn_valid_bit(1),.no_of_configurations(1),.collect_data(1),.range_of_vlan(3),.range_of_conn_id(3));
       //port - 4
-		  if(!conn_cfg_seqs.randomize() with {
-        connection_valid == 1'b1; vlan == 'h77; port_id == 'd4; out_port_sel == 'd9;
-      })
-			  `uvm_error(get_full_name(),"Randomization Failed!!")
-			conn_cfg_seqs.start(null);
-      temp_vlan_q[conn_cfg_seqs.port_id].push_back(conn_cfg_seqs.vlan);
-		
+		  configure_connection(.in_port_no(1),.out_port_no(1),.conn_valid_bit(1),.no_of_configurations(1),.collect_data(1),.range_of_vlan(3),.range_of_conn_id(3));
       //port - 5
-	  	if(!conn_cfg_seqs.randomize() with {
-        connection_valid == 1'b1; vlan == 'h11; port_id == 'd5; out_port_sel == 'd10;
-      })
-			  `uvm_error(get_full_name(),"Randomization Failed!!")
-			conn_cfg_seqs.start(null);
-      temp_vlan_q[conn_cfg_seqs.port_id].push_back(conn_cfg_seqs.vlan);
-		end
-		
-// /*
-		fork
-    $display(" MAC SEQS ");
-     `uvm_do_on_with(mac_tx_seqs[3][0],mac_tx_seqr_h[0],
-                    {
-                      min_payload_size == 46; max_payload_size == 46; vlan_q.size == temp_vlan_q[3].size; foreach(temp_vlan_q[3][i]) { vlan_q[i] == temp_vlan_q[3][i]; no_of_packet == 1;}
-                    })
+		  configure_connection(.in_port_no(2),.out_port_no(2),.conn_valid_bit(1),.no_of_configurations(1),.collect_data(1),.range_of_vlan(3),.range_of_conn_id(3));
+    end
 
-     `uvm_do_on_with(mac_tx_seqs[4][0],mac_tx_seqr_h[1],
-                    {
-                      min_payload_size == 46; max_payload_size == 46; vlan_q.size == temp_vlan_q[4].size; foreach(temp_vlan_q[4][i]) { vlan_q[i] == temp_vlan_q[4][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[5][0],mac_tx_seqr_h[2],
-                    {
-                      min_payload_size == 46; max_payload_size == 46; vlan_q.size == temp_vlan_q[5].size; foreach(temp_vlan_q[5][i]) { vlan_q[i] == temp_vlan_q[5][i]; no_of_packet == 1;}
-                    }) 
-    join
-// */
-
-// /*
-    fork
-     `uvm_do_on_with(mac_tx_seqs[3][0],mac_tx_seqr_h[0],
-                    {
-                      min_payload_size == 45; max_payload_size == 45; vlan_q.size == temp_vlan_q[3].size; foreach(temp_vlan_q[3][i]) { vlan_q[i] == temp_vlan_q[3][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[4][0],mac_tx_seqr_h[1],
-                    {
-                      min_payload_size == 45; max_payload_size == 45; vlan_q.size == temp_vlan_q[4].size; foreach(temp_vlan_q[4][i]) { vlan_q[i] == temp_vlan_q[4][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[5][0],mac_tx_seqr_h[2],
-                    {
-                      min_payload_size == 45; max_payload_size == 45; vlan_q.size == temp_vlan_q[5].size; foreach(temp_vlan_q[5][i]) { vlan_q[i] == temp_vlan_q[5][i]; no_of_packet == 1;}
-                    })
-    join
-// */ 
-
-// /*
-    fork
-     `uvm_do_on_with(mac_tx_seqs[3][0],mac_tx_seqr_h[0],
-                    {
-                      min_payload_size == 1500; max_payload_size == 1500; vlan_q.size == temp_vlan_q[3].size; foreach(temp_vlan_q[3][i]) { vlan_q[i] == temp_vlan_q[3][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[4][0],mac_tx_seqr_h[1],
-                    {
-                      min_payload_size == 1500; max_payload_size == 1500; vlan_q.size == temp_vlan_q[4].size; foreach(temp_vlan_q[4][i]) { vlan_q[i] == temp_vlan_q[4][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[5][0],mac_tx_seqr_h[2],
-                    {
-                      min_payload_size == 1500; max_payload_size == 1500; vlan_q.size == temp_vlan_q[5].size; foreach(temp_vlan_q[5][i]) { vlan_q[i] == temp_vlan_q[5][i]; no_of_packet == 1;}
-                    })
-    join
-// */ 
-
-// /*
-    fork
-     `uvm_do_on_with(mac_tx_seqs[3][0],mac_tx_seqr_h[0],
-                    {
-                      min_payload_size == 1501; max_payload_size == 1501; vlan_q.size == temp_vlan_q[3].size; foreach(temp_vlan_q[3][i]) { vlan_q[i] == temp_vlan_q[3][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[4][0],mac_tx_seqr_h[1],
-                    {
-                      min_payload_size == 1501; max_payload_size == 1501; vlan_q.size == temp_vlan_q[4].size; foreach(temp_vlan_q[4][i]) { vlan_q[i] == temp_vlan_q[4][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[5][0],mac_tx_seqr_h[2],
-                    {
-                      min_payload_size == 1501; max_payload_size == 1501; vlan_q.size == temp_vlan_q[5].size; foreach(temp_vlan_q[5][i]) { vlan_q[i] == temp_vlan_q[5][i]; no_of_packet == 1;}
-                    })
-    join
-// */ 
-
-// /*
-    repeat(1) begin
+    // -------------------------------------------------------------
+    // Scenario 1: Valid payload range check
+    // Generates packets with payload size strictly within [46:1500]
+    // Ensures min_payload_size <= max_payload_size
+    // Uses pre-configured VLANs from temp_vlan_q for each port
+    // -------------------------------------------------------------
+    $display(" Scenerio 1 : payload valid range check ");
+    repeat(5) begin
       fork
-        `uvm_do_on_with(mac_tx_seqs[3][0],mac_tx_seqr_h[0],
-                       {
-                         min_payload_size == 47; max_payload_size == 1499; vlan_q.size == temp_vlan_q[3].size; foreach(temp_vlan_q[3][i]) { vlan_q[i] == temp_vlan_q[3][i]; no_of_packet == 1;}
-                       })
+        `uvm_do_on_with(mac_tx_seqs[0][0],mac_tx_seqr_h[0],{
+                                                              min_payload_size inside {[46:1500]}; 
+                                                              max_payload_size inside {[46:1500]}; 
+                                                              min_payload_size <= max_payload_size; 
+                                                              foreach(temp_vlan_q[0][i]) { 
+                                                                // enforce same VLAN list collected earlier
+                                                                vlan_q[i] == temp_vlan_q[0][i]; 
+                                                              }
+                                                              no_of_packet == 1;
+                                                            })
 
-        `uvm_do_on_with(mac_tx_seqs[4][0],mac_tx_seqr_h[1],
-                       {
-                          min_payload_size == 47; max_payload_size == 1499; vlan_q.size == temp_vlan_q[4].size; foreach(temp_vlan_q[4][i]) { vlan_q[i] == temp_vlan_q[4][i]; no_of_packet == 1;}
-                       })
 
-        `uvm_do_on_with(mac_tx_seqs[5][0],mac_tx_seqr_h[2],
-                       {
-                         min_payload_size == 47; max_payload_size == 1499; vlan_q.size == temp_vlan_q[5].size; foreach(temp_vlan_q[5][i]) { vlan_q[i] == temp_vlan_q[5][i]; no_of_packet == 1;}
-                       })
+        `uvm_do_on_with(mac_tx_seqs[1][0],mac_tx_seqr_h[1],{
+                                                              min_payload_size inside {[46:1500]}; 
+                                                              max_payload_size inside {[46:1500]}; 
+                                                              min_payload_size <= max_payload_size; 
+                                                              foreach(temp_vlan_q[1][i]) { 
+                                                                vlan_q[i] == temp_vlan_q[1][i]; 
+                                                              }
+                                                              no_of_packet == 1;
+                                                            })
+
+        `uvm_do_on_with(mac_tx_seqs[2][0],mac_tx_seqr_h[2], {
+                                                              min_payload_size inside {[46:1500]}; 
+                                                              max_payload_size inside {[46:1500]}; 
+                                                              min_payload_size <= max_payload_size; 
+                                                              foreach(temp_vlan_q[2][i]) { 
+                                                                vlan_q[i] == temp_vlan_q[2][i]; 
+                                                              }
+                                                              no_of_packet == 1;
+                                                            })
       join
     end
-// */ 
 
+    // -------------------------------------------------------------
+    // Scenario 2: Invalid payload range check
+    // Generates payloads in invalid ranges: [0:45] and [1501:1600]
+    // Ensures min and max lie in the same invalid range
+    // Enforces max_payload_size >= min_payload_size
+    // Uses pre-configured VLANs from temp_vlan_q
+    // -------------------------------------------------------------
+    $display(" Scenerio 2 :payload invalid range check ");
+    repeat(2) begin
+      fork
+        `uvm_do_on_with(mac_tx_seqs[0][0],mac_tx_seqr_h[0], {(
+                                                             (min_payload_size inside {[0:45]} &&
+                                                              max_payload_size inside {[0:45]} &&
+                                                              max_payload_size >= min_payload_size)
+                                                             ||
+                                                             (min_payload_size inside {[1501:1600]} &&
+                                                              max_payload_size inside {[1501:1600]} &&
+                                                              max_payload_size >= min_payload_size)
+                                                            );
+                                                            foreach(temp_vlan_q[0][i]) { 
+                                                              // preserve VLANs collected earlier
+                                                              vlan_q[i] == temp_vlan_q[0][i];
+                                                              }
+                                                             no_of_packet == 1;
+                                                            })
 
+        `uvm_do_on_with(mac_tx_seqs[1][0],mac_tx_seqr_h[1],{(
+                                                             (min_payload_size inside {[0:45]} &&
+                                                              max_payload_size inside {[0:45]} &&
+                                                              max_payload_size >= min_payload_size)
+                                                             ||
+                                                             (min_payload_size inside {[1501:1600]} &&
+                                                              max_payload_size inside {[1501:1600]} &&
+                                                              max_payload_size >= min_payload_size)
+                                                            );
+                                                            foreach(temp_vlan_q[1][i]) { 
+                                                              vlan_q[i] == temp_vlan_q[1][i]; 
+                                                              }
+                                                             no_of_packet == 1;
+                                                            })
 
- /*
-    fork
-     `uvm_do_on_with(mac_tx_seqs[3][0],mac_tx_seqr_h[0],
-                    {
-                      min_payload_size == 1501; max_payload_size == 1600; vlan_q.size == temp_vlan_q[3].size; foreach(temp_vlan_q[3][i]) { vlan_q[i] == temp_vlan_q[3][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[4][0],mac_tx_seqr_h[1],
-                    {
-                      min_payload_size == 1501; max_payload_size == 1600; vlan_q.size == temp_vlan_q[4].size; foreach(temp_vlan_q[4][i]) { vlan_q[i] == temp_vlan_q[4][i]; no_of_packet == 1;}
-                    })
-
-     `uvm_do_on_with(mac_tx_seqs[5][0],mac_tx_seqr_h[2],
-                    {
-                      min_payload_size == 25; max_payload_size == 44; vlan_q.size == temp_vlan_q[5].size; foreach(temp_vlan_q[5][i]) { vlan_q[i] == temp_vlan_q[5][i]; no_of_packet == 1;}
-                    })
-    join
- */
+        `uvm_do_on_with(mac_tx_seqs[2][0],mac_tx_seqr_h[2],{(
+                                                             (min_payload_size inside {[0:45]} &&
+                                                              max_payload_size inside {[0:45]} &&
+                                                              max_payload_size >= min_payload_size)
+                                                             ||
+                                                             (min_payload_size inside {[1501:1600]} &&
+                                                              max_payload_size inside {[1501:1600]} &&
+                                                              max_payload_size >= min_payload_size)
+                                                            );
+                                                            foreach(temp_vlan_q[2][i]) { 
+                                                              vlan_q[i] == temp_vlan_q[2][i]; 
+                                                              }
+                                                             no_of_packet == 1;
+                                                            })
+      join
+    end
 	endtask : body
-	
 endclass : mac_to_axi_s_payload_seqs	
+
+
 
 class mac_to_axi_s_payload_test extends mac_to_axi_s_base_test;
     
 	mac_to_axi_s_payload_seqs payload_seqs;
   
-  mac_to_axi_s_base_virtual_seqs mac_vseqs; 
-  mac_to_axi_s_virtual_seqr mac_vseqr;
-
   `uvm_component_utils_begin(mac_to_axi_s_payload_test)
 	`uvm_component_utils_end
   
@@ -193,18 +168,20 @@ class mac_to_axi_s_payload_test extends mac_to_axi_s_base_test;
  
   function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-    payload_seqs = mac_to_axi_s_payload_seqs::type_id::create("payload_seqs");
   endfunction : build_phase
  
   task run_phase(uvm_phase phase);
-   	//super.run_phase(phase);
+    //super.run_phase(phase);
 	
-    phase.raise_objection(this);
+    // Create the sequence instance and start it on the virtual sequencer
+    payload_seqs = mac_to_axi_s_payload_seqs::type_id::create("payload_seqs");
+    phase.raise_objection(this); // keep simulation running while sequence runs
 		payload_seqs.start(env_h.vseqr_h);
-		#50us;
-		phase.drop_objection(this);
+		#50us; // wait for test activity (timing is test-specific)
+		phase.drop_objection(this); // allow simulation to finish
   endtask : run_phase 
   
 endclass : mac_to_axi_s_payload_test
 
 `endif 
+
