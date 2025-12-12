@@ -27,17 +27,15 @@ class emac_tx2rx_output_ports_test extends mac_to_axi_s_base_test;
                   
 
    task run_phase(uvm_phase phase);
-
+ 
+      
       phase.raise_objection(this);
-     
-
+      super.run_phase(phase);
+      
       if(!output_prt_vseqs.randomize() with {no_pkt[0] == 5; no_pkt[1] == 14; no_pkt[2] == 40;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
       output_prt_vseqs.sprint();
-
+      phase.raise_objection(null,"Raising objection for total num of packet",output_prt_vseqs.total_num_packet);
       output_prt_vseqs.start(env_h.vseqr_h);
-
-
-      #10000;
 
       phase.drop_objection(this);
       endtask

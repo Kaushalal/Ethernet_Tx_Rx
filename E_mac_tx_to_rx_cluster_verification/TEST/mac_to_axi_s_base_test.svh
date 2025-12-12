@@ -97,12 +97,11 @@ class mac_to_axi_s_base_test extends uvm_test;
 ////----------------------------------------------------------------------/////
 	
     task run_phase(uvm_phase phase);
-		phase.raise_objection(this);
-           mac_vseqs = mac_to_axi_s_base_virtual_seqs::type_id::create("mac_vseqs");
-	       mac_vseqs.start(env_h.vseqr_h);
 
-           #2000;
-		phase.drop_objection(this);
+
+    env_h.mac_tx_to_rx_scrbrd_h.drop_obj_phase      = phase;
+    env_h.mac_tx_to_rx_ref.drped_pkt_drop_obj_phase = phase;
+   
 	endtask
 
 endclass : mac_to_axi_s_base_test
