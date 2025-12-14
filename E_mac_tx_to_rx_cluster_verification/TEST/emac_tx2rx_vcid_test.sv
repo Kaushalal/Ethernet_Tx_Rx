@@ -110,7 +110,7 @@ class emac_tx2rx_vcid_test extends mac_to_axi_s_base_test;
       if(!vcid_vseqs.randomize() with {no_pkt[0] == 1; no_pkt[1] == 4; no_pkt[2] == 4;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
       vcid_vseqs.sprint();
 
-      phase.raise_objection(null,"Raising objection for total num of packet",output_prt_vseqs.total_num_packet);
+      phase.raise_objection(null,"Raising objection for total num of packet",vcid_vseqs.total_num_packet);
       vcid_vseqs.start(env_h.vseqr_h);
 
 
