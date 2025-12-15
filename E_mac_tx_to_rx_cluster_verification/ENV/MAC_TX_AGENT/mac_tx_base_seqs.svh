@@ -42,12 +42,22 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
 
   function new (string name = "mac_base_seqs");
   super.new(name);
+  starting_phase = new("starting_phase");
   endfunction
+
+  task pre_start();
+   if(!uvm_config_db #(uvm_phase)::get(null,"", "run_phase_set",starting_phase))
+       `uvm_fatal("STARTING_PHASE"," Failed to get phase at tx_base_seqs" )
+  if( starting_phase != null ) begin 
+      starting_phase.raise_objection(null,"RAISED_Objection at mac_tx_base_seqs",no_of_packet );
+  end 
+  endtask
 
   task body ();
   int i = 0;
-  `uvm_create(mac_pkt);
+  `uvm_create(mac_pkt)
   
+  $display("BODY");
   repeat(no_of_packet) begin
       
      `uvm_rand_send_with( mac_pkt, { payload_q.size inside { [min_payload_size:max_payload_size] };

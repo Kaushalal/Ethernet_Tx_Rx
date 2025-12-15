@@ -97,11 +97,9 @@ class mac_to_axi_s_base_test extends uvm_test;
 ////----------------------------------------------------------------------/////
 	
     task run_phase(uvm_phase phase);
-
-
+     uvm_config_db#(uvm_phase)::set(null,"", "run_phase_set",phase);
     env_h.mac_tx_to_rx_scrbrd_h.drop_obj_phase      = phase;
     env_h.mac_tx_to_rx_ref.drped_pkt_drop_obj_phase = phase;
-   
 	endtask
 
 endclass : mac_to_axi_s_base_test

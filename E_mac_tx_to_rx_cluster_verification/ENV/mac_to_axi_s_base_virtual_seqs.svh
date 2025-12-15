@@ -41,6 +41,7 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
       mac_tx_seqs[2]   = new[no_of_seqs];
       mac_tx_seqr_h = new[no_of_ports];
       conn_cfg_seqs = new("conn_cfg_seqs");
+      starting_phase = new("starting_phase");
    endfunction
 
 ////---------------------------------------------------------------------------------////
@@ -124,7 +125,10 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
    foreach( mac_tx_seqr_h[i] ) begin 
    mac_tx_seqr_h[i] = p_sequencer.mac_tx_seqr_h[i];
    end
-   endtask 
+   foreach( mac_tx_seqs[i,j] )begin 
+   mac_tx_seqs[i][j] = new($sformatf("mac_tx_seqs[%0d][%0d]",i,j));
+   end 
+   endtask  
 
 ////-----------------------------------------------------------------////
 ////-----------------------------------------------------------------////
@@ -134,6 +138,8 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
    
    task body();
    begin
+   if(starting_phase != null)
+       $display("START_PHASE OF VSEQS || starting_phase = %0d",starting_phase);
 
    ////-----------------------------------------------------------------////
    ////               RAL SEQS 
@@ -153,13 +159,19 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
       
       fork 
           begin 
-            `uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
+            //`uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
+            void'(mac_tx_seqs[0][0].randomize with {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} ) ;
+            mac_tx_seqs[0][0].start(mac_tx_seqr_h[0]);
           end
           begin
-            `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {no_of_packet== 5; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
+           // `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {no_of_packet== 5; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
+            void'(mac_tx_seqs[1][0].randomize with {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} ) ;
+            mac_tx_seqs[1][0].start(mac_tx_seqr_h[1]);
           end
           begin
-            `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {no_of_packet== 5; min_payload_size == 48; max_payload_size == 50; vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
+           // `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {no_of_packet== 5; min_payload_size == 48; max_payload_size == 50; vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
+            void'(mac_tx_seqs[2][0].randomize with {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} ) ;
+            mac_tx_seqs[2][0].start(mac_tx_seqr_h[2]);
           end 
       join
    
