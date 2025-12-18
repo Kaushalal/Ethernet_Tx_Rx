@@ -416,6 +416,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end
 	        else
                     begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     payload_mismatched_count[PORT3_IDX]++;
                     tdata_pkt_q[0].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD SIZE=%d - DROPPED", port_names[PORT3_IDX], etype_valid_pkt_q[0][i].payload_q.size()), UVM_LOW);
