@@ -39,13 +39,13 @@ class mac_tx_to_rx_sanity_vseqs extends mac_to_axi_s_base_virtual_seqs;
       
       fork 
           begin 
-            `uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
-          end
+            `uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], {raise_obj==1;no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
+          end                                                      
+          begin                                                    
+            `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {raise_obj==1;no_of_packet== 5; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
+          end                                                      
           begin
-            `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {no_of_packet== 5; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
-          end
-          begin
-            `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {no_of_packet== 5; min_payload_size == 48; max_payload_size == 50; vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {raise_obj==1;no_of_packet== 5; min_payload_size == 48; max_payload_size == 50; vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
           end 
       join
    
@@ -74,12 +74,14 @@ class mac_to_axi_s_sanity_test extends mac_to_axi_s_base_test;
 ////----------------------------------------------------------------------/////
 
 	task run_phase(uvm_phase phase);
+    super.run_phase(phase);
 		phase.raise_objection(this);
-           //// Base virtual seqs 
+
            mac_sanity_vseqs = mac_tx_to_rx_sanity_vseqs::type_id::create("mac_sanity_vseqs");
+           mac_vseqs = mac_to_axi_s_base_virtual_seqs::type_id::create("mac_vseqs");
+
 	       mac_sanity_vseqs.start(env_h.vseqr_h);
 
-           #2000;
 		phase.drop_objection(this);
 	endtask
     

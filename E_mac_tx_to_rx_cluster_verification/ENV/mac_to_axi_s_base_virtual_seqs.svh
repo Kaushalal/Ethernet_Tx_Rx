@@ -70,12 +70,14 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
 ////--------------- We can use this function to configure the connection ------------////
 //// in_port_no -> use to select the input_port(0,1,2) ( by default 3 -> select any port ) || out_port_no -> used to select the output port(0,1,2) ( by defualt 3 -> select any port );
 ////  range ( input argument ) 0 -> min_range; 1 -> in_bet_range; 2 -> max_range; 3 -> completely random 
+////  conn_valid : 0 -> 0; 1 -> 1; 2 -> toggle; 3 -> random;
 ////---------------------------------------------------------------------------------////
 ////---------------------------------------------------------------------------------////
 
-  virtual task configure_connection( int in_port_no = 3, int out_port_no = 3, bit conn_valid_bit= 1, int no_of_configurations = 1, bit collect_data = 1, bit[2:0] range_of_vlan=3, bit[2:0] range_of_conn_id=3 );
+  virtual task configure_connection( int in_port_no = 3, int out_port_no = 3, bit[1:0] conn_valid = 1, int no_of_configurations = 1, bit collect_data = 1, bit[2:0] range_of_vlan=3, bit[2:0] range_of_conn_id=3 );
 
        int port_no[int];
+       bit temp_conn_valid;
      
        port_no[3] = 0;
        port_no[4] = 1;
@@ -88,7 +90,9 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
             (in_port_no==1)->(port_id==4); 
             (in_port_no==2)->(port_id==5);
             port_id inside {3,4,5};
-            connection_valid == conn_valid_bit ;
+            (conn_valid inside {0,1})-> (connection_valid == conn_valid);
+            (conn_valid==2)->(connection_valid != temp_conn_valid);
+            (conn_valid==3)->(connection_valid inside {0,1});
             (out_port_no==0)->(out_port_sel==8); 
             (out_port_no==1)->(out_port_sel==9);
             (out_port_no==2)->(out_port_sel==10); 
@@ -106,6 +110,7 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
             
             conn_cfg_seqs.start(null);
             
+            temp_conn_valid = conn_cfg_seqs.connection_valid;
             if( collect_data == 1 ) begin 
             collect_vcid( port_no[conn_cfg_seqs.port_id], conn_cfg_seqs.connection_id, conn_cfg_seqs.vcid_val );
             collect_vlan_id( port_no[conn_cfg_seqs.port_id], conn_cfg_seqs.vlan );
@@ -160,17 +165,17 @@ class mac_to_axi_s_base_virtual_seqs extends uvm_sequence #(uvm_sequence_item);
       fork 
           begin 
             //`uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
-            void'(mac_tx_seqs[0][0].randomize with {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} ) ;
+            void'(mac_tx_seqs[0][0].randomize with {raise_obj==1;no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} ) ;
             mac_tx_seqs[0][0].start(mac_tx_seqr_h[0]);
           end
           begin
            // `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {no_of_packet== 5; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
-            void'(mac_tx_seqs[1][0].randomize with {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} ) ;
+            void'(mac_tx_seqs[1][0].randomize with {raise_obj==1;no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} ) ;
             mac_tx_seqs[1][0].start(mac_tx_seqr_h[1]);
           end
           begin
            // `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {no_of_packet== 5; min_payload_size == 48; max_payload_size == 50; vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
-            void'(mac_tx_seqs[2][0].randomize with {no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} ) ;
+            void'(mac_tx_seqs[2][0].randomize with {raise_obj==1;no_of_packet== 5; min_payload_size == 10; max_payload_size == 15;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} ) ;
             mac_tx_seqs[2][0].start(mac_tx_seqr_h[2]);
           end 
       join

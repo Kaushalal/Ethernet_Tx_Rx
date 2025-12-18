@@ -30,6 +30,8 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   
   rand int no_of_packet;
 
+  rand bit raise_obj;
+
   constraint no_of_pkt_c { soft no_of_packet == 10 ;}
   constraint min_payload_size_c { soft min_payload_size == 46 ;}
   constraint max_payload_size_c { soft max_payload_size == 1500 ;}
@@ -46,10 +48,12 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   endfunction
 
   task pre_start();
+  if( raise_obj == 1 ) begin
    if(!uvm_config_db #(uvm_phase)::get(null,"", "run_phase_set",starting_phase))
        `uvm_fatal("STARTING_PHASE"," Failed to get phase at tx_base_seqs" )
   if( starting_phase != null ) begin 
       starting_phase.raise_objection(null,"RAISED_Objection at mac_tx_base_seqs",no_of_packet );
+  end 
   end 
   endtask
 
@@ -57,7 +61,6 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   int i = 0;
   `uvm_create(mac_pkt)
   
-  $display("BODY");
   repeat(no_of_packet) begin
       
      `uvm_rand_send_with( mac_pkt, { payload_q.size inside { [min_payload_size:max_payload_size] };
