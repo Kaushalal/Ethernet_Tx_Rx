@@ -38,6 +38,8 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   constraint da_c { soft temp_da.size == no_of_packet ;}
   constraint sa_c { soft temp_sa.size == no_of_packet ;}
   
+  constraint raise_obj_c { soft raise_obj == 1 ;}
+  
   constraint vlan_q_c { soft vlan_q.size() == no_of_packet ;}
   
   constraint Etype_c { soft temp_Etype inside { 16'h0800, 16'h8100 }; }

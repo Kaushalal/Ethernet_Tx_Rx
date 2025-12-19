@@ -55,19 +55,19 @@ class mac_tx_to_rx_port_id_check_vseqs extends mac_to_axi_s_base_virtual_seqs;
       fork   //// Valid port_ids 
             
             //// PORT 1  
-            `uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], {raise_obj==1; no_of_packet== 15; min_payload_size == 90; max_payload_size == 100;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
-            `uvm_do_on_with( mac_tx_seqs[0][1], mac_tx_seqr_h[0], {raise_obj==1; no_of_packet== 15; min_payload_size == 90; max_payload_size == 100;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
-            `uvm_do_on_with( mac_tx_seqs[0][2], mac_tx_seqr_h[0], {raise_obj==1; no_of_packet== 15; min_payload_size == 90; max_payload_size == 100;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[0][0], mac_tx_seqr_h[0], { no_of_packet== 15; min_payload_size == 90; max_payload_size == 100;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[0][1], mac_tx_seqr_h[0], { no_of_packet== 15; min_payload_size == 90; max_payload_size == 100;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[0][2], mac_tx_seqr_h[0], { no_of_packet== 15; min_payload_size == 90; max_payload_size == 100;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
             
             //// PORT 2
-            `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {raise_obj==1;no_of_packet== 15; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
-            `uvm_do_on_with( mac_tx_seqs[1][1], mac_tx_seqr_h[1], {raise_obj==1;no_of_packet== 15; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
-            `uvm_do_on_with( mac_tx_seqs[1][2], mac_tx_seqr_h[1], {raise_obj==1;no_of_packet== 15; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[1][0], mac_tx_seqr_h[1], {no_of_packet== 15; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[1][1], mac_tx_seqr_h[1], {no_of_packet== 15; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[1][2], mac_tx_seqr_h[1], {no_of_packet== 15; min_payload_size == 46; max_payload_size == 50;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
             
             //// PORT 3
-            `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {raise_obj==1;no_of_packet== 15; min_payload_size == 100; max_payload_size == 150; vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
-            `uvm_do_on_with( mac_tx_seqs[2][1], mac_tx_seqr_h[2], {raise_obj==1;no_of_packet== 15; min_payload_size == 100; max_payload_size == 150;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
-            `uvm_do_on_with( mac_tx_seqs[2][2], mac_tx_seqr_h[2], {raise_obj==1;no_of_packet== 15; min_payload_size == 100; max_payload_size == 150;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[2][0], mac_tx_seqr_h[2], {no_of_packet== 15; min_payload_size == 100; max_payload_size == 150; vlan_q.size == temp_vlan_q[0].size; foreach(temp_vlan_q[0][i]) { vlan_q[i] == temp_vlan_q[0][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[2][1], mac_tx_seqr_h[2], {no_of_packet== 15; min_payload_size == 100; max_payload_size == 150;vlan_q.size == temp_vlan_q[1].size; foreach(temp_vlan_q[1][i]) { vlan_q[i] == temp_vlan_q[1][i];}} )
+            `uvm_do_on_with( mac_tx_seqs[2][2], mac_tx_seqr_h[2], {no_of_packet== 15; min_payload_size == 100; max_payload_size == 150;vlan_q.size == temp_vlan_q[2].size; foreach(temp_vlan_q[2][i]) { vlan_q[i] == temp_vlan_q[2][i];}} )
             
       join
       
