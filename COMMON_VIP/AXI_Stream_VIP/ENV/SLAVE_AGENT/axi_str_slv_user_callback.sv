@@ -31,10 +31,10 @@ class axi_str_slv_user_callback extends axi_str_slv_drv_callback;
       max_itr = 5;
    endfunction : tready_drv_random*/
 
-   function void tready_drv_user(byte unsigned packet_count,beats_count, output byte unsigned n_cycle_delay);
-      //if(packet_count == 1 && beats_cnt == 2)
-        //n_cycle_delay = 1;
-      //`uvm_info("axi_str_slv_usr_callback",$sformatf(" :slave driver callback tready toggle : packet_count=%0d | beats_count=%0d | n_cycle_delay=%0d",packet_count,beats_count,n_cycle_delay),UVM_DEBUG)
+   function void tready_drv_user(shortint unsigned packet_count,beats_count, output int  n_cycle_delay);
+      if(packet_count ==1 && beats_count == 0)
+        n_cycle_delay = 512;
+      `uvm_info("axi_str_slv_usr_callback",$sformatf(" :slave driver callback tready toggle : packet_count=%0d | beats_count=%0d | n_cycle_delay=%0d",packet_count,beats_count,n_cycle_delay),UVM_LOW)
    endfunction : tready_drv_user
 
 endclass : axi_str_slv_user_callback

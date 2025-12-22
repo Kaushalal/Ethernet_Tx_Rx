@@ -84,6 +84,7 @@ class axi_str_mas_seq_item #(int DATA_SIZE=32,int USER_SIZE=32) extends uvm_sequ
   
   
   function void post_randomize();
+    $display("total_byte=%0d | tdata_q.size=%0d",total_bytes, tdata_q.size());
     tkeep_cal();
   endfunction : post_randomize
 

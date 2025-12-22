@@ -67,7 +67,7 @@ class axi_str_slv_driver #(shortint DATA_SIZE=512,int USER_SIZE=1) extends uvm_d
   endtask : initialize
 
   virtual protected task drive_to_inf();
-    byte unsigned n_cycle_delay;
+    int  n_cycle_delay;
     bit tready_tmp;
     tready_drv_mode_enum tready_drv_mode;
     shortint unsigned min_itr, max_itr, tready_low_itr;
@@ -98,6 +98,7 @@ class axi_str_slv_driver #(shortint DATA_SIZE=512,int USER_SIZE=1) extends uvm_d
             vif.slv_drv_cb.tready <= 1'b0;
             repeat(n_cycle_delay+1) @(vif.slv_drv_cb);
           end
+          n_cycle_delay=0;
         end 
         vif.slv_drv_cb.tready <= 1'b1;
         i++;

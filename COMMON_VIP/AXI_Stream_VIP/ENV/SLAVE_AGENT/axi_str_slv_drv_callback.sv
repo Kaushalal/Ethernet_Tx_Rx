@@ -35,7 +35,7 @@ class axi_str_slv_drv_callback extends uvm_callback;
    //'packet_count' : indicates the packet number
    //'beats_count' : indicates the beats number of a packet
    //'n_cycle_delay' : To deaasert tready for number of cycle
-   virtual function void tready_drv_user(byte unsigned packet_count, beats_count, output byte unsigned n_cycle_delay);
+   virtual function void tready_drv_user(shortint unsigned packet_count, beats_count, output int n_cycle_delay);
   endfunction : tready_drv_user
 
 endclass : axi_str_slv_drv_callback

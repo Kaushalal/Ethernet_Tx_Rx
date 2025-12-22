@@ -37,7 +37,6 @@ package axi_str_slv_pkg;
   `include "axi_str_slv_driver.sv"
   `include "axi_str_slv_monitor.sv"
   `include "axi_str_slv_agent.sv"
-  `include "axi_str_slv_uvc.sv"
 
 
 

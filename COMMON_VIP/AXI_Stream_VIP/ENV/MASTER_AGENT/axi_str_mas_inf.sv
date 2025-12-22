@@ -20,7 +20,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
  interface axi_str_mas_inf  (input bit aclk);
 
- parameter DATA_SIZE=32,
+ parameter DATA_SIZE=16,
            USER_SIZE = 32;
  
   //AXI stream master

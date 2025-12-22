@@ -38,7 +38,6 @@ package axi_str_mas_pkg;
   `include "axi_str_mas_driver.sv"
   `include "axi_str_mas_monitor.sv"
   `include "axi_str_mas_agent.sv"
-  `include "axi_str_mas_uvc.sv"
   `include "axi_str_mas_base_seqs.sv"
 
 endpackage
