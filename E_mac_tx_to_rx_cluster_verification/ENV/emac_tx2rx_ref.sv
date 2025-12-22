@@ -28,7 +28,7 @@
 
 
 class emac_tx2rx_ref_model extends uvm_scoreboard;
-     
+  emac_tx_to_rx_coverage emac_cvg;
      
      // ----  Implication ports will be connected to emac_tx_mon to get frame format input data
     uvm_analysis_imp_tx_mon_port0 #(mac_tx_seq_item, emac_tx2rx_ref_model)                           frame_port0_imp;
@@ -179,6 +179,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
      virtual function void write_axis_mon_port0(axi_str_mas_seq_item #(32,32) axis_tdata);
 
          static int port0_pkt_count = 0;  
+    int temp_payload_size;
          
          tdata_pkt_q[0].push_back(axis_tdata);
          port0_pkt_count++;
@@ -193,12 +194,14 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
          `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_DEBUG)
          `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref: %s", axis_tdata.sprint()), UVM_DEBUG)    
          `uvm_info("REF_QUEUE_STATUS", $sformatf("PORT0 queue size: %0d", tdata_pkt_q[0].size()), UVM_HIGH)
+
          endfunction
 
      virtual function void write_axis_mon_port1(axi_str_mas_seq_item #(32,32) axis_tdata_p1);
 
          static int port1_pkt_count = 0;
      
+    int temp_payload_size;
          tdata_pkt_q[1].push_back(axis_tdata_p1);
          port1_pkt_count++;  // Increment counter
          
@@ -214,12 +217,14 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
          
          // Optional: Show queue status
          `uvm_info("REF_QUEUE_STATUS", $sformatf("PORT1 queue size: %0d", tdata_pkt_q[1].size()), UVM_HIGH)
+
          endfunction
  
      virtual function void write_axis_mon_port2(axi_str_mas_seq_item #(32,32) axis_tdata_p2);
 
           static int port2_pkt_count = 0; 
           
+    int temp_payload_size;
           tdata_pkt_q[2].push_back(axis_tdata_p2);
           port2_pkt_count++;
           
@@ -236,6 +241,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
           
           // Display queue status (optional)
           `uvm_info("REF_QUEUE_STATUS", $sformatf("PORT2 queue size: %0d", tdata_pkt_q[2].size()), UVM_HIGH)
+
          endfunction
 
      virtual function void write_tx_mon_port0(mac_tx_seq_item pkt_port3);
@@ -418,6 +424,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     begin
                     drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     payload_mismatched_count[PORT3_IDX]++;
+                    emac_cvg.payload_cg.sample(etype_valid_pkt_q[0][i].payload_q.size(), 3);
+                    
                     tdata_pkt_q[0].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD SIZE=%d - DROPPED", port_names[PORT3_IDX], etype_valid_pkt_q[0][i].payload_q.size()), UVM_LOW);
                 end
@@ -440,6 +448,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                 end else begin
                     drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     payload_mismatched_count[PORT4_IDX]++;
+                    emac_cvg.payload_cg.sample(etype_valid_pkt_q[1][i].payload_q.size(), 4);
+                    
                     tdata_pkt_q[1].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD=%d - DROPPED", port_names[PORT4_IDX], etype_valid_pkt_q[1][i].payload_q.size()), UVM_LOW)
                 end
@@ -461,6 +471,8 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
                     drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     payload_mismatched_count[PORT5_IDX]++;
+                    emac_cvg.payload_cg.sample(etype_valid_pkt_q[2][i].payload_q.size(), 5);
+                    
                     tdata_pkt_q[2].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD SIZE=%D - DROPPED", port_names[PORT5_IDX], etype_valid_pkt_q[2][i].payload_q.size()), UVM_LOW)
                 end
@@ -1055,3 +1067,4 @@ function void final_phase(uvm_phase phase);
    
 endclass
 `endif
+

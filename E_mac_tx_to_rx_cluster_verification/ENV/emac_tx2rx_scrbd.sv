@@ -25,6 +25,7 @@ typedef bit [`AXI_STR_DATA_SIZE] tdata_q_array_type[$];
    `uvm_analysis_imp_decl(_tdata_ref2)
 
 class emac_tx2rx_scrbd extends uvm_scoreboard;
+  emac_tx_to_rx_coverage emac_cvg;
 
    //Switch to select between tdata comparison or frame comparison
    int tdata_comparison = 1;
@@ -107,12 +108,33 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    function write_tdata_mon0(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
             byte unsigned act_vc_id;
             int temp_act_vcid;
+    int temp_payload_size;
 	     
 	    temp_act_vcid      = {<<8{act_trans.tdata_q[3]}};
 	    act_vc_id = {>>{temp_act_vcid[31 -: 8]}};
             act_vcid_q[0].push_back(act_vc_id);
 
 	    scrbd[0].set_act_buffer( act_vc_id , act_trans.tdata_q);
+
+    case (act_trans.tkeep_q[$])
+      4'b0001: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 3;
+      end
+      4'b0011: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 2;
+      end
+      4'b0111: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 1;
+      end
+      4'b1111: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15;
+      end
+    endcase
+    $display("temp_payload_size = %0d", temp_payload_size);
+
+    emac_cvg.payload_cg.sample(temp_payload_size, 3);
+
+
             drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
             $display("drop_objection called!");
             endfunction
@@ -120,12 +142,33 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    function write_tdata_mon1(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
             byte unsigned act_vc_id;
             int temp_act_vcid;
+    int temp_payload_size;
 	     
 	    temp_act_vcid      = {<<8{act_trans.tdata_q[3]}};
 	    act_vc_id = {>>{temp_act_vcid[31 -: 8]}};
             act_vcid_q[1].push_back(act_vc_id);
 
 	    scrbd[1].set_act_buffer( act_vc_id , act_trans.tdata_q);
+
+    case (act_trans.tkeep_q[$])
+      4'b0001: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 3;
+      end
+      4'b0011: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 2;
+      end
+      4'b0111: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 1;
+      end
+      4'b1111: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15;
+      end
+    endcase
+    $display("temp_payload_size = %0d", temp_payload_size);
+
+    emac_cvg.payload_cg.sample(temp_payload_size, 4);
+
+
             drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
             $display("drop_objection called!");
             endfunction
@@ -133,12 +176,32 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    function write_tdata_mon2(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
             byte unsigned act_vc_id;
             int temp_act_vcid;
+    int temp_payload_size;
 	     
 	    temp_act_vcid      = {<<8{act_trans.tdata_q[3]}};
 	    act_vc_id = {>>{temp_act_vcid[31 -: 8]}};
             act_vcid_q[2].push_back(act_vc_id);
 
 	    scrbd[2].set_act_buffer( act_vc_id , act_trans.tdata_q);
+
+    case (act_trans.tkeep_q[$])
+      4'b0001: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 3;
+      end
+      4'b0011: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 2;
+      end
+      4'b0111: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15 - 1;
+      end
+      4'b1111: begin
+        temp_payload_size = ($size(act_trans.tdata_q) * 4) - 15;
+      end
+    endcase
+    $display("temp_payload_size = %0d", temp_payload_size);
+
+    emac_cvg.payload_cg.sample(temp_payload_size, 5);
+
             drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
             $display("drop_objection called!");
             endfunction
@@ -212,10 +275,16 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
            $display("\nACUTAL");      
 	   foreach(act_vcid_q[i][j]) $write(" [%0d] : 'd%0d  " , j,  act_vcid_q[i][j]);
 	   $display("");
+
+     $display("------------------------------");
+         `uvm_info("PAYLOAD_COV",
+              $sformatf("Payload coverage = %0.2f%%", emac_cvg.payload_cg.get_coverage()),
+              UVM_NONE)
            end
            endfunction 
 endclass 
 `endif
+
 
 
 

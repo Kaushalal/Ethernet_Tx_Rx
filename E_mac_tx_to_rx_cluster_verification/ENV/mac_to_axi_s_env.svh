@@ -53,6 +53,9 @@ class mac_to_axi_s_env extends uvm_env;
  //// REF_MODEL and SCORE_BOARD 
    emac_tx2rx_scrbd                   mac_tx_to_rx_scrbrd_h;
    emac_tx2rx_ref_model               mac_tx_to_rx_ref;
+  
+  // payload_coverage
+  emac_tx_to_rx_coverage emac_cvg;
 
 ////----------------------------------------------------------------------/////
 ////----------------------------------------------------------------------/////
@@ -137,6 +140,8 @@ class mac_to_axi_s_env extends uvm_env;
      axi_4_reg_block_h = axi_4_reg_block::type_id::create("axi_4_reg_block",this);
      axi_4_reg_block_h.build();
      
+     // emac coverage
+     emac_cvg = emac_tx_to_rx_coverage::type_id::create("emac_cvg");
    endfunction
 
 ////----------------------------------------------------------------------/////
@@ -197,10 +202,14 @@ class mac_to_axi_s_env extends uvm_env;
      axi_4_reg_block_h.misc_reg_map.set_base_addr('h3000);
      axi_4_reg_block_h.vcid_reg_map.set_sequencer(axi_4_muvc_h.axi_4_magent_h[0].mseqr_h, axi_4_ral_adapter_h);
      axi_4_reg_block_h.vcid_reg_map.set_base_addr('h2900);
-     
+
+     // need to connect the emac_cvg of ref and scoreboard
+    mac_tx_to_rx_scrbrd_h.emac_cvg = emac_cvg;
+    mac_tx_to_rx_ref.emac_cvg = emac_cvg;
   endfunction
 
 endclass 
 
 `endif
+
 
