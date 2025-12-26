@@ -1,31 +1,29 @@
 /******************************************************************************************************************************************
- File Name   : emac_tx2rx_output_ports_vseqs.sv
+ File Name   : emac_tx2rx_connection_id.sv
  Author Name : Jyoti Vishwakarma
- Date        : Dec 1
- Description : These is seqs to test working of output port
+ Date        : Dec 23
+ Description : These is seqs to test working of connection_id
  ****************************************************************************************************************************************/
 
-`ifndef EMAC_TX2RX_OUTPUT_PORTS_VIRTUAL_SEQS
-`define EMAC_TX2RX_OUTPUT_PORTS_VIRTUAL_SEQS
+`ifndef EMAC_TX2RX_CONN_ID_VIRTUAL_SEQS
+`define EMAC_TX2RX_CONN_ID_VIRTUAL_SEQS
 
-class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
+class emac_tx2rx_conn_id_vseqs extends emac_tx2rx_base_vseqs;
 
-  `uvm_object_utils(emac_tx2rx_output_ports_vseqs)
-  
+  `uvm_object_utils(emac_tx2rx_conn_id_vseqs)
 
-   function new(string name = "emac_tx2rx_output_ports_vseqs");
+   function new(string name = "emac_tx2rx_conn_id_vseqs");
 
       super.new(name);
 
       endfunction
-  
 
   task body(); 
      begin       
-     
-     //Register Configuration      
+           
      int i = 0, j = 0, k = 0;
      repeat(no_pkt[0]) begin 
+
          conn_cfg_seqs.randomize with { port_id == 3 ; connection_valid == 1'b1 ; connection_id == conn_id_q[0][i] ; vlan == vln_q[0][i]; 
 	                                out_port_sel inside {8, 9, 10} ;          vcid_val      == vcid_q[0][i];
 				       };conn_cfg_seqs.start(null);
@@ -34,7 +32,7 @@ class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
     
      repeat(no_pkt[1]) begin
          conn_cfg_seqs.randomize with { port_id == 4 ; connection_valid == 1'b1 ; connection_id == conn_id_q[1][j]  ; vlan == vln_q[1][j] ; 
-	                                out_port_sel inside {8, 9, 10} ;         vcid_val      == vcid_q[1][j];
+	                                out_port_sel inside {8, 9, 10} ;          vcid_val      == vcid_q[1][j];
 				       };conn_cfg_seqs.start(null);
 				       j++;
          end
@@ -47,7 +45,7 @@ class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
 
 
    
-      //Seqs driving on Inputs
+      
        fork 
            begin 
            `uvm_do_on_with( emac_tx_seqs[0], mac_tx_seqr_h[0],
@@ -67,7 +65,7 @@ class emac_tx2rx_output_ports_vseqs extends emac_tx2rx_base_vseqs;
            `uvm_do_on_with( emac_tx_seqs[2], mac_tx_seqr_h[2],
 	                    {no_of_packet== no_pkt[2];
 			     min_payload_size == min_pyld_size[2];
-			     max_payload_size == max_pyld_size[2]; 
+			     max_payload_size == max_pyld_size[2];
 			     vlan_q.size == no_pkt[2]; foreach(vlan_q[i]) vlan_q[i] == vln_q[2][i];} )
            end 
        join
@@ -78,27 +76,21 @@ endclass
 
 `endif
 
-/******************************************************************************************************************************************
 
- File Name   : emac_tx2rx_vcid_test.sv
- Author Name : Jyoti Vishwakarma
- Date        : Dec 1
- Description : These is seqs to test working of output port
- ****************************************************************************************************************************************/
+/*******************************************************************************************************************************************/
+`ifndef EMAC_TX2RX_CONN_ID_TEST
+`define EMAC_TX2RX_CONN_ID_TEST
 
-`ifndef EMAC_TX2RX_OUTPUT_PORTS_TEST
-`define EMAC_TX2RX_OUTPUT_PORTS_TEST
-
-class emac_tx2rx_output_ports_test extends mac_to_axi_s_base_test; 
+class emac_tx2rx_conn_id_test extends mac_to_axi_s_base_test; 
  
-  `uvm_component_utils(emac_tx2rx_output_ports_test) 
+  `uvm_component_utils(emac_tx2rx_conn_id_test) 
    
-   emac_tx2rx_output_ports_vseqs output_prt_vseqs;
+   emac_tx2rx_conn_id_vseqs conn_id_vseqs;
    
-   function new (string name="emac_tx2rx_output_ports_test", uvm_component parent=null); 
+   function new (string name="emac_tx2rx_conn_id_test", uvm_component parent=null); 
 
       super.new(name,parent); 
-      output_prt_vseqs = emac_tx2rx_output_ports_vseqs::type_id::create("output_prt_vseqs");
+      conn_id_vseqs = emac_tx2rx_conn_id_vseqs::type_id::create("conn_id_vseqs");
       endfunction: new 
 
    function void connect_phase(uvm_phase phase);
@@ -108,24 +100,26 @@ class emac_tx2rx_output_ports_test extends mac_to_axi_s_base_test;
                   
 
    task run_phase(uvm_phase phase);
- 
-      phase.raise_objection(this);
-      super.run_phase(phase);
-      
-      if(!output_prt_vseqs.randomize() with {no_pkt[0] == 10; no_pkt[1] == 10; no_pkt[2] == 10;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
 
-      phase.raise_objection(null,"Raising objection for total num of packet",output_prt_vseqs.total_num_packet);
-      output_prt_vseqs.start(env_h.vseqr_h);
-      uvm_root::get().set_timeout(2ms, 1);
+      phase.raise_objection(this);
+     
+
+      super.run_phase(phase);
+      if(!conn_id_vseqs.randomize() with {no_pkt[0] == 1; no_pkt[1] == 0; no_pkt[2] == 0;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
+      conn_id_vseqs.sprint();
+
+      phase.raise_objection(null,"Raising objection for total num of packet",conn_id_vseqs.total_num_packet);
+      conn_id_vseqs.start(env_h.vseqr_h);
+
       phase.drop_objection(this);
       endtask
       
    function void report_phase(uvm_phase  phase);
-    
-      output_prt_vseqs.seqs_summary();
+        
+      conn_id_vseqs.seqs_summary();
 
    endfunction
     
-endclass : emac_tx2rx_output_ports_test
+endclass : emac_tx2rx_conn_id_test
 
 `endif

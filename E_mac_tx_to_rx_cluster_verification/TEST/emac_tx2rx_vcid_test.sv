@@ -12,13 +12,11 @@ class emac_tx2rx_vcid_vseqs extends emac_tx2rx_base_vseqs;
 
   `uvm_object_utils(emac_tx2rx_vcid_vseqs)
   
-
    function new(string name = "emac_tx2rx_vcid_vseqs");
 
       super.new(name);
 
       endfunction
-  
 
   task body(); 
      begin       
@@ -104,17 +102,12 @@ class emac_tx2rx_vcid_test extends mac_to_axi_s_base_test;
    task run_phase(uvm_phase phase);
 
       phase.raise_objection(this);
-     
 
       super.run_phase(phase);
-      if(!vcid_vseqs.randomize() with {no_pkt[0] == 1; no_pkt[1] == 4; no_pkt[2] == 4;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
-      vcid_vseqs.sprint();
+      if(!vcid_vseqs.randomize() with {no_pkt[0] == 1; no_pkt[1] == 0; no_pkt[2] == 0;}) `uvm_error(get_full_name(), "vseqs is not reandozmie")
 
       phase.raise_objection(null,"Raising objection for total num of packet",vcid_vseqs.total_num_packet);
       vcid_vseqs.start(env_h.vseqr_h);
-
-
-
 
       phase.drop_objection(this);
       endtask

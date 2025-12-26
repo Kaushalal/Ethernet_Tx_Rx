@@ -32,9 +32,13 @@ package mac_to_axi_s_test_pkg;
   `include "mac_to_axi_s_base_test.svh"
   `include "mac_tx_to_rx_sanity_test.svh"
   `include "mac_tx_to_rx_payload_test.svh"
-  `include "emac_tx2rx_output_ports_vseqs.sv"
-  `include "emac_tx2rx_output_port_test.sv"
+
+   //Register Test
   `include "emac_tx2rx_vcid_test.sv"
+  `include "emac_tx2rx_conn_id_test.sv"
+  `include "emac_tx2rx_conn_valid_test.sv"
+  `include "emac_tx2rx_output_port_test.sv"
+
  
 
 
