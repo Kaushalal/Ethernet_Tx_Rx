@@ -68,34 +68,21 @@ class emac_tx2rx_base_vseqs extends mac_to_axi_s_base_virtual_seqs;
 
 	
 
-  constraint no_pkt_range         { foreach(no_pkt[i]) soft no_pkt[i] inside {1}; total_num_packet == no_pkt.sum();};
+  constraint no_pkt_range         { foreach(no_pkt[i]) soft no_pkt[i] inside {[0:1000]}; total_num_packet == no_pkt.sum();};
  
 
    function seqs_summary();
-      $display("****************************************************************************");
-      $display("\n                      ---  SEQUENCE SUMMARY  ---  ");
-      $display("\nTOTAL NUM OF PKT : %0d \nNUM_PACKET : Port[0]: %0d Port[1] : %0d Port[2] : %0d"
-      , total_num_packet ,no_pkt[0] ,no_pkt[1], no_pkt[2]);
-      $display("****************************************************************************");
-      $display(" | PAYLOAD_RANGE | :");
-      foreach(min_pyld_size[i]) $write("Port[%0d]-> [%0d : %0d] | ", i, min_pyld_size[i], max_pyld_size[i]); 
 
-      $display("\n****************************************************************************");
-
+      $display("\n------------------    SEQUENCE SUMMARY    |  Total_packet : %0d  --------------------------------------\n", total_num_packet);
       foreach(vcid_q[i]) begin
+      $display("\n--- Port [%0d]       Num_of_packet :   %0d    Payload_size range : [ %0d : %0d ] ",i, no_pkt[i], min_pyld_size[i], max_pyld_size[i]);
+      $display("\n                         |    VCID |   VLAN   |  Connection_id "); 
+      foreach(vcid_q[i][j]) begin 
+      $display("                 [%5d] :   'h%2h      'h%3h	  'h%2h",  j, vcid_q[i][j] ,  vln_q[i][j], conn_id_q[i][j]);
 
-      $display("\n   --- Port [%0d]", i);
-      $display("| VCID | :"); 
-      foreach(vcid_q[i][j]) $write(" [%0d]:'d%0d ",  j, vcid_q[i][j]);
-      $display("\n-----------------------------------------------------");
-      $display("| VLAN | :");
-      foreach(vln_q[i][j]) $write(" [%0d]:'d%0d ",  j, vln_q[i][j]);
-      $display("\n-----------------------------------------------------");
-      $display("| CONN_ID | : ");
-      foreach(vcid_q[i][j]) $write(" [%0d]:'d%0d ",  j,conn_id_q[i][j]);
+      end
       $display("\n****************************************************************************");
       end
-      $display("****************************************************************************");
       endfunction
 
 

@@ -264,26 +264,18 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
    function void report_phase(uvm_phase phase);
             super.report_phase(phase);
-          
+            
+           $display("\n------------------ Scoreboard VCID's --------------------------------------------------\n");
 	   foreach(exp_vcid_q[i]) 
 	   begin
-	   $display("");
-	   $display("  ----  Scoreboard exp - act VCID's  for port %0d  ", i );
-	   $display("no_of_pkt recevied -> exp :%0d act :%0d  ", exp_vcid_q[i].size(),act_vcid_q[i].size());
-	   $display("");
-           $display("EXPECTED");      
-       	   foreach(exp_vcid_q[i][j]) $write(" [%0d] : 'd%0d  ",  j, exp_vcid_q[i][j]);
-    
-           $display("\nACUTAL");      
-	   foreach(act_vcid_q[i][j]) $write(" [%0d] : 'd%0d  " , j,  act_vcid_q[i][j]);
-	   $display("");
-
-     $display("------------------------------");
-         `uvm_info("PAYLOAD_COV",
-              $sformatf("Payload coverage = %0.2f%%", emac_cvg.payload_cg.get_coverage()),
-              UVM_NONE)
+           $display("---  Port[%1d]            EXPECTED     ACUTAL", i);      
+       	   foreach(exp_vcid_q[i][j]) 
+	   $display("                 [%4d] : 'h%2h      'h%2h  ",  j, exp_vcid_q[i][j], act_vcid_q[i][j]);
+           $display("------------------------------------------------------------------------\n");
            end
-           endfunction 
+
+          endfunction 
+
 endclass 
 `endif
 
