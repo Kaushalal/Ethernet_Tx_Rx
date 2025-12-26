@@ -45,6 +45,7 @@ package mac_to_axi_s_env_pkg;
   `include "mac_tx_uvc.svh"
   `include "mac_rx_uvc.sv"
   
+  `include "emac_tx_to_rx_coverage.svh"
   `include "emac_tx2rx_ref.sv"
   `include "emac_tx2rx_scrbd.sv"
   

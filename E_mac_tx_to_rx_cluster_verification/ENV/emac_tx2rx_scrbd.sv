@@ -108,6 +108,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
    function write_tdata_mon0(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);
             byte unsigned act_vc_id;
             int temp_act_vcid;
+
     int temp_payload_size;
 	     
 	    temp_act_vcid      = {<<8{act_trans.tdata_q[3]}};
@@ -137,6 +138,7 @@ class emac_tx2rx_scrbd extends uvm_scoreboard;
 
             drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
             $display("drop_objection called!");
+  
             endfunction
 
    function write_tdata_mon1(axi_str_slv_seq_item #(`AXI_STR_DATA_SIZE,`AXI_STR_USER_SIZE) act_trans);

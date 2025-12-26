@@ -50,7 +50,7 @@ class mac_tx_base_seqs extends uvm_sequence#(mac_tx_seq_item);
   endfunction
 
   task pre_start();
-  if( raise_obj == 1 ) begin
+  if( raise_obj == 0 ) begin
    if(!uvm_config_db #(uvm_phase)::get(null,"", "run_phase_set",starting_phase))
        `uvm_fatal("STARTING_PHASE"," Failed to get phase at tx_base_seqs" )
   if( starting_phase != null ) begin 
