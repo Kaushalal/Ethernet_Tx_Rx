@@ -64,7 +64,6 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     mac_tx_seq_item                   etype_valid_pkt_q[][$];
     mac_tx_seq_item                   payload_valid_pkt_q[][$];
     mac_tx_seq_item                   conn_cfg_valid_pkt_q[][$];
-    event ev; 
     bit [15:0]           valid_etypes[$] = '{16'h0800, 16'h8100};
     string               port_names[NUM_PORTS] = '{"PORT3", "PORT4", "PORT5"};
     string               port_names_tdata[NUM_PORTS] = '{"PORT8", "PORT9", "PORT10"};
@@ -90,7 +89,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     //int                  total_crc_drop;            
     int                  expected_out_port[NUM_PORTS];
     int                  actual_out_port[NUM_PORTS];  
-   
+    event ev_port0; 
+    event ev_port1;
+    event ev_port2;
+ 
 
     `uvm_component_utils(emac_tx2rx_ref_model)
 
@@ -165,16 +167,18 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
      virtual function void write_acctual_port0(axi_str_slv_seq_item #(32,32) acctual_tdata);
          acctual_pkt_q[0].push_back(acctual_tdata);
           actual_out_port[PORT8_IDX]++;
-          ->ev;
+          ->ev_port0;
          endfunction
      virtual function void write_acctual_port1(axi_str_slv_seq_item #(32,32) acctual_tdata);
          acctual_pkt_q[1].push_back(acctual_tdata);
           actual_out_port[PORT9_IDX]++;
+          ->ev_port1;
          endfunction
 
      virtual function void write_acctual_port2(axi_str_slv_seq_item #(32,32) acctual_tdata);
          acctual_pkt_q[2].push_back(acctual_tdata);
           actual_out_port[PORT10_IDX]++;
+          ->ev_port2;
          endfunction
 
      virtual function void write_axis_mon_port0(axi_str_mas_seq_item #(32,32) axis_tdata);
@@ -682,7 +686,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                       waiting_for_actual = 1;
                       $display("[REF_MODEL] Buffer full, waiting for actual packet...");
                       // Wait for actual packet
-                      wait(ev);
+                      wait(ev_port0);
                     $display("[REF_MODEL] Actual packet arrived, processing...");
 
                     while (buffer_size_bytes >= BUFFER_SIZE && buffer.size() > 0) begin
@@ -794,7 +798,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                       waiting_for_actual = 1;
                       $display("[REF_MODEL] Buffer full, waiting for actual packet...");
                       // Wait for actual packet
-                      wait(ev);
+                      wait(ev_port1);
                     $display("[REF_MODEL] Actual packet arrived, processing...");
 
                     while (buffer_size_bytes >= BUFFER_SIZE && buffer.size() > 0) begin
@@ -903,7 +907,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                       waiting_for_actual = 1;
                       $display("[REF_MODEL] Buffer full, waiting for actual packet...");
                       // Wait for actual packet
-                      wait(ev);
+                      wait(ev_port2);
                     $display("[REF_MODEL] Actual packet arrived, processing...");
 
                     while (buffer_size_bytes >= BUFFER_SIZE && buffer.size() > 0) begin
