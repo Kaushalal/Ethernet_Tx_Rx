@@ -8,7 +8,7 @@
   localparam NUM_PORTS = 3;
   localparam PAYLOAD_DATA_WIDTH = 8;
   localparam FRAME_DATA_WIDTH = 32;
-
+  localparam BUFFER_SIZE = 2048;
   localparam PORT8_IDX = 0;
   localparam PORT9_IDX = 1;
   localparam PORT10_IDX = 2;
@@ -21,6 +21,10 @@
     `uvm_analysis_imp_decl(_axis_mon_port0)
     `uvm_analysis_imp_decl(_axis_mon_port1)
     `uvm_analysis_imp_decl(_axis_mon_port2)
+
+    `uvm_analysis_imp_decl(_acctual_port0)
+    `uvm_analysis_imp_decl(_acctual_port1)
+    `uvm_analysis_imp_decl(_acctual_port2)
 
 
 class emac_tx2rx_ref_model extends uvm_scoreboard;
@@ -35,40 +39,58 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     uvm_analysis_imp_axis_mon_port0 #(axi_str_mas_seq_item #(32,32), emac_tx2rx_ref_model)           tdata_port0_imp;
     uvm_analysis_imp_axis_mon_port1 #(axi_str_mas_seq_item #(32,32), emac_tx2rx_ref_model)           tdata_port1_imp;
     uvm_analysis_imp_axis_mon_port2 #(axi_str_mas_seq_item #(32,32), emac_tx2rx_ref_model)           tdata_port2_imp;
-    
+   //for acctual
+    uvm_analysis_imp_acctual_port0 #(axi_str_slv_seq_item #(32,32), emac_tx2rx_ref_model)           acctual_tdata_port0_imp;
+    uvm_analysis_imp_acctual_port1 #(axi_str_slv_seq_item #(32,32), emac_tx2rx_ref_model)           acctual_tdata_port1_imp;
+    uvm_analysis_imp_acctual_port2 #(axi_str_slv_seq_item #(32,32), emac_tx2rx_ref_model)           acctual_tdata_port2_imp;
+ 
     // ---   Ports that will be connected to  SCOREBOARD to send expected data in frame format
     uvm_analysis_port #(emac_rx_seqs_item#(PAYLOAD_DATA_WIDTH,FRAME_DATA_WIDTH))                     frame_scrbd_port[];
   
     // ---   Ports that will be connected to  SCOREBOARD to send expected data in tdata_q format
     uvm_analysis_port #(axi_str_mas_seq_item #(32,32))                                               tdata_scrbd_port[];
-   
+ 
+ 
+    uvm_phase drped_pkt_drop_obj_phase; 
+ 
+ 
+ 
     //stores input frame packet coming form tx_mon
 
     axi_str_mas_seq_item #(32,32)     tdata_pkt_q[][$];
+    axi_str_slv_seq_item #(32,32)     acctual_pkt_q[][$];
 
     mac_tx_seq_item                   packet_q[][$];
     mac_tx_seq_item                   etype_valid_pkt_q[][$];
     mac_tx_seq_item                   payload_valid_pkt_q[][$];
     mac_tx_seq_item                   conn_cfg_valid_pkt_q[][$];
-
+    event ev; 
     bit [15:0]           valid_etypes[$] = '{16'h0800, 16'h8100};
     string               port_names[NUM_PORTS] = '{"PORT3", "PORT4", "PORT5"};
     string               port_names_tdata[NUM_PORTS] = '{"PORT8", "PORT9", "PORT10"};
     int                  tdata_ref;
     bit [7:0]            global_clean_data_q[$];
     axi_4_reg_block      ral; 
-     
+    int                  etype_matched_count[NUM_PORTS];
     int                  etype_mismatched_count[NUM_PORTS];
+    int                  payload_matched_count[NUM_PORTS];
     int                  payload_mismatched_count[NUM_PORTS];
     int                  pkt_in_port[NUM_PORTS];
     int                  valid[NUM_PORTS];
     int                  invalid[NUM_PORTS];
-    int total_pkts_received;     
-    int total_conn_invalid_drop;  
-    int total_crc_drop;            
-    int expected_out_port[NUM_PORTS];
-    int actual_out_port[NUM_PORTS];  
-
+    int                  total_pkts_received;     
+    int                  total_pkts_etype_matched;
+    int                  total_pkts_etype_missmached; 
+    int                  total_pkts_payload_size_matched;     
+    int                  total_pkts_payload_size_missmatched;     
+    int                  total_pkts_out_from_ref;     
+    int                  total_conn_valid;  
+    int                  total_conn_invalid_drop;
+    int                  total_acctual_pkt;  
+    //int                  total_crc_drop;            
+    int                  expected_out_port[NUM_PORTS];
+    int                  actual_out_port[NUM_PORTS];  
+   
 
     `uvm_component_utils(emac_tx2rx_ref_model)
 
@@ -86,6 +108,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         tdata_port1_imp = new ("tdata_port1_imp",this);
         tdata_port2_imp = new ("tdata_port2_imp",this);
 
+        acctual_tdata_port0_imp = new ("acctual_tdata_port0_imp",this);
+        acctual_tdata_port1_imp = new ("acctual_tdata_port1_imp",this);
+        acctual_tdata_port2_imp = new ("acctual_tdata_port2_imp",this);
         //Ouput ports
         frame_scrbd_port = new[NUM_PORTS];
         foreach(frame_scrbd_port[i]) frame_scrbd_port[i] = new( $sformatf("frame_scrbd_port[%0d]",i), this);
@@ -99,7 +124,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         etype_valid_pkt_q    = new[NUM_PORTS];
         payload_valid_pkt_q  = new[NUM_PORTS];
         conn_cfg_valid_pkt_q = new[NUM_PORTS];
-
+        acctual_pkt_q        = new[NUM_PORTS];
         endfunction
 
     function void build_phase (uvm_phase phase);
@@ -107,7 +132,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         super.build_phase (phase);
 
         ral = axi_4_reg_block::type_id::create("ral");
-
+        //ev=new();
         if (!uvm_config_db#(int)::get(this,"","ref_type",tdata_ref)) 	`uvm_fatal(get_full_name(), "set ref_mod type from env")
         else begin
              $display("REF_TYPE=%d",tdata_ref);
@@ -127,7 +152,7 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
     virtual function void add_etype(bit [15:0] new_etype);
         valid_etypes.push_back(new_etype);
-        `uvm_info("REF_ETYPE_ADDED", $sformatf("Added: 0x%04h, Now: %p", new_etype, valid_etypes), UVM_LOW)
+        `uvm_info("REF_ETYPE_ADDED", $sformatf("Added: 0x%04h, Now: %p", new_etype, valid_etypes), UVM_DEBUG)
         endfunction
 
     // -----------------------------------------------------------------
@@ -137,6 +162,20 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
     // Here all write function will push packet in their respective queue
 
 
+     virtual function void write_acctual_port0(axi_str_slv_seq_item #(32,32) acctual_tdata);
+         acctual_pkt_q[0].push_back(acctual_tdata);
+          actual_out_port[PORT8_IDX]++;
+          ->ev;
+         endfunction
+     virtual function void write_acctual_port1(axi_str_slv_seq_item #(32,32) acctual_tdata);
+         acctual_pkt_q[1].push_back(acctual_tdata);
+          actual_out_port[PORT9_IDX]++;
+         endfunction
+
+     virtual function void write_acctual_port2(axi_str_slv_seq_item #(32,32) acctual_tdata);
+         acctual_pkt_q[2].push_back(acctual_tdata);
+          actual_out_port[PORT10_IDX]++;
+         endfunction
 
      virtual function void write_axis_mon_port0(axi_str_mas_seq_item #(32,32) axis_tdata);
 
@@ -149,11 +188,11 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
          $display("tdata inside ref model - PORT0");
          axis_tdata.print(); 
          
-         `uvm_info("REF_DEBUG", "=== Component Hierarchy Debug PORT0 ===", UVM_LOW)
-         `uvm_info("REF_DEBUG", $sformatf("Instance name: %s", get_name()), UVM_LOW)
-         `uvm_info("REF_DEBUG", $sformatf("Full name: %s", get_full_name()), UVM_LOW)  
-         `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_LOW)
-         `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref: %s", axis_tdata.sprint()), UVM_LOW)    
+         `uvm_info("REF_DEBUG", "=== Component Hierarchy Debug PORT0 ===", UVM_DEBUG)
+         `uvm_info("REF_DEBUG", $sformatf("Instance name: %s", get_name()), UVM_DEBUG)
+         `uvm_info("REF_DEBUG", $sformatf("Full name: %s", get_full_name()), UVM_DEBUG)  
+         `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_DEBUG)
+         `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref: %s", axis_tdata.sprint()), UVM_DEBUG)    
          `uvm_info("REF_QUEUE_STATUS", $sformatf("PORT0 queue size: %0d", tdata_pkt_q[0].size()), UVM_HIGH)
          endfunction
 
@@ -168,11 +207,11 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
          axis_tdata_p1.print();  
          $display("tdata_pkt_at_port4=%0d", port1_pkt_count);
          
-         `uvm_info("REF_DEBUG", "=== Component Hierarchy Debug PORT1 ===", UVM_LOW)
-         `uvm_info("REF_DEBUG", $sformatf("Instance name: %s", get_name()), UVM_LOW)
-         `uvm_info("REF_DEBUG", $sformatf("Full name: %s", get_full_name()), UVM_LOW)  
-         `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_LOW)
-         `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref: %s", axis_tdata_p1.sprint()), UVM_LOW)  
+         `uvm_info("REF_DEBUG", "=== Component Hierarchy Debug PORT1 ===", UVM_DEBUG)
+         `uvm_info("REF_DEBUG", $sformatf("Instance name: %s", get_name()), UVM_DEBUG)
+         `uvm_info("REF_DEBUG", $sformatf("Full name: %s", get_full_name()), UVM_DEBUG)  
+         `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_DEBUG)
+         `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref: %s", axis_tdata_p1.sprint()), UVM_DEBUG)  
          
          // Optional: Show queue status
          `uvm_info("REF_QUEUE_STATUS", $sformatf("PORT1 queue size: %0d", tdata_pkt_q[1].size()), UVM_HIGH)
@@ -190,11 +229,11 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
           axis_tdata_p2.print();
           $display("tdata_pkt_at_port2 = %d", port2_pkt_count);
           
-          `uvm_info("REF_DEBUG", "=== Component Hierarchy Debug PORT2 ===", UVM_LOW)
-          `uvm_info("REF_DEBUG", $sformatf("Instance name: %s", get_name()), UVM_LOW)
-          `uvm_info("REF_DEBUG", $sformatf("Full name: %s", get_full_name()), UVM_LOW)  
-          `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_LOW)
-          `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref port 2: %s", axis_tdata_p2.sprint()), UVM_LOW)
+          `uvm_info("REF_DEBUG", "=== Component Hierarchy Debug PORT2 ===", UVM_DEBUG)
+          `uvm_info("REF_DEBUG", $sformatf("Instance name: %s", get_name()), UVM_DEBUG)
+          `uvm_info("REF_DEBUG", $sformatf("Full name: %s", get_full_name()), UVM_DEBUG)  
+          `uvm_info("REF_DEBUG", $sformatf("Type name: %s", get_type_name()), UVM_DEBUG)
+          `uvm_info(get_full_name(), $sformatf("Got AXI-S Pkt in ref port 2: %s", axis_tdata_p2.sprint()), UVM_DEBUG)
           
           // Display queue status (optional)
           `uvm_info("REF_QUEUE_STATUS", $sformatf("PORT2 queue size: %0d", tdata_pkt_q[2].size()), UVM_HIGH)
@@ -208,14 +247,14 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
              pkt_in_port[PORT3_IDX]++;
              packet_q[0].push_back(pkt_port3); 
              
-             `uvm_info("REF_PACKET_ARRIVED",  $sformatf("%s: Received packet #%0d (Queue size: %0d)", port_names[PORT3_IDX], pkt_in_port[PORT3_IDX], packet_q[0].size()), UVM_LOW)
+             `uvm_info("REF_PACKET_ARRIVED",  $sformatf("%s: Received packet #%0d (Queue size: %0d)", port_names[PORT3_IDX], pkt_in_port[PORT3_IDX], packet_q[0].size()), UVM_DEBUG)
              
              // Restored loop for printing
              foreach (packet_q[0][i]) begin
                  $display("inside ref model");
                  packet_q[0][i].print();
                  $display("VLAN ID =%h", packet_q[0][i].vlan); 
-                 `uvm_info("REF_MODEL", $sformatf("%s: Converting MAC frame: %s",   port_names[PORT3_IDX], packet_q[0][i].convert2string()), UVM_MEDIUM)
+                 `uvm_info("REF_MODEL", $sformatf("%s: Converting MAC frame: %s",   port_names[PORT3_IDX], packet_q[0][i].convert2string()), UVM_DEBUG)
                  end
 
              end
@@ -234,10 +273,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
              pkt_in_port[PORT4_IDX]++;
              packet_q[1].push_back(pkt_port4); 
              
-             `uvm_info("REF_PACKET_ARRIVED", $sformatf("%s: Received packet #%0d (Queue size: %0d)", port_names[PORT4_IDX], pkt_in_port[PORT4_IDX],  packet_q[1].size()),UVM_LOW)
+             `uvm_info("REF_PACKET_ARRIVED", $sformatf("%s: Received packet #%0d (Queue size: %0d)", port_names[PORT4_IDX], pkt_in_port[PORT4_IDX],  packet_q[1].size()),UVM_DEBUG)
              
              foreach (packet_q[1][i]) begin
-                `uvm_info("REF_MODEL", $sformatf("%s: Converting MAC frame: %s",  port_names[PORT4_IDX], packet_q[1][i].convert2string()), UVM_MEDIUM)
+                `uvm_info("REF_MODEL", $sformatf("%s: Converting MAC frame: %s",  port_names[PORT4_IDX], packet_q[1][i].convert2string()), UVM_DEBUG)
                  end
              end
           else
@@ -252,11 +291,11 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                pkt_in_port[PORT5_IDX]++;
                packet_q[2].push_back(pkt_port5); 
                
-               `uvm_info("REF_PACKET_ARRIVED",  $sformatf("%s: Received packet #%0d (Queue size: %0d)", port_names[PORT5_IDX], pkt_in_port[PORT5_IDX],packet_q[2].size()),UVM_LOW)
+               `uvm_info("REF_PACKET_ARRIVED",  $sformatf("%s: Received packet #%0d (Queue size: %0d)", port_names[PORT5_IDX], pkt_in_port[PORT5_IDX],packet_q[2].size()),UVM_DEBUG)
                
                foreach (packet_q[2][i]) 
 	           begin
-                   `uvm_info("REF_MODEL", $sformatf("%s: Converting MAC frame: %s", port_names[PORT5_IDX], packet_q[2][i].convert2string()), UVM_MEDIUM)
+                   `uvm_info("REF_MODEL", $sformatf("%s: Converting MAC frame: %s", port_names[PORT5_IDX], packet_q[2][i].convert2string()), UVM_DEBUG)
                    end
                end
             else 
@@ -284,15 +323,17 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
         forever begin
             wait(packet_q[0].size() > 0);
-            `uvm_info("REF_PORT3_CHECK", $sformatf("Processing %0d packets", packet_q[0].size()), UVM_HIGH)
+            `uvm_info("REF_PORT3_CHECK", $sformatf("Processing %0d packets", packet_q[0].size()), UVM_DEBUG)
 
             foreach (packet_q[0][i]) begin
                  if (packet_q[0][i].Etype inside {valid_etypes}) begin
-                    `uvm_info("REF_VALID ETYPE", $sformatf("%s: EType=%h", port_names[PORT3_IDX], packet_q[0][i].Etype), UVM_LOW);
+                    `uvm_info("REF_VALID ETYPE", $sformatf("%s: EType=%h", port_names[PORT3_IDX], packet_q[0][i].Etype), UVM_DEBUG);
+                    etype_matched_count[PORT3_IDX]++;
                     etype_valid_pkt_q[0].push_back(packet_q[0][i]);
                     end
 	         else
                     begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     etype_mismatched_count[PORT3_IDX]++;
                     tdata_pkt_q[0].delete();
                     `uvm_info("REF_INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT3_IDX], packet_q[0][i].Etype), UVM_LOW);
@@ -310,11 +351,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
             foreach (packet_q[1][i]) begin
                 if (packet_q[1][i].Etype inside {valid_etypes}) begin
-                    `uvm_info("REF_VALID ETYPE", $sformatf("%s: EType=%h", port_names[PORT4_IDX], packet_q[1][i].Etype), UVM_LOW);
+                    `uvm_info("REF_VALID ETYPE", $sformatf("%s: EType=%h", port_names[PORT4_IDX], packet_q[1][i].Etype), UVM_DEBUG);
+                    etype_matched_count[PORT4_IDX]++;
                     etype_valid_pkt_q[1].push_back(packet_q[1][i]);
                     end 
 		else 
 	            begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     etype_mismatched_count[PORT4_IDX]++;
                     tdata_pkt_q[1].delete();
                     `uvm_info("REF_INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT4_IDX], packet_q[1][i].Etype), UVM_LOW);
@@ -332,11 +375,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
 
             foreach (packet_q[2][i]) begin
                 if (packet_q[2][i].Etype inside {valid_etypes}) begin
-                    `uvm_info("REF_VALID ETYPE", $sformatf("%s: EType=%h", port_names[PORT5_IDX], packet_q[2][i].Etype), UVM_LOW);
+                    `uvm_info("REF_VALID ETYPE", $sformatf("%s: EType=%h", port_names[PORT5_IDX], packet_q[2][i].Etype), UVM_DEBUG);
+                    etype_matched_count[PORT5_IDX]++;
                     etype_valid_pkt_q[2].push_back(packet_q[2][i]);
                     end
 	        else
                     begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     etype_mismatched_count[PORT5_IDX]++;
                     tdata_pkt_q[2].delete();
                     `uvm_info("REF_INVALID ETYPE", $sformatf("%s: EType=%h - DROPPED", port_names[PORT5_IDX], packet_q[2][i].Etype), UVM_LOW)
@@ -366,8 +411,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
             foreach (etype_valid_pkt_q[0][i]) begin
                 if(etype_valid_pkt_q[0][i].payload_q.size() <= 1500) begin
                     `uvm_info("REF_VALID PAYLOAD SIZE", $sformatf("%s: payload_q size=%d", port_names[PORT3_IDX], etype_valid_pkt_q[0][i].payload_q.size()), UVM_DEBUG);
+                    payload_matched_count[PORT3_IDX]++;
                     payload_valid_pkt_q[0].push_back(etype_valid_pkt_q[0][i]);
-                    `uvm_info("REF_[RETURN VALID E MAC PKT]","PORT 3",UVM_LOW)
+                    `uvm_info("REF_[RETURN VALID E MAC PKT]","PORT 3",UVM_DEBUG)
                     end
 	        else
                     begin
@@ -389,8 +435,10 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
             foreach (etype_valid_pkt_q[1][i]) begin
                 if(etype_valid_pkt_q[1][i].payload_q.size() <= 1500) begin
                     `uvm_info("REF_VALID PAYLOAD", $sformatf("%s: PAYLOAD SIZE=%d", port_names[PORT4_IDX], etype_valid_pkt_q[1][i].payload_q.size()), UVM_DEBUG)
+                    payload_matched_count[PORT4_IDX]++;
                     payload_valid_pkt_q[1].push_back(etype_valid_pkt_q[1][i]);
                 end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     payload_mismatched_count[PORT4_IDX]++;
                     tdata_pkt_q[1].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD=%d - DROPPED", port_names[PORT4_IDX], etype_valid_pkt_q[1][i].payload_q.size()), UVM_LOW)
@@ -406,9 +454,12 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
             `uvm_info("REF_PORT5_ETYPE_CHECK", $sformatf("Processing %0d packets", etype_valid_pkt_q[2].size()), UVM_HIGH)
             foreach (etype_valid_pkt_q[2][i]) begin
                 if(etype_valid_pkt_q[2][i].payload_q.size() <= 1500) begin
-                    `uvm_info("REF_VALID PAYLOAD", $sformatf("%s: payload_q=%d", port_names[PORT5_IDX], etype_valid_pkt_q[2][i].payload_q.size()), UVM_HIGH);
+                    `uvm_info("REF_VALID PAYLOAD", $sformatf("%s: payload_q=%d", port_names[PORT5_IDX], etype_valid_pkt_q[2][i].payload_q.size()), UVM_DEBUG);
+                    payload_matched_count[PORT5_IDX]++;
                     payload_valid_pkt_q[2].push_back(etype_valid_pkt_q[2][i]);
                 end else begin
+
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                     payload_mismatched_count[PORT5_IDX]++;
                     tdata_pkt_q[2].delete();
                     `uvm_info("REF_INVALID PAYLOAD SIZE", $sformatf("%s: PAYLOAD SIZE=%D - DROPPED", port_names[PORT5_IDX], etype_valid_pkt_q[2][i].payload_q.size()), UVM_LOW)
@@ -450,8 +501,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     if (conn_valid_bit == 1) begin
                         valid[PORT3_IDX]++;
                         conn_cfg_valid_pkt_q[0].push_back(payload_valid_pkt_q[0][i]);
-                        `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT3_IDX], conn_valid_bit), UVM_LOW);
+                        `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT3_IDX], conn_valid_bit), UVM_DEBUG);
                     end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                       tdata_pkt_q[0].delete();
                         invalid[PORT3_IDX]++;
                         `uvm_info("REF_CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT3_IDX], conn_valid_bit), UVM_LOW);
@@ -481,8 +533,9 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     if (conn_valid_bit == 1) begin
                         valid[PORT4_IDX]++;
                         conn_cfg_valid_pkt_q[1].push_back(payload_valid_pkt_q[1][i]);
-                        `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_LOW);
+                        `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_DEBUG);
                     end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                         invalid[PORT4_IDX]++;
                         tdata_pkt_q[1].delete();
                         `uvm_info("REF_CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT4_IDX], conn_valid_bit), UVM_LOW);
@@ -511,10 +564,11 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     if (conn_valid_bit == 1) begin
                         valid[PORT5_IDX]++;
                         conn_cfg_valid_pkt_q[2].push_back(payload_valid_pkt_q[2][i]);
-                        `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_LOW);
+                        `uvm_info("REF_CONNECTION VALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_DEBUG);
                     end else begin
+                    drped_pkt_drop_obj_phase.drop_objection(null,"Dropping transcation that are compared",1);
                         invalid[PORT5_IDX]++;
-                    tdata_pkt_q[2].delete();
+                        tdata_pkt_q[2].delete();
                         `uvm_info("REF_CONNECTION INVALID", $sformatf("%s: CONN_VALID=%0d", port_names[PORT5_IDX], conn_valid_bit), UVM_LOW);
                     end
                 end
@@ -548,6 +602,12 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         uvm_reg_field conn_id_field;
         uvm_reg_field vcid_field;
         uvm_reg_field out_port_sel;
+        axi_str_mas_seq_item#(32,32) buffer[$];
+        axi_str_mas_seq_item #(32,32) pkt;  
+        int buffer_size_bytes = 0;
+        bit waiting_for_actual = 0;
+        int pkt_panding =0;
+        int ctr;
         forever begin
 
             wait(conn_cfg_valid_pkt_q[0].size() > 0);
@@ -565,17 +625,19 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                 out_sel = out_port_sel.get();
                 $display("output sel=%0d",out_sel);
 
-                `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT3=%h", vcid_addr), UVM_LOW) // Restored
+                `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT3=%h", vcid_addr), UVM_DEBUG) // Restored
 
                 if (ral.vcid_reg_h[vcid_addr] != null) begin
 
                     vcid_field = ral.vcid_reg_h[vcid_addr].vcid;
                     vcid       = vcid_field.get();
                     $display("REF_VCID=%h",vcid); 
-                    `uvm_info("REF_VCID_PORT0", $sformatf ("VCID_PORT3=%h", vcid), UVM_LOW) // Restored
+                    `uvm_info("REF_VCID_PORT0", $sformatf ("VCID_PORT3=%h", vcid), UVM_DEBUG) // Restored
 
                     expected_pkt = get_rx_expected(current_pkt, vcid);
                     expected_tdata = expected_tdata_pkt(current_tdata,vcid);
+                    $display("INSIDE REF MOD");
+                    expected_tdata.print();
                  //   tdata_scrbd_port[0].write(expected_tdata);
 
                    // frame_scrbd_port[0].write(expected_pkt);
@@ -595,21 +657,68 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end
                     endcase
           */
+            //      foreach (expected_tdata[i])begin
+                   /* $display("SIZE OF BUFFER=%0d",buffer.size());
+                    total_byte.push_back(expected_tdata.total_bytes);
+                    foreach(total_byte[i])begin
+                       $display("TOTAL BYTE=%0p",total_byte);
+                    end
+                     saved_buffer = total_byte.sum();
+                       $display("BUFFER SIZE=%0d",saved_buffer);                    
+                    buffer.push_back(expected_tdata);
+                    if(saved_buffer >= 2048)begin
+                       buffer.pop_front();
+                    end
+                    $display("QUEUE SIZE=%0d",buffer.size());
+            //      end
+                    wait(ev);*/
+                    buffer.push_back(expected_tdata);
+                    buffer_size_bytes += expected_tdata.total_bytes;
+                    pkt_panding = 1;
+                    $display("[REF_MODEL] Buffer: %0d packets, %0d bytes", 
+                    buffer.size(), buffer_size_bytes);
+
+                    if (buffer_size_bytes >= BUFFER_SIZE && !waiting_for_actual) begin
+                      waiting_for_actual = 1;
+                      $display("[REF_MODEL] Buffer full, waiting for actual packet...");
+                      // Wait for actual packet
+                      wait(ev);
+                    $display("[REF_MODEL] Actual packet arrived, processing...");
+
+                    while (buffer_size_bytes >= BUFFER_SIZE && buffer.size() > 0) begin
+                    axi_str_mas_seq_item #(32,32) removed;
+                    removed = buffer.pop_front();
+                    buffer_size_bytes -= removed.total_bytes;
+            
+                    $display("[REF_MODEL] Dropped packet of %0d bytes, remaining: %0d bytes", 
+                    removed.total_bytes, buffer_size_bytes);
+                    end
+        
+                     waiting_for_actual = 0;
+                  end
+              else if (!waiting_for_actual && pkt_panding)begin
+                  ctr++;
+                  $display("CTR=%0d",ctr);
+                   pkt=buffer.pop_front();
+              //   foreach(buffer[i])begin
                     case(out_sel)
                      8: begin
-                        tdata_scrbd_port[0].write(expected_tdata);
+                        tdata_scrbd_port[0].write(pkt);
                         expected_out_port[PORT8_IDX]++;
                      end
                      9: begin
-                        tdata_scrbd_port[1].write(expected_tdata);
+                        tdata_scrbd_port[1].write(pkt);
                         expected_out_port[PORT9_IDX]++;
                      end
                     10: begin
-                        tdata_scrbd_port[2].write(expected_tdata);
+                        tdata_scrbd_port[2].write(pkt);
                         expected_out_port[PORT10_IDX]++;
                     end
                     default $error("INVALID OUTPORT SEL FACHED");
                     endcase
+                 end
+              //end
+//                 buffer_size_bytes = 0;
                 end
             end
         end
@@ -628,6 +737,12 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         uvm_reg_field vcid_field;
         uvm_reg_field out_port_sel;
 
+        axi_str_mas_seq_item#(32,32) buffer[$];
+        axi_str_mas_seq_item #(32,32) pkt;  
+        int buffer_size_bytes = 0;
+        bit waiting_for_actual = 0;
+        int pkt_panding =0;
+
         forever begin
             wait(conn_cfg_valid_pkt_q[1].size() > 0);
 
@@ -641,13 +756,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                 out_port_sel = ral.output_prt_reg_h[vcid_addr].output_port_sel;
                 out_sel = out_port_sel.get();
                 $display("output sel=%0d",out_sel); 
-                `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT4=%h", vcid_addr), UVM_LOW) // Restored
+                `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT4=%h", vcid_addr), UVM_DEBUG) // Restored
                 
                 if (ral.vcid_reg_h[vcid_addr] != null) begin
                     vcid_field = ral.vcid_reg_h[vcid_addr].vcid;
                     vcid       = vcid_field.get();
                     $display("REF_VCID=%h",vcid); 
-                    `uvm_info("REF_VCID", $sformatf ("VCID_PORT4=%h", vcid), UVM_LOW) // Restored
+                    `uvm_info("REF_VCID", $sformatf ("VCID_PORT4=%h", vcid), UVM_DEBUG) // Restored
 
                     expected_pkt_p4 = get_rx_expected(current_pkt_p4, vcid);
                   //  frame_scrbd_port[2].write(expected_pkt_p4);
@@ -669,22 +784,48 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end
                     endcase
 */
+                    buffer.push_back(expected_tdata_p4);
+                    buffer_size_bytes += expected_tdata_p4.total_bytes;
+                    pkt_panding = 1;
+                    $display("[REF_MODEL] Buffer: %0d packets, %0d bytes", 
+                    buffer.size(), buffer_size_bytes);
+
+                    if (buffer_size_bytes >= BUFFER_SIZE && !waiting_for_actual) begin
+                      waiting_for_actual = 1;
+                      $display("[REF_MODEL] Buffer full, waiting for actual packet...");
+                      // Wait for actual packet
+                      wait(ev);
+                    $display("[REF_MODEL] Actual packet arrived, processing...");
+
+                    while (buffer_size_bytes >= BUFFER_SIZE && buffer.size() > 0) begin
+                    axi_str_mas_seq_item #(32,32) removed;
+                    removed = buffer.pop_front();
+                    buffer_size_bytes -= removed.total_bytes;
+            
+                    $display("[REF_MODEL] Dropped packet of %0d bytes, remaining: %0d bytes", 
+                    removed.total_bytes, buffer_size_bytes);
+                    end
+        
+                     waiting_for_actual = 0;
+                  end
+                    else if (!waiting_for_actual && pkt_panding)begin
+                    pkt=buffer.pop_front();
                     case(out_sel)
                      8: begin
-                        tdata_scrbd_port[0].write(expected_tdata_p4);
+                        tdata_scrbd_port[0].write(pkt);
                         expected_out_port[PORT8_IDX]++;
                      end
                      9: begin
-                        tdata_scrbd_port[1].write(expected_tdata_p4);
+                        tdata_scrbd_port[1].write(pkt);
                         expected_out_port[PORT9_IDX]++;
                      end
                     10: begin
-                        tdata_scrbd_port[2].write(expected_tdata_p4);
+                        tdata_scrbd_port[2].write(pkt);
                         expected_out_port[PORT10_IDX]++;
                     end
                     endcase
 
-
+                   end
                 end
             end
        end
@@ -703,6 +844,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
         uvm_reg_field conn_id_field;
         uvm_reg_field vcid_field;
         uvm_reg_field out_port_sel;
+
+        axi_str_mas_seq_item#(32,32) buffer[$];
+        axi_str_mas_seq_item #(32,32) pkt;  
+        int buffer_size_bytes = 0;
+        bit waiting_for_actual = 0;
+        int pkt_panding =0;
+
         forever begin
             wait(conn_cfg_valid_pkt_q[2].size() > 0);
 
@@ -717,13 +865,13 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                 out_sel = out_port_sel.get();
                 $display("output sel=%0d",out_sel); 
  
-                `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT5=%h", vcid_addr), UVM_LOW) // Restored
+                `uvm_info("REF_VCID REG ADDR", $sformatf ("VCID_ADDR_PORT5=%h", vcid_addr), UVM_DEBUG) // Restored
                 
                 if (ral.vcid_reg_h[vcid_addr] != null) begin
                     vcid_field = ral.vcid_reg_h[vcid_addr].vcid;
                     vcid       = vcid_field.get();
                     $display("REF_VCID=%h",vcid); 
-                    `uvm_info("REF_VCID", $sformatf ("VCID_PORT5=%h", vcid), UVM_LOW) // Restored
+                    `uvm_info("REF_VCID", $sformatf ("VCID_PORT5=%h", vcid), UVM_DEBUG) // Restored
 
                     expected_pkt_p5 = get_rx_expected(current_pkt_p5, vcid);
                  //   frame_scrbd_port[2].write(expected_pkt_p5);
@@ -745,21 +893,48 @@ class emac_tx2rx_ref_model extends uvm_scoreboard;
                     end
                     endcase
 */
+                    buffer.push_back(expected_tdata_p5);
+                    buffer_size_bytes += expected_tdata_p5.total_bytes;
+                    pkt_panding = 1;
+                    $display("[REF_MODEL] Buffer: %0d packets, %0d bytes", 
+                    buffer.size(), buffer_size_bytes);
+
+                    if (buffer_size_bytes >= BUFFER_SIZE && !waiting_for_actual) begin
+                      waiting_for_actual = 1;
+                      $display("[REF_MODEL] Buffer full, waiting for actual packet...");
+                      // Wait for actual packet
+                      wait(ev);
+                    $display("[REF_MODEL] Actual packet arrived, processing...");
+
+                    while (buffer_size_bytes >= BUFFER_SIZE && buffer.size() > 0) begin
+                    axi_str_mas_seq_item #(32,32) removed;
+                    removed = buffer.pop_front();
+                    buffer_size_bytes -= removed.total_bytes;
+            
+                    $display("[REF_MODEL] Dropped packet of %0d bytes, remaining: %0d bytes", 
+                    removed.total_bytes, buffer_size_bytes);
+                    end
+        
+                     waiting_for_actual = 0;
+                  end
+                    else if (!waiting_for_actual && pkt_panding)begin
+                    pkt=buffer.pop_front();
+
                     case(out_sel)
                      8: begin
-                        tdata_scrbd_port[0].write(expected_tdata_p5);
+                        tdata_scrbd_port[0].write(pkt);
                         expected_out_port[PORT8_IDX]++;
                      end
                      9: begin
-                        tdata_scrbd_port[1].write(expected_tdata_p5);
+                        tdata_scrbd_port[1].write(pkt);
                         expected_out_port[PORT9_IDX]++;
                      end
                     10: begin
-                        tdata_scrbd_port[2].write(expected_tdata_p5);
+                        tdata_scrbd_port[2].write(pkt);
                         expected_out_port[PORT10_IDX]++;
                     end
                     endcase
-
+                    end
 
                 end
             end
@@ -775,22 +950,25 @@ function axi_str_mas_seq_item #(32,32) expected_tdata_pkt(axi_str_mas_seq_item #
     int padding_bytes;
     int last_idx;
     int i;
-
+    int tlast;
+    int total_byte;
+    int pkt_len;
+    int pkt_len_last;
     if (original_tdata == null) begin
         `uvm_error("NULL_HANDLE", "Function expected_tdata_pkt received a NULL handle!")
         return null;
     end
 
-    `uvm_info("REF_INPUT_DEBUG", "=== ORIGINAL TRANSACTION (FROM MONITOR) ===", UVM_LOW)
-    `uvm_info("REF_INPUT_DEBUG", $sformatf("Total words: %0d", original_tdata.tdata_q.size()), UVM_LOW)
-    `uvm_info("REF_INPUT_DEBUG", $sformatf("Last word: %08h", original_tdata.tdata_q[original_tdata.tdata_q.size()-1]), UVM_LOW)
-    `uvm_info("REF_INPUT_DEBUG", $sformatf("Last TKEEP: %01h", original_tdata.tkeep_q[original_tdata.tkeep_q.size()-1]), UVM_LOW)
+    `uvm_info("REF_INPUT_DEBUG", "=== ORIGINAL TRANSACTION (FROM MONITOR) ===", UVM_DEBUG)
+    `uvm_info("REF_INPUT_DEBUG", $sformatf("Total words: %0d", original_tdata.tdata_q.size()), UVM_DEBUG)
+    `uvm_info("REF_INPUT_DEBUG", $sformatf("Last word: %08h", original_tdata.tdata_q[original_tdata.tdata_q.size()-1]), UVM_DEBUG)
+    `uvm_info("REF_INPUT_DEBUG", $sformatf("Last TKEEP: %01h", original_tdata.tkeep_q[original_tdata.tkeep_q.size()-1]), UVM_DEBUG)
 
     foreach(original_tdata.tdata_q[i]) begin
         `uvm_info("REF_INPUT_DEBUG", 
                   $sformatf("Word[%0d]: DATA=%08h, TKEEP=%01h", 
                            i, original_tdata.tdata_q[i], original_tdata.tkeep_q[i]), 
-                  UVM_LOW)
+                  UVM_DEBUG)
     end
     // Debug original frame
     `uvm_info("REF_ORIGINAL_DEBUG", 
@@ -833,7 +1011,7 @@ function axi_str_mas_seq_item #(32,32) expected_tdata_pkt(axi_str_mas_seq_item #
     `uvm_info("REF_TKEEP_ADJUST", 
               $sformatf("Last beat: valid_bytes=%0d, padding_bytes=%0d", 
                        valid_bytes_in_last_beat, padding_bytes), 
-              UVM_MEDIUM)
+              UVM_DEBUG)
 
     // Remove padding bytes from the end
     repeat(padding_bytes) void'(byte_stream.pop_back());
@@ -852,7 +1030,7 @@ function axi_str_mas_seq_item #(32,32) expected_tdata_pkt(axi_str_mas_seq_item #
         `uvm_info("REF_VCID_INSERT", 
                   $sformatf("Replaced TCI with VCID=%0h, New frame: %0d bytes", 
                            vcid, byte_stream.size()), 
-                  UVM_LOW)
+                  UVM_DEBUG)
     end else begin
         `uvm_error("FRAME_TOO_SHORT", "Frame too short for VCID insertion")
         return null;
@@ -887,10 +1065,32 @@ end        // Set TKEEP based on actual valid bytes
         
         // Swap to Little Endian for AXI bus
         new_word = {<<8{new_word}};
-
         modified_tdata.tdata_q.push_back(new_word);
         modified_tdata.tkeep_q.push_back(new_keep);
-
+        pkt_len = modified_tdata.tdata_q.size();
+        $display("PKT_LENGHT=%0d",pkt_len);
+        pkt_len_last = pkt_len-1;
+        $display("PKT_LEN_LAST=%0d",pkt_len_last);
+        total_byte = pkt_len_last * 4;
+        $display("TOTTAL BYTE=%0d",total_byte);
+        case(bytes_to_pop)
+            1: total_byte = total_byte+1;
+            2: total_byte = total_byte+2;
+            3: total_byte = total_byte+3;
+            4: total_byte = total_byte+4;
+        endcase
+        $display("TOTTAL BYTE AFTER LAST=%0d",total_byte);
+        modified_tdata.total_bytes = total_byte;
+      /*  tlast = modified_tdata.tdata_q.size();
+        $display("TLAST=%0d",tlast);
+        if (!tlast) begin
+           foreach(modified_tdata.tdata_q[i])begin
+             byte_ctr++;
+            // byte_ctr =+ 4;
+           end
+        end
+           $display("TOTAL BYTE=%0d",byte_ctr);
+*/
         `uvm_info("REF_WORD_PACK", 
                   $sformatf("Word[%0d]: DATA=%08h, TKEEP=%01h, bytes=%0d", 
                            modified_tdata.tdata_q.size()-1, new_word, new_keep, bytes_to_pop), 
@@ -903,18 +1103,18 @@ end        // Set TKEEP based on actual valid bytes
                        modified_tdata.tdata_q[modified_tdata.tdata_q.size()-1],
                        modified_tdata.tkeep_q[modified_tdata.tkeep_q.size()-1]), 
               UVM_HIGH)
-    `uvm_info("REF_OUTPUT_DEBUG", "=== MODIFIED TRANSACTION (AFTER PROCESSING) ===", UVM_LOW)
-    `uvm_info("OUTPUT_DEBUG", $sformatf("Total words: %0d", modified_tdata.tdata_q.size()), UVM_LOW)
-    `uvm_info("OUTPUT_DEBUG", $sformatf("Last word: %08h", modified_tdata.tdata_q[modified_tdata.tdata_q.size()-1]), UVM_LOW)
-    `uvm_info("OUTPUT_DEBUG", $sformatf("Last TKEEP: %01h", modified_tdata.tkeep_q[modified_tdata.tkeep_q.size()-1]), UVM_LOW)
+    `uvm_info("REF_OUTPUT_DEBUG", "=== MODIFIED TRANSACTION (AFTER PROCESSING) ===", UVM_DEBUG)
+    `uvm_info("OUTPUT_DEBUG", $sformatf("Total words: %0d", modified_tdata.tdata_q.size()), UVM_DEBUG)
+    `uvm_info("OUTPUT_DEBUG", $sformatf("Last word: %08h", modified_tdata.tdata_q[modified_tdata.tdata_q.size()-1]), UVM_DEBUG)
+    `uvm_info("OUTPUT_DEBUG", $sformatf("Last TKEEP: %01h", modified_tdata.tkeep_q[modified_tdata.tkeep_q.size()-1]), UVM_DEBUG)
     
     foreach(modified_tdata.tdata_q[i]) begin
         `uvm_info("OUTPUT_DEBUG", 
                   $sformatf("Word[%0d]: DATA=%08h, TKEEP=%01h", 
                            i, modified_tdata.tdata_q[i], modified_tdata.tkeep_q[i]), 
-                  UVM_LOW)
+                  UVM_DEBUG)
     end
-    
+     
     $display("INSIDE TDATA FUNCTION");
      modified_tdata.print();
     return modified_tdata;
@@ -938,7 +1138,7 @@ endfunction
         expected_pkt.print();
         // Restored uvm_info
        /* `uvm_info("REF_GET_RX", $sformatf("Converting MAC frame: %s", 
-                                 expected_pkt.convert2string()), UVM_MEDIUM)
+                                 expected_pkt.convert2string()), UVM_DEBUG)
         */
         return expected_pkt;
     endfunction
@@ -951,46 +1151,53 @@ function void final_phase(uvm_phase phase);
     // Reset grand total before calculation
     total_pkts_received = 0;
     total_conn_invalid_drop = 0;
-    total_crc_drop = 0;
-    
-    // 1. Calculate Grand Totals based on the single consolidated array (pkt_in_port)
+   // total_crc_drop = 0;
+    total_pkts_etype_matched = 0;
+    //  Calculate Grand Totals based on the single consolidated array (pkt_in_port)
     for (int i = 0; i < NUM_PORTS; i++) begin
-        // Total received:
         total_pkts_received += pkt_in_port[i]; 
         
-        // Total Dropped (Connection Invalid):
+        total_conn_valid += valid[i];
         total_conn_invalid_drop += invalid[i];
-        
-        // Total Dropped (CRC):
-       // total_crc_drop += crc_drop[i]; 
+        total_pkts_etype_matched +=etype_matched_count[i];
+        total_pkts_etype_missmached += etype_mismatched_count[i];
+        total_pkts_payload_size_matched +=payload_matched_count[i];
+        total_pkts_payload_size_missmatched +=payload_mismatched_count[i];
+        total_pkts_out_from_ref +=  expected_out_port[i];
+        total_acctual_pkt += actual_out_port[i];
     end
     
     // 2. Print Summary Report
     `uvm_info(get_full_name(), 
-        "\n--------------------------- Expected Packet Summary ---------------------------------------", UVM_LOW)
+        "\n--------------------------- Expected Packet Summary ---------------------------------------", UVM_DEBUG)
 
-    $display("Total Packets received on all input ports = %0d", total_pkts_received);
+     $display("    ---  ETYPE CHECK  ----   ");
+     foreach(etype_matched_count[i])
+     $display("Port[%0d]    -> Valid :  %10d packets  Invalid :  %10d packet", i, etype_matched_count[i], etype_mismatched_count[i]);
+     $display("Ttl pkt    -> Valid :  %10d packets  Invalid :  %10d packet",total_pkts_etype_matched,total_pkts_etype_missmached);
 
-    // Consolidated Input Port Counts using the single array:
-    $display("No. of packet received at in_port0 = %0d", pkt_in_port[PORT3_IDX]);
-    $display("No. of packet received at in_port1 = %0d", pkt_in_port[PORT4_IDX]);
-    $display("No. of packet received at in_port2 = %0d", pkt_in_port[PORT5_IDX]);
+     $display("    ---  PAYLOAD CHECK  ----   ");
+     foreach(payload_matched_count[i])
+     $display("Port[%0d]    -> Valid :  %10d packets  Invalid :  %10d packet", i, payload_matched_count[i], payload_mismatched_count[i]);
+     $display("Ttl pkt    -> Valid :  %10d packets  Invalid :  %10d packet",total_pkts_payload_size_matched,total_pkts_payload_size_missmatched);
 
-    $display("No. of packet dropped due to connection invalid = %0d", total_conn_invalid_drop);
- //   $display("No of packet dropped due to incorrect CRC = %0d", total_crc_drop);
+     $display("    ---  CONNECTION_VALID CHECK  ----   ");
+     foreach(payload_matched_count[i])
+     $display("Port[%0d]    -> Valid :  %10d packets  Invalid :  %10d packet", i, valid[i], invalid[i]);
+     $display("Ttl pkt    -> Valid :  %10d packets  Invalid :  %10d packet",total_conn_valid,total_conn_invalid_drop);       
 
-    // Expected Output Counts
-    $display("No of expected packet at out_port0 = %0d", expected_out_port[PORT8_IDX]);
-    $display("No of expected packet at out_port1 = %0d", expected_out_port[PORT9_IDX]);
-    $display("No of expected packet at out_port2 = %0d", expected_out_port[PORT10_IDX]);
+     $display("    ---  EXPECTED Packet at OUTPUT  ----   ");
+     foreach(expected_out_port[i])
+     $display("Port[%0d]    -> EXP   :  %10d packets  ACTUAL  :  %10d packet", i, expected_out_port[i], actual_out_port[i]);
+     $display("Ttl pkt    -> EXP   :  %10d packets  ACTUAL  :  %10d packet",total_pkts_out_from_ref,total_acctual_pkt);
 
-    // Actual Output Counts
-    $display("No of actual packet at out_port0 = %0d", actual_out_port[PORT3_IDX]);
-    $display("No of actual packet at out_port1 = %0d", actual_out_port[PORT4_IDX]);
-    $display("No of actual packet at out_port2 = %0d", actual_out_port[PORT5_IDX]);
 
+
+    $display("\n");
     `uvm_info(get_full_name(), 
-        "------------------------------------------------------------------------------------------\n", UVM_LOW)
-endfunction
+        "------------------------------------------------------------------------------------------\n", UVM_DEBUG)
+    endfunction
+
+   
 endclass
 `endif
